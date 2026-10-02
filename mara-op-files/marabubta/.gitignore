@@ -1,0 +1,46 @@
+# IDE
+.idea/
+
+/target/
+Cargo.lock
+node_modules/
+.vite/
+**/target/
+
+# Large/generated files
+bigfile
+escape
+dashboard/dist/
+plugins/examples/postgresql/marabunta-postgres
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.tbz2
+*.tar.xz
+*.txz
+*.tar.zst
+*.7z
+*.rar
+*.lz
+*.lzma
+*.zst
+*.gz
+*.bz2
+*.xz
+*.cab
+*.iso
+*.dmg
+*.ar
+*.cpio
+*.whl
+.venv
+marabunta_source.tar.gz

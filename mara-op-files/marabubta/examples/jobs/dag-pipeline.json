@@ -1,0 +1,77 @@
+{
+  "name": "data-processing-pipeline",
+  "description": "Job with task dependencies forming a DAG (Directed Acyclic Graph)",
+  "priority": "high",
+  "tasks": [
+    {
+      "id": "fetch-data",
+      "name": "Fetch Raw Data",
+      "payload": {
+        "type": "shell",
+        "command": "curl",
+        "args": ["-s", "https://api.example.com/data", "-o", "/tmp/raw_data.json"]
+      },
+      "depends_on": []
+    },
+    {
+      "id": "validate-data",
+      "name": "Validate Data Schema",
+      "payload": {
+        "type": "python",
+        "script": "import json; data = json.load(open('/tmp/raw_data.json')); assert 'records' in data; print(f'Validated {len(data[\"records\"])} records')",
+        "args": []
+      },
+      "depends_on": ["fetch-data"]
+    },
+    {
+      "id": "transform-a",
+      "name": "Transform - Extract Metrics",
+      "payload": {
+        "type": "python",
+        "script": "import json; data = json.load(open('/tmp/raw_data.json')); metrics = [r['metric'] for r in data['records']]; json.dump(metrics, open('/tmp/metrics.json', 'w')); print(f'Extracted {len(metrics)} metrics')",
+        "args": []
+      },
+      "depends_on": ["validate-data"]
+    },
+    {
+      "id": "transform-b",
+      "name": "Transform - Extract Labels",
+      "payload": {
+        "type": "python",
+        "script": "import json; data = json.load(open('/tmp/raw_data.json')); labels = [r['label'] for r in data['records']]; json.dump(labels, open('/tmp/labels.json', 'w')); print(f'Extracted {len(labels)} labels')",
+        "args": []
+      },
+      "depends_on": ["validate-data"]
+    },
+    {
+      "id": "aggregate",
+      "name": "Aggregate Results",
+      "payload": {
+        "type": "python",
+        "script": "import json; metrics = json.load(open('/tmp/metrics.json')); labels = json.load(open('/tmp/labels.json')); result = {'total_metrics': len(metrics), 'total_labels': len(labels), 'avg_metric': sum(metrics)/len(metrics) if metrics else 0}; json.dump(result, open('/tmp/aggregated.json', 'w')); print(result)",
+        "args": []
+      },
+      "depends_on": ["transform-a", "transform-b"]
+    },
+    {
+      "id": "export",
+      "name": "Export Final Report",
+      "payload": {
+        "type": "shell",
+        "command": "cat",
+        "args": ["/tmp/aggregated.json"]
+      },
+      "depends_on": ["aggregate"]
+    }
+  ],
+  "constraints": {
+    "architectures": ["x86_64", "aarch64"]
+  },
+  "preferences": {
+    "prefer_local": true
+  },
+  "placement": {
+    "strategy": "latency"
+  },
+  "timeout_secs": 600
+}

@@ -1,0 +1,46 @@
+# Marabunta - Licensed under the MIT License.
+# Prometheus configuration for Marabunta Compute monitoring
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+  external_labels:
+    monitor: 'marabunta-compute'
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+rule_files: []
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Marabunta Coordinator metrics
+  - job_name: 'marabunta-coordinator'
+    static_configs:
+      - targets: ['coordinator:8080']
+    metrics_path: /metrics
+    scrape_interval: 10s
+
+  # Marabunta Master metrics
+  - job_name: 'marabunta-master'
+    static_configs:
+      - targets: ['master:9000']
+    metrics_path: /metrics
+    scrape_interval: 10s
+
+  # Marabunta Workers metrics (using DNS service discovery for scaled workers)
+  - job_name: 'marabunta-workers'
+    dns_sd_configs:
+      - names:
+          - 'tasks.worker'
+        type: 'A'
+        port: 9100
+    metrics_path: /metrics
+    scrape_interval: 30s

@@ -1,0 +1,397 @@
+# Marabunta Decentralized HPC Swarm - Licensed under WTFPL. Do what the fuck you want
+# marabunta Compute Release Workflow
+#
+# Triggers on version tags (v*) to:
+# - Build binaries for multiple platforms
+# - Create GitHub releases with artifacts
+# - Build and push Docker images
+#
+# Manual trigger available for testing
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 0.1.0)'
+        required: true
+      dry_run:
+        description: 'Dry run (skip actual release)'
+        type: boolean
+        default: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  # ==========================================================================
+  # Build binaries for all platforms
+  # ==========================================================================
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux x86_64 (glibc)
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            name: linux-x86_64
+
+          # Linux x86_64 (musl - static)
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            name: linux-x86_64-musl
+
+          # Linux ARM64
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            name: linux-aarch64
+            cross: true
+
+          # Linux ARMv7
+          - target: armv7-unknown-linux-gnueabihf
+            os: ubuntu-latest
+            name: linux-armv7
+            cross: true
+
+          # macOS x86_64
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            name: darwin-x86_64
+
+          # macOS ARM64 (Apple Silicon)
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            name: darwin-aarch64
+
+          # Windows x86_64
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            name: windows-x86_64
+            ext: .exe
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-action@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install musl tools
+        if: matrix.target == 'x86_64-unknown-linux-musl'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+
+      - name: Install cross
+        if: matrix.cross
+        uses: taiki-e/install-action@cross
+
+      - name: Build (native)
+        if: ${{ !matrix.cross }}
+        run: |
+          cargo build --release --target ${{ matrix.target }} \
+            --bin marabunta \
+            --bin marabunta-coordinator \
+            --bin marabunta-master \
+            --bin marabunta-worker
+
+      - name: Build (cross)
+        if: matrix.cross
+        run: |
+          cross build --release --target ${{ matrix.target }} \
+            --bin marabunta \
+            --bin marabunta-coordinator \
+            --bin marabunta-master \
+            --bin marabunta-worker
+
+      - name: Get version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event.inputs.version }}" != "" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Package binaries
+        shell: bash
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          PLATFORM=${{ matrix.name }}
+          PKG_NAME="marabunta-compute-${VERSION}-${PLATFORM}"
+
+          mkdir -p "${PKG_NAME}"
+
+          # Copy binaries
+          for bin in marabunta marabunta-coordinator marabunta-master marabunta-worker; do
+            cp "target/${{ matrix.target }}/release/${bin}${{ matrix.ext || '' }}" "${PKG_NAME}/"
+          done
+
+          # Copy documentation
+          cp README.md LICENSE* CHANGELOG.md "${PKG_NAME}/" 2>/dev/null || true
+
+          # Create tarball (or zip for Windows)
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            7z a "${PKG_NAME}.zip" "${PKG_NAME}"
+            echo "ARTIFACT=${PKG_NAME}.zip" >> $GITHUB_ENV
+          else
+            tar -czvf "${PKG_NAME}.tar.gz" "${PKG_NAME}"
+            echo "ARTIFACT=${PKG_NAME}.tar.gz" >> $GITHUB_ENV
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: marabunta-compute-${{ matrix.name }}
+          path: ${{ env.ARTIFACT }}
+          retention-days: 7
+
+  # ==========================================================================
+  # Build Docker images
+  # ==========================================================================
+  docker:
+    name: Build Docker images
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event.inputs.version }}" != "" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        if: ${{ !github.event.inputs.dry_run }}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        if: ${{ !github.event.inputs.dry_run }}
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker meta (coordinator)
+        id: meta-coordinator
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            marabuntacompute/coordinator
+            ghcr.io/${{ github.repository }}/coordinator
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/tags/v{0}', steps.version.outputs.version) }}
+
+      - name: Build and push coordinator
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile
+          target: coordinator
+          platforms: linux/amd64,linux/arm64
+          push: ${{ !github.event.inputs.dry_run }}
+          tags: ${{ steps.meta-coordinator.outputs.tags }}
+          labels: ${{ steps.meta-coordinator.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Docker meta (master)
+        id: meta-master
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            marabuntacompute/master
+            ghcr.io/${{ github.repository }}/master
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest
+
+      - name: Build and push master
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile
+          target: master
+          platforms: linux/amd64,linux/arm64
+          push: ${{ !github.event.inputs.dry_run }}
+          tags: ${{ steps.meta-master.outputs.tags }}
+          labels: ${{ steps.meta-master.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Docker meta (worker)
+        id: meta-worker
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            marabuntacompute/worker
+            ghcr.io/${{ github.repository }}/worker
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest
+
+      - name: Build and push worker
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile
+          target: worker
+          platforms: linux/amd64,linux/arm64
+          push: ${{ !github.event.inputs.dry_run }}
+          tags: ${{ steps.meta-worker.outputs.tags }}
+          labels: ${{ steps.meta-worker.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Docker meta (cli)
+        id: meta-cli
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            marabuntacompute/marabunta
+            ghcr.io/${{ github.repository }}/marabunta
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest
+
+      - name: Build and push CLI
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile
+          target: cli
+          platforms: linux/amd64,linux/arm64
+          push: ${{ !github.event.inputs.dry_run }}
+          tags: ${{ steps.meta-cli.outputs.tags }}
+          labels: ${{ steps.meta-cli.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ==========================================================================
+  # Create GitHub Release
+  # ==========================================================================
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build, docker]
+    if: ${{ !github.event.inputs.dry_run }}
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event.inputs.version }}" != "" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: marabunta-compute-*
+
+      - name: List artifacts
+        run: find artifacts -type f
+
+      - name: Generate checksums
+        run: |
+          cd artifacts
+          find . -type f \( -name "*.tar.gz" -o -name "*.zip" \) -exec mv {} . \;
+          sha256sum *.tar.gz *.zip > checksums-sha256.txt
+          cat checksums-sha256.txt
+
+      - name: Extract changelog
+        id: changelog
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          # Extract section for this version from CHANGELOG.md
+          if [ -f CHANGELOG.md ]; then
+            awk "/^## \[${VERSION}\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md > release_notes.md
+          fi
+          if [ ! -s release_notes.md ]; then
+            echo "Release v${VERSION}" > release_notes.md
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: marabunta Compute v${{ steps.version.outputs.version }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.version, '-') }}
+          files: |
+            artifacts/*.tar.gz
+            artifacts/*.zip
+            artifacts/checksums-sha256.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ==========================================================================
+  # Update Homebrew formula (optional)
+  # ==========================================================================
+  homebrew:
+    name: Update Homebrew formula
+    runs-on: ubuntu-latest
+    needs: release
+    if: ${{ !github.event.inputs.dry_run && !contains(github.ref, '-') }}
+
+    steps:
+      - name: Get version
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Update Homebrew formula
+        uses: mislav/bump-homebrew-formula-action@v3
+        with:
+          formula-name: marabunta-compute
+          homebrew-tap: marabunta-compute/homebrew-tap
+          download-url: https://github.com/${{ github.repository }}/releases/download/v${{ steps.version.outputs.version }}/marabunta-compute-${{ steps.version.outputs.version }}-darwin-x86_64.tar.gz
+        env:
+          COMMITTER_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        continue-on-error: true

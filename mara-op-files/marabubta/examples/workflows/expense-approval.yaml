@@ -1,0 +1,311 @@
+# Marabunta - Licensed under the MIT License.
+# examples/workflows/expense-approval.yaml
+# Expense Approval Workflow with Amount-Based Routing
+# Replaces: SAP Concur Expense (~$8/user/month), Fiori Inbox
+# License: Apache 2.0
+
+name: expense-approval
+version: "1.0.0"
+description: >
+  Expense report approval with amount-based routing.
+  Under $5K: manager. $5K-$50K: director. Over $50K: CFO.
+  Includes payment webhook integration on approval.
+
+# -- Context Schema ------------------------------------------
+context:
+  amount:
+    type: number
+    required: true
+    description: "Expense amount in base currency"
+  currency:
+    type: string
+    required: true
+    default: "USD"
+    description: "ISO 4217 currency code"
+  category:
+    type: string
+    required: true
+    description: "Expense category (travel, equipment, services, etc.)"
+  submitter_id:
+    type: string
+    required: true
+    description: "User ID of the expense submitter"
+  receipt_ids:
+    type: array
+    required: true
+    description: "List of receipt document references"
+  rejection_reason:
+    type: string
+    default: ""
+    description: "Reason provided when expense is rejected"
+  approved_by:
+    type: string
+    default: ""
+    description: "User ID of the final approver"
+  payment_reference:
+    type: string
+    default: ""
+    description: "External payment system reference after disbursement"
+
+# -- Roles ---------------------------------------------------
+roles:
+  - name: submitter
+    description: "Employee submitting the expense report"
+  - name: manager
+    description: "Direct manager with approval up to $5,000"
+  - name: director
+    description: "Director with approval up to $50,000"
+  - name: cfo
+    description: "CFO with unlimited approval authority"
+
+# -- States --------------------------------------------------
+states:
+  - name: draft
+    type: initial
+    description: "Expense report is being composed"
+
+  - name: manager_review
+    type: active
+    description: "Pending manager review"
+    on_enter:
+      - action: notify
+        params:
+          to: "role:manager"
+          template: "expense_pending_review"
+          context_fields: ["amount", "currency", "category", "submitter_id"]
+
+  - name: director_review
+    type: active
+    description: "Escalated to director for amounts $5K-$50K"
+    on_enter:
+      - action: notify
+        params:
+          to: "role:director"
+          template: "expense_escalated_review"
+          context_fields: ["amount", "currency", "category"]
+      - action: audit_log
+        params:
+          message: "Expense escalated to director: {{ context.amount }} {{ context.currency }}"
+          criticality: NORMAL
+
+  - name: cfo_review
+    type: active
+    description: "Escalated to CFO for amounts over $50K"
+    on_enter:
+      - action: notify
+        params:
+          to: "role:cfo"
+          template: "expense_cfo_review"
+          context_fields: ["amount", "currency", "category"]
+      - action: audit_log
+        params:
+          message: "Expense escalated to CFO: {{ context.amount }} {{ context.currency }}"
+          criticality: HIGH
+
+  - name: approved
+    type: active
+    description: "Expense approved, pending payment"
+    on_enter:
+      - action: set_context
+        params:
+          key: approved_by
+          value: "{{ actor.id }}"
+      - action: notify
+        params:
+          to: "{{ context.submitter_id }}"
+          template: "expense_approved"
+      - action: audit_log
+        params:
+          message: "Expense {{ instance.id }} approved by {{ actor.id }} for {{ context.amount }} {{ context.currency }}"
+          criticality: HIGH
+
+  - name: rejected
+    type: terminal
+    description: "Expense rejected"
+    on_enter:
+      - action: notify
+        params:
+          to: "{{ context.submitter_id }}"
+          template: "expense_rejected"
+      - action: audit_log
+        params:
+          message: "Expense rejected: {{ context.rejection_reason }}"
+          criticality: NORMAL
+
+  - name: paid
+    type: terminal
+    description: "Payment disbursed to submitter"
+    on_enter:
+      - action: audit_log
+        params:
+          message: "Payment disbursed: {{ context.payment_reference }}"
+          criticality: HIGH
+
+# -- Transitions ---------------------------------------------
+transitions:
+  - name: submit
+    from: draft
+    to: manager_review
+    guards:
+      - condition: role_is
+        params:
+          role: submitter
+      - condition: expression
+        params:
+          expr: "context.amount > 0"
+          message: "Amount must be positive"
+    actions:
+      - action: audit_log
+        params:
+          message: "Expense submitted: {{ context.amount }} {{ context.currency }} ({{ context.category }})"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: manager_approve
+    from: manager_review
+    to: approved
+    guards:
+      - condition: role_is
+        params:
+          role: manager
+      - condition: expression
+        params:
+          expr: "context.amount <= 5000"
+          message: "Manager can only approve up to $5,000"
+    actions:
+      - action: audit_log
+        params:
+          message: "Manager approved expense"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: escalate_to_director
+    from: manager_review
+    to: director_review
+    guards:
+      - condition: role_is
+        params:
+          role: manager
+      - condition: expression
+        params:
+          expr: "context.amount > 5000"
+    actions:
+      - action: audit_log
+        params:
+          message: "Escalated to director (amount exceeds $5,000)"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: director_approve
+    from: director_review
+    to: approved
+    guards:
+      - condition: role_is
+        params:
+          role: director
+      - condition: expression
+        params:
+          expr: "context.amount <= 50000"
+          message: "Director can only approve up to $50,000"
+    actions:
+      - action: audit_log
+        params:
+          message: "Director approved expense"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: escalate_to_cfo
+    from: director_review
+    to: cfo_review
+    guards:
+      - condition: role_is
+        params:
+          role: director
+      - condition: expression
+        params:
+          expr: "context.amount > 50000"
+    actions:
+      - action: audit_log
+        params:
+          message: "Escalated to CFO (amount exceeds $50,000)"
+          criticality: HIGH
+    audit:
+      criticality: HIGH
+
+  - name: cfo_approve
+    from: cfo_review
+    to: approved
+    guards:
+      - condition: role_is
+        params:
+          role: cfo
+    actions:
+      - action: audit_log
+        params:
+          message: "CFO approved expense: {{ context.amount }} {{ context.currency }}"
+          criticality: HIGH
+    audit:
+      criticality: HIGH
+
+  - name: reject
+    from:
+      - manager_review
+      - director_review
+      - cfo_review
+    to: rejected
+    guards:
+      - condition: any_of
+        params:
+          conditions:
+            - condition: role_is
+              params:
+                role: manager
+            - condition: role_is
+              params:
+                role: director
+            - condition: role_is
+              params:
+                role: cfo
+    actions:
+      - action: set_context
+        params:
+          key: rejection_reason
+          value: "{{ params.reason }}"
+      - action: audit_log
+        params:
+          message: "Expense rejected by {{ actor.id }}: {{ params.reason }}"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: disburse_payment
+    from: approved
+    to: paid
+    guards:
+      - condition: role_is
+        params:
+          role: system
+    actions:
+      - action: http_webhook
+        params:
+          url: "{{ config.payment_gateway_url }}"
+          method: POST
+          headers:
+            Content-Type: "application/json"
+            Authorization: "Bearer {{ config.payment_api_key }}"
+          body:
+            expense_id: "{{ instance.id }}"
+            amount: "{{ context.amount }}"
+            currency: "{{ context.currency }}"
+            payee_id: "{{ context.submitter_id }}"
+          response_field: payment_reference
+      - action: audit_log
+        params:
+          message: "Payment webhook fired, ref={{ context.payment_reference }}"
+          criticality: HIGH
+    audit:
+      criticality: HIGH

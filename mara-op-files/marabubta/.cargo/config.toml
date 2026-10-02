@@ -1,0 +1,81 @@
+# Cargo configuration for cross-compilation
+#
+# This file configures linkers and other settings for building
+# Android native libraries.
+#
+# Prerequisites:
+#   1. Install Android NDK
+#   2. Set NDK_HOME or ANDROID_NDK_HOME environment variable
+#   3. Or use cargo-ndk which handles this automatically
+#
+# Usage with cargo-ndk (recommended):
+#   cargo ndk -t aarch64-linux-android build --release
+#
+# Usage with manual setup:
+#   export NDK_HOME=/path/to/ndk
+#   cargo build --target aarch64-linux-android --release
+
+# ============================================================
+# Android ARM64 (aarch64)
+# ============================================================
+[target.aarch64-linux-android]
+# When using NDK standalone toolchain
+# linker = "/path/to/ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
+
+# When using cargo-ndk (recommended)
+# No manual configuration needed - cargo-ndk sets this up
+
+# ============================================================
+# Android ARM32 (armv7)
+# ============================================================
+[target.armv7-linux-androideabi]
+# linker = "/path/to/ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang"
+
+# ============================================================
+# Android x86
+# ============================================================
+[target.i686-linux-android]
+# linker = "/path/to/ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang"
+
+# ============================================================
+# Android x86_64
+# ============================================================
+[target.x86_64-linux-android]
+# linker = "/path/to/ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang"
+
+# ============================================================
+# Build settings
+# ============================================================
+[build]
+# Incremental compilation for faster rebuilds
+incremental = true
+
+# ============================================================
+# Profile settings
+# ============================================================
+# ---------- release-small: the old Android / mobile profile ----------
+[profile.release-small]
+inherits = "release"
+opt-level = "s"
+lto = true
+strip = true
+codegen-units = 1
+panic = "abort"
+
+# ---------- release: SPEED KING — maximum throughput ----------
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = false
+
+[profile.release.package."*"]
+opt-level = 3
+
+# ============================================================
+# Environment variables (can be overridden)
+# ============================================================
+[env]
+# Minimum Android API level (21 = Android 5.0 Lollipop)
+# ANDROID_API = "21"

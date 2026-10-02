@@ -1,0 +1,70 @@
+# Marabunta - Licensed under the MIT License.
+# Marabunta Compute Worker Configuration
+# This file configures worker nodes for task execution
+
+[master]
+# Master URL for task assignment
+url = "http://master:9000"
+
+# Connection retry interval
+retry_interval = "5s"
+
+# Maximum retries before failing
+max_retries = 0  # 0 = infinite
+
+[coordinator]
+# Coordinator URL for discovery
+url = "http://coordinator:8080"
+
+[worker]
+# Worker name (auto-generated if empty)
+name = ""
+
+# Number of CPU cores to use (0 = all available)
+cores = 0
+
+# Memory limit in bytes (0 = no limit)
+memory_limit = 0
+
+# Heartbeat interval
+heartbeat_interval = "10s"
+
+# Enable idle detection (pause when system is busy)
+idle_detection = false
+
+# CPU usage threshold for idle detection (0-100)
+idle_threshold = 50
+
+[execution]
+# Task execution timeout (0 = no timeout)
+timeout = "1h"
+
+# Temporary directory for task files
+temp_dir = "/var/lib/marabunta/tmp"
+
+# Clean up temp files after task completion
+cleanup_temp = true
+
+# Checkpoint interval for long-running tasks
+checkpoint_interval = "5m"
+
+[storage]
+# Data directory for worker state
+data_dir = "/var/lib/marabunta"
+
+# Checkpoint directory
+checkpoint_dir = "/var/lib/marabunta/checkpoints"
+
+[logging]
+level = "info"
+format = "json"
+file = "/var/log/marabunta/worker.log"
+
+[metrics]
+enabled = true
+# Local metrics port (0 = disabled)
+port = 0
+
+[security]
+# Sandboxing mode: none, container, seccomp
+sandbox = "none"

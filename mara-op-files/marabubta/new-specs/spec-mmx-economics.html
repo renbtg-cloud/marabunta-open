@@ -1,0 +1,111 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta | Book V: The MMX Spot Market & Energy Oracle</title>
+    <link rel="stylesheet" href="marabunta-core.css">
+</head>
+<body>
+    <nav>
+        <h1>Marabunta Spec</h1>
+        <ul>
+            <li><a href="index.html">0. Master Index</a></li>
+            <li><a href="spec-gossip-dht.html">I. The Hive Mind & DHT</a></li>
+            <li><a href="spec-phantom-crypto.html">II. Phantom Cryptography</a></li>
+            <li><a href="spec-wasm-enclaves.html">III. WASM & Zero-Copy ABI</a></li>
+            <li><a href="spec-neuromancer.html">IV. Neuromancer Storage</a></li>
+            <li><a href="spec-mmx-economics.html" class="active">V. MMX Spot Market</a></li>
+            <li><a href="spec-business-strategy.html">VII. Business & Strategic Usages</a></li>
+            <li><a href="spec-global-impact.html">VIII. The 100 Entities Matrix</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Book V: The MMX Spot Market & Energy Oracle</h2>
+        <h3>The Architecture of Universal FinOps</h3>
+        
+        <p>
+            Cloud providers (AWS, Azure, GCP) sell compute via artificial, time-based abstractions (vCPUs per hour). This model is a financial obfuscation layer designed to capture massive margins. Marabunta shatters this paradigm by pricing compute down to the physical <strong>Joule</strong>—the literal energy required to execute WebAssembly opcodes on silicon.
+        </p>
+
+        <p>
+            The <strong>MMX Spot Market</strong> is a decentralized, auction-based exchange where computation tasks hunt for the cheapest available power across the planet.
+        </p>
+
+        <h3>5.1 The Energy Oracle & Fuel Metering</h3>
+        <p>
+            Every node in the Swarm runs an <code>Energy Oracle</code> (located in <code>src/swarm/energy.rs</code>). This subsystem maps WASM instruction execution directly to hardware-specific power consumption. It accounts for the idle vs. load wattage of specific architectures (ARM vs. x86_64) and even GPU-specific draw.
+        </p>
+
+        <div class="alert">
+            <strong>HIERARCHICAL OVERRIDES:</strong> Node operators can set precise power profiles at the node, node-type, or group level. If a data center in Iceland has access to $0.02/kWh geothermal energy, its Oracle will outbid a residential node in London paying $0.40/kWh, naturally attracting the heaviest computational workloads to the cheapest physical energy sources.
+        </div>
+
+        <pre><code>// src/swarm/energy.rs - Power Consumption Model
+pub struct PowerProfile {
+    pub idle_watts: f64,
+    pub load_watts: f64,
+    pub gpu_watts: Option<f64>,
+}
+
+// Global Heuristics for Unspecified Nodes
+const POWER_X86_LOAD: f64 = 150.0; // Watts
+const POWER_ARM_LOAD: f64 = 15.0;  // Watts (Edge/Mobile)</code></pre>
+
+        <h3>5.2 The Marketplace Lifecycle: Bidding & Awards</h3>
+        <p>
+            When a user submits a job, the <code>MarketplaceEngine</code> posts a <code>JobPosting</code> to the DHT. This posting is not "scheduled" by a central server; it propagates via epidemic gossip.
+        </p>
+
+        <ol>
+            <li><strong>The Posting:</strong> Submitter posts a JCL Bid with a maximum budget in MMX Tokens.</li>
+            <li><strong>The Gossip:</strong> The posting spreads globally. Every node evaluates the job's <code>JobRequirements</code> against its own local Energy Oracle cost.</li>
+            <li><strong>The Bid:</strong> Capable nodes submit a cryptographic <code>Bid</code> to the DHT.</li>
+            <li><strong>Deterministic Award:</strong> After a 5-second <code>BID_WINDOW</code>, all nodes independently run the <code>select_winner</code> algorithm. Because the scoring is deterministic and tie-breaking is lexicographic, every node in the cluster arrives at the same winner without any central arbitration.</li>
+        </ol>
+
+        <h3>5.3 Economic Arbitrage vs. Legacy Cloud</h3>
+        <p>
+            By pricing compute to the Joule and utilizing stranded global energy, Marabunta provides an immediate 80%+ reduction in raw compute costs compared to AWS EC2 or Lambda.
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Workload Type</th>
+                    <th>AWS Equivalent (Est.)</th>
+                    <th>Marabunta Spot (MMX)</th>
+                    <th>Savings %</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>LLM Inference (70B)</strong></td>
+                    <td>$2.40 / hr (g5.48xlarge)</td>
+                    <td>$0.32 / hr</td>
+                    <td>86.7%</td>
+                </tr>
+                <tr>
+                    <td><strong>Monte Carlo Sim (100M iter)</strong></td>
+                    <td>$145.00 total</td>
+                    <td>$18.50 total</td>
+                    <td>87.2%</td>
+                </tr>
+                <tr>
+                    <td><strong>Genomic Sequencing (50TB)</strong></td>
+                    <td>$4,200.00 egress + compute</td>
+                    <td>$580.00 (localized)</td>
+                    <td>86.2%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="alert alert-critical">
+            <strong>THE STRANGLER FIG STRATEGY:</strong> Organizations do not migrate all at once. They use the "Stealth Ingestion" doctrine. By deploying <code>harpy</code> and <code>leafcutter</code> nodes inside AWS VPCs, enterprises can quietly siphon off 90% of their compute spend to the Marabunta Spot Market while maintaining a small, "meat-shield" footprint on AWS to satisfy legacy compliance auditors.
+        </div>
+
+    </main>
+</body>
+</html>

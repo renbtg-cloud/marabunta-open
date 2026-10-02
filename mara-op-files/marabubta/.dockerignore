@@ -1,0 +1,61 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Build artifacts
+target/
+*.rs.bk
+*.pdb
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Documentation (keep README for packaging)
+docs/
+*.md
+!README.md
+
+# Test files
+tests/
+examples/
+benches/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Docker files (avoid recursive builds)
+docker/docker-compose*.yml
+docker/config/
+
+# Packaging
+packaging/
+scripts/
+
+# Development
+.env
+.env.*
+*.log
+*.tmp
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Coverage and profiling
+coverage/
+*.profraw
+*.profdata
+lcov.info
+tarpaulin-report.html
+
+# Local configuration
+config.local.toml
+*.local.*

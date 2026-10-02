@@ -1,0 +1,144 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta Compute - Instances</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">&#x2b21;</div>
+                <h1>Marabunta <span>Compute</span></h1>
+            </div>
+            <nav>
+                <a href="/">Dashboard</a>
+                <a href="/jobs.html">Jobs</a>
+                <a href="/nodes.html">Nodes</a>
+                <a href="/instances.html" class="active">Instances</a>
+                <a href="/compute.html">Compute</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="page-header">
+                <h2>PostgreSQL Instances</h2>
+                <p>Manage distributed PostgreSQL instances and shards</p>
+            </div>
+
+            <!-- Instance Summary -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="label">Total Instances</div>
+                    <div class="value" id="total-instances">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Total Shards</div>
+                    <div class="value" id="total-shards">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Nodes Hosting Shards</div>
+                    <div class="value" id="total-hosting-nodes">0</div>
+                </div>
+            </div>
+
+            <!-- Actions Bar -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-body" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input type="text" id="instance-search" class="form-input" placeholder="Search instances..." style="width: 200px;">
+                        <button class="btn btn-secondary" onclick="instances.refresh()">&#8635; Refresh</button>
+                    </div>
+                    <button id="create-instance-btn" class="btn btn-primary">&#43; Create Instance</button>
+                </div>
+            </div>
+
+            <!-- Instances Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Instance List</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Instance Name</th>
+                                    <th>Port</th>
+                                    <th>Shards</th>
+                                    <th>Nodes</th>
+                                    <th>Consistency</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="instances-table-body">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 2rem;">
+                                        <div class="spinner" style="margin: 0 auto;"></div>
+                                        <p style="margin-top: 1rem; color: var(--text-secondary);">Loading instances...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create Instance Modal -->
+    <div id="create-instance-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Create New Instance</h3>
+                <button class="modal-close" data-close-modal>&times;</button>
+            </div>
+            <form id="create-instance-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="instance-name">Instance Name</label>
+                        <input type="text" id="instance-name" class="form-input" placeholder="my-postgres-instance" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="shard-count">Shard Count</label>
+                        <input type="number" id="shard-count" class="form-input" value="16" min="1" max="256" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="replication-factor">Replication Factor</label>
+                        <input type="number" id="replication-factor" class="form-input" value="1" min="1" max="5" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="consistency-mode">Consistency Mode</label>
+                        <select id="consistency-mode" class="form-select">
+                            <option value="eventual" selected>Eventual</option>
+                        </select>
+                    </div>
+
+                    <div style="background: var(--bg-dark); padding: 1rem; border-radius: 6px; margin-top: 1rem;">
+                        <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Instance defaults:</p>
+                        <ul style="font-size: 0.75rem; color: var(--text-muted); list-style: none; line-height: 1.8;">
+                            <li>Shards: 16 (distributes data across nodes)</li>
+                            <li>Replication Factor: 1 (number of copies per shard)</li>
+                            <li>Consistency: Eventual (best performance)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Instance</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

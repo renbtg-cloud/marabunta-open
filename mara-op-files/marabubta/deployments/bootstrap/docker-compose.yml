@@ -1,0 +1,52 @@
+# Marabunta - Licensed under the MIT License.
+version: '3.8'
+
+services:
+  # The Marabunta Bootstrap Node (The Kademlia DHT anchor)
+  marabunta-bootstrap:
+    build:
+      context: ../../
+      dockerfile: deployments/bootstrap/Dockerfile.bootstrap
+    container_name: marabunta-bootstrap
+    restart: unless-stopped
+    ports:
+      - "4200:4200/tcp" # Marabunta Native TCP/QUIC Port
+      - "4200:4200/udp" # Marabunta Epidemic Gossip UDP
+    environment:
+      - RUST_LOG=info,marabunta_compute=debug
+      - MARABUNTA_ROLE=bootstrap
+      - MARABUNTA_LISTEN=0.0.0.0:4200
+      - MARABUNTA_PUBLIC_IP=${PUBLIC_IP:-127.0.0.1} # Must be set via .env in production
+    volumes:
+      - marabunta-data:/var/lib/marabunta
+
+  # Coturn: STUN/TURN server for NAT traversal (Starlink / CGNAT punching)
+  coturn:
+    image: coturn/coturn:latest
+    container_name: marabunta-turn
+    restart: unless-stopped
+    ports:
+      - "3478:3478/tcp"
+      - "3478:3478/udp"
+      - "5349:5349/tcp"
+      - "5349:5349/udp"
+    # Port range for TURN relay allocations
+    expose:
+      - "49152-65535/udp"
+    environment:
+      - TURN_SECRET=${TURN_SECRET:-marabunta-demo-secret-2026}
+      - TURN_REALM=marabunta.swarm
+      - EXTERNAL_IP=${PUBLIC_IP:-127.0.0.1}
+    command: >
+      -c /etc/coturn/turnserver.conf
+      -n
+      --log-file=stdout
+      --min-port=49152
+      --max-port=65535
+      --use-auth-secret
+      --static-auth-secret=${TURN_SECRET:-marabunta-demo-secret-2026}
+      --realm=marabunta.swarm
+      --external-ip=${PUBLIC_IP:-127.0.0.1}
+
+volumes:
+  marabunta-data:

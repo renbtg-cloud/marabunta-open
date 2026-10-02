@@ -1,0 +1,462 @@
+# MARABUNTA CODE-CHECK BIBLE: THE 5-BILLION DOLLAR PROOF
+
+## EXECUTION DIRECTIVE
+This file tracks every physical architectural claim made in `marabunta_bible.pdf`. 
+We will interactively inspect the `src/` directory to verify each claim against the 400k lines of Rust.
+
+**Status Domain:** [TODO, CHECKING, NEEDS_FIX, DONE]
+
+---
+### CLAIM 001: A critical paradox in decentralized edge computing involves consumer resource exhaustion. If a node is trapped behind a restrictive Symmetric NAT, it must route its encrypted payloads through a `Relay` node (e.g., a 3rd party laptop on an open residential connection). Similarly, the `Storage` role requires edge nodes to host encrypted Reed-Solomon shards of planetary S3 buckets.
+* **Volume:** VOLUME 01: THE THERMODYNAMIC ANTI-PATTERN & SWARM PHYSICS
+* **Status:** DONE
+* **Fix_Proposed:** N/A
+### CLAIM 002: Every byte of relayed traffic and every gigabyte of retained storage generates instantaneous MMX micro-transactions, cryptographically streamed from the payload originator's escrow account directly to the edge node's wallet. The Swarm organically discovers the optimal routing and storage pricing based on localized supply and demand. If a consumer's iPhone drops below 20% battery or 5GB of free space, their local `marabunta-visor` daemon dynamically spikes its MMX Ask price to infinity, seamlessly rejecting new shards and forcing the Kademlia DHT to route payloads to cheaper, stationary workstations.
+* **Volume:** VOLUME 01: THE THERMODYNAMIC ANTI-PATTERN & SWARM PHYSICS
+* **Status:** NEEDS_FIX
+* **Fix_Proposed:** Modify `src/swarm/pricing.rs` to dynamically calculate the `Ask` price based on `battery_percent` and `disk_free_gb` from `metrics.rs`. If battery is < 20% or disk free space is < 5GB, return `f64::INFINITY` to mathematically force the Kademlia DHT to route payloads to cheaper nodes. Additionally, introduce an `MmxEscrowStream` struct to simulate cryptographic byte-streaming payments during Relay/Storage operations.
+### CLAIM 003: During the initial boot phase, the `marabunta-visor` daemon saturates all physical CPU cores, executing a memory-hard SHA-256 Proof-of-Work (PoW) algorithm to derive a Sybil-resistant Kademlia Node ID.
+* **Volume:** VOLUME 01: THE THERMODYNAMIC ANTI-PATTERN & SWARM PHYSICS
+* **Status:** NEEDS_FIX
+* **Fix_Proposed:** Completely rewrite `src/swarm/pow_worker.rs` to implement a multi-threaded SHA-256 hashing engine. The algorithm must incorporate a hardware-specific seed to force L3 cache saturation and memory-hard execution, mathematically anchoring identity generation in thermodynamic cost. The engine must output a 160-bit Kademlia Node ID, replacing the current 128-bit random UUID implementation.
+### CLAIM 004: 2.  **The Threat Matrix:** Deriving a valid 160-bit Kademlia Node ID requires approximately 4 seconds of 100% CPU utilization on a standard Ryzen 9 workstation. While negligible for a single legitimate user, an attacker attempting to generate 10 million Sybil nodes to eclipse a subnet would have to burn <i>40,000,000</i> seconds of CPU time—roughly 1.2 years of continuous supercomputer saturation. The network's topology is permanently anchored to the thermodynamic expenditure of its participants.
+* **Volume:** VOLUME 01: THE THERMODYNAMIC ANTI-PATTERN & SWARM PHYSICS
+* **Status:** NEEDS_FIX
+* **Fix_Proposed:** Bound to Claim 003. The current UUID generator requires milliseconds, not 4 seconds. Once the SHA-256 engine is written, the `target_difficulty` constant must be explicitly calibrated and mathematically proven to enforce the 4-second minimum CPU burn rate on standard hardware.
+### CLAIM 005: A Chrysalis PoW identity allows a node to *exist* on the network, but it does not allow it to route high-value traffic. To participate in the `Aggregator` or `Gateway` Kademlia buckets, a node must cryptographically stake MMX tokens. Even if a botnet generates 1 million free PoW identities, they possess zero MMX economic reputation, mathematically isolating them from intercepting mission-critical payloads.
+* **Volume:** VOLUME 01: THE THERMODYNAMIC ANTI-PATTERN & SWARM PHYSICS
+* **Status:** NEEDS_FIX
+* **Fix_Proposed:** Modify `src/swarm/election.rs` to include a `staked_mmx` parameter in the node evaluation logic. Introduce a strict cryptographic gate: If a node attempts to adopt a high-tier role (`Aggregator`, `Gateway`, `Relay`), it must prove ownership of an MMX stake above a localized threshold. If it possesses 0 MMX, its Elo rating must be mathematically capped, locking it into the `Ephemeral` role permanently.
+### CLAIM 006: Marabunta mitigates this via **Ping-Shale Aggregation**. `Dust` nodes do not ping each other directly to maintain DHT state. They gossip their presence to local Tier-1 `Boulders` (Aggregators). The Boulders compile these connection states into highly compressed Bloom Filters and exchange them via Epidemic Gossip, shielding the edge network from $O(N^2)$ ping exhaustion.
+* **Volume:** VOLUME 01: THE THERMODYNAMIC ANTI-PATTERN & SWARM PHYSICS
+* **Status:** DONE
+* **Fix_Proposed:** N/A
+### CLAIM 007: Marabunta neutralizes latency spoofing via synthetic **Vivaldi Network Coordinates**. Kademlia does not blindly trust a direct ping. The `neighborhood.rs` engine triangulates the RTT mathematically.
+* **Volume:** VOLUME 01: THE THERMODYNAMIC ANTI-PATTERN & SWARM PHYSICS
+* **Status:** NEEDS_FIX
+* **Fix_Proposed:** While the Vivaldi coordinate math and Triangle Inequality verifier exist in `src/highestsec/jurisdiction_verify.rs`, they are not yet integrated into the `NeighborhoodManager` in `src/marabunta/neighborhood.rs`. We must wire the `GeolocationVerifier::detect_spoofing` check into the node admission and heartbeat loops to physically enforce the un-spoofable routing table.
+### CLAIM 008: Workloads are compiled to mathematically pure Abstract Syntax Trees (ASTs) in the `wasm32-wasi` format. The resulting payloads are typically under 2MB, allowing instantaneous distribution across the Swarm.
+* **Volume:** VOLUME 02: ABSOLUTE DETERMINISM (THE EXECUTION SANDBOX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 009: The strict `wasm32` architecture imposes a hard, physical limit of 4 Gigabytes of linear memory per instance. Loading a 40GB LLM tensor into this sandbox results in an immediate Out-Of-Memory (OOM) panic.
+* **Volume:** VOLUME 02: ABSOLUTE DETERMINISM (THE EXECUTION SANDBOX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 010: WebAssembly guarantees structural determinism, but the underlying physical CPUs (x86 vs ARM) handle `NaN` (Not-a-Number) bit patterns and Fused Multiply-Add (FMA) instructions differently. This minute hardware drift destroys ZK-STARK BFT consensus.
+* **Volume:** VOLUME 02: ABSOLUTE DETERMINISM (THE EXECUTION SANDBOX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 011: If the `MantisJournal` mocks `clock_time_get` to a static `0` to ensure determinism, payloads verifying TLS certificates or JWT expiration dates will permanently fail. Conversely, passing real wall-clock time breaks STARK reproducibility.
+* **Volume:** VOLUME 02: ABSOLUTE DETERMINISM (THE EXECUTION SANDBOX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 012: Marabunta utilizes **Isomorphic Monotonic Clocks**. During the live execution, the payload receives the true wall-clock time, which is strictly serialized into the `.mrb-dump` tape. During the ZK-STARK proof generation, the JIT compiler is fed the *exact recorded timestamp* from the tape, resolving the paradox between secure network verification and mathematical reproducibility.
+* **Volume:** VOLUME 02: ABSOLUTE DETERMINISM (THE EXECUTION SANDBOX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 013: Because all workloads execute inside the strict `wasm32-wasi` sandbox, the Marabunta node intercepts every single interaction between the payload and the host machine via the **Mantis Journal**.
+* **Volume:** VOLUME 02: ABSOLUTE DETERMINISM (THE EXECUTION SANDBOX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 014: The `MantisJournal` does not maintain an infinite tape. At mathematically defined intervals (e.g., every 10,000 CPU cycles or when the tape buffer reaches 50MB), the Wasmtime JIT compiler pauses execution. It serializes the entire 32-bit linear memory state of the `wasm32-wasi` instance into a highly compressed binary snapshot.
+* **Volume:** VOLUME 02: ABSOLUTE DETERMINISM (THE EXECUTION SANDBOX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 015: int BPF_KPROBE(thermal_guardian, struct thermal_zone_device *tz) {
+* **Volume:** VOLUME 02: ABSOLUTE DETERMINISM (THE EXECUTION SANDBOX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 016: 1.  **Ring 0 Execution:** This C payload is compiled directly into the Rust binary as an eBPF (Extended Berkeley Packet Filter) object. The `SEC("kprobe/thermal_zone_device_update")` macro attaches the function directly to the hardware thermal sensor interrupt.
+* **Volume:** VOLUME 02: ABSOLUTE DETERMINISM (THE EXECUTION SANDBOX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 017: 3.  **The Preemption:** It bypasses the OS scheduler entirely and executes `bpf_send_signal(9)` (SIGKILL) directly against the execution thread in microseconds.
+* **Volume:** VOLUME 02: ABSOLUTE DETERMINISM (THE EXECUTION SANDBOX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 018: 1.  **The Data Poisoning Simulation (Case 1):** When the Chaos Engine deliberately mutates the WASM linear memory, it forces the node to generate a cryptographically invalid STARK receipt. This validates that the `Harpy` daemon is functioning correctly on the receiving nodes, confirming that corrupted payloads are instantly slashed and excluded from the `IsomorphicStateRing`.
+* **Volume:** VOLUME 03: STRICT RESOURCE GOVERNANCE & ADVERSARIAL RESILIENCE
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 019: 2.  **The Network Isolation Simulation (Case 2):** When the engine blackholes the TCP/QUIC tables, it simulates a kinetic strike on a regional datacenter. The Swarm's recovery is measured by the time (<i>T<sub>recovery</sub></i>) it takes the surrounding Kademlia nodes to detect the dropped pings and autonomously re-route the active `JobControlLanguage` chunks to adjacent latency cohorts.
+* **Volume:** VOLUME 03: STRICT RESOURCE GOVERNANCE & ADVERSARIAL RESILIENCE
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 020: Marabunta mitigates this by embedding **TCP-Friendly Rate Control (TFRC)** and BBR congestion algorithms directly inside the Sphinx QUIC tunnels (`src/phantom/network/onion.rs`). The Swarm dynamically throttles cryptographic injection rates based on real-time packet-loss telemetry from the DHT, ensuring high-throughput operations gracefully back off before saturating the physical carrier lines.
+* **Volume:** VOLUME 04: THE PHANTOM OVERLAY (UNIDENTIFIABILITY & ONION ROUTING)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 021: However, it is mathematically sufficient to sustain the minimum viable cryptographic heartbeat of the Swarm. A node trapped behind a national firewall can use the DoH transport to slowly bleed out execution receipts, authenticate `MclManifest` command definitions, and maintain its Kademlia routing presence.
+* **Volume:** VOLUME 04: THE PHANTOM OVERLAY (UNIDENTIFIABILITY & ONION ROUTING)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 022: Marabunta natively embeds a **Stigmergic Delay-Tolerant Networking (DTN)** router.
+* **Volume:** VOLUME 04: THE PHANTOM OVERLAY (UNIDENTIFIABILITY & ONION ROUTING)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 023: The DTN router mathematically decouples the Kademlia routing plane from the physical transport layer. It operates on a "store-and-forward" cryptographic caching model.
+* **Volume:** VOLUME 04: THE PHANTOM OVERLAY (UNIDENTIFIABILITY & ONION ROUTING)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 024: // The DTN Router handles massive temporal partitions, bridging air-gapped or deep-space environments.
+* **Volume:** VOLUME 04: THE PHANTOM OVERLAY (UNIDENTIFIABILITY & ONION ROUTING)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 025: If an edge node (e.g., a drone) enters an area with zero connectivity for two weeks, it does not discard computational payloads. It executes the WASM logic, generates the STARK receipts, and routes the packets to the local `DtnRouter`.
+* **Volume:** VOLUME 04: THE PHANTOM OVERLAY (UNIDENTIFIABILITY & ONION ROUTING)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 026: The node writes the encrypted Sphinx packets to physical NVMe storage. When the node eventually detects an intermittent connection (e.g., passing within range of a LEO satellite or establishing a brief STUN connection via a 3G tower), the `DtnRouter` autonomously flushes the `pending_frames` queue into the Kademlia DHT.
+* **Volume:** VOLUME 04: THE PHANTOM OVERLAY (UNIDENTIFIABILITY & ONION ROUTING)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 027: The Swarm relies on **Epidemic Stigmergy**. The packets are passed from node to node, held in storage during outages, and forwarded when links are re-established. The CRDT `IsomorphicStateRing` is mathematically indifferent to time. It seamlessly merges a tensor gradient computed 14 days ago on an isolated drone with the live global model, neutralizing the hyperscaler assumption of constant connectivity.
+* **Volume:** VOLUME 04: THE PHANTOM OVERLAY (UNIDENTIFIABILITY & ONION ROUTING)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 028: They silently intercept legacy communication streams and source code, shred the requests into distributed `wasm32-wasi` MapReduce payloads, execute the computation across the global Marabunta Swarm, and return standard, legacy-compliant responses.
+* **Volume:** VOLUME 06: THE ASSIMILATION LAYER (LEGACY INGRESS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 029: use pgwire::api::query::{PlaceholderExtendedQueryHandler, SimpleQueryHandler};
+* **Volume:** VOLUME 06: THE ASSIMILATION LAYER (LEGACY INGRESS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 030: use pgwire::api::results::{DataRowEncoder, FieldFormat, FieldInfo, QueryResponse, Response};
+* **Volume:** VOLUME 06: THE ASSIMILATION LAYER (LEGACY INGRESS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 031: When the AST Shredder detects an `INSERT` or `UPDATE`, it does not execute a SQL command. It compiles the state mutation into a **Conflict-Free Replicated Data Type (CRDT)** payload.
+* **Volume:** VOLUME 06: THE ASSIMILATION LAYER (LEGACY INGRESS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 032: While the CRDT architecture resolves concurrent writes mathematically, a severe performance bottleneck arises at the verification layer. If the Swarm requires a 12ms ZK-STARK verification for *every* individual SQL `INSERT` transaction, the global database throughput is artificially capped to an abysmal $\sim80$ Transactions Per Second (TPS).
+* **Volume:** VOLUME 06: THE ASSIMILATION LAYER (LEGACY INGRESS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 033: Marabunta resolves this throughput ceiling via **Asynchronous Epoch Rollups** (`src/batching/batcher.rs`).
+* **Volume:** VOLUME 06: THE ASSIMILATION LAYER (LEGACY INGRESS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 034: The Assimilator coalesces thousands of concurrent mutations into a discrete, time-bound batch (an Epoch). The entire Epoch is compiled into a single WASM payload and executed across the Swarm. The resulting ZK-STARK receipt mathematically proves the validity of *10,000 concurrent mutations* simultaneously in the same 12ms verification window, elevating the theoretical global TPS limit to over 800,000.
+* **Volume:** VOLUME 06: THE ASSIMILATION LAYER (LEGACY INGRESS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 035: Instead of trying to rewrite Microsoft Excel into `wasm32-wasi`, Marabunta treats proprietary software as **Execution Oracles** (`src/switchboard/oracles/`).
+* **Volume:** VOLUME 06: THE ASSIMILATION LAYER (LEGACY INGRESS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 036: 1.  **The Job Manifest:** An administrator submits a fragmented workflow via Marabunta Command Language (MCL):
+* **Volume:** VOLUME 06: THE ASSIMILATION LAYER (LEGACY INGRESS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 037: 2.  **Step 1 (The Excel Execution):** The Kademlia DHT queries its Bloom Filters for the `msexcel` capability. It locates an idle receptionist’s laptop in London running Windows 11. The node receives the CSV, executes the VBScript natively through the Marabunta Plugin Host, and outputs the raw result matrix.
+* **Volume:** VOLUME 06: THE ASSIMILATION LAYER (LEGACY INGRESS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 038: Marabunta provides native C Foreign Function Interface (FFI) bindings to ingest these models into the decentralized `wasm32-wasi` execution sandbox.
+* **Volume:** VOLUME 06: THE ASSIMILATION LAYER (LEGACY INGRESS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 039: The `FortranAnalyzer` intercepts the legacy `.f77` code. It uses Tree-sitter to algorithmically decouple the shared memory `COMMON` blocks into discrete, stateless variables, and JIT-compiles the modernized AST into a deterministic `wasm32-wasi` payload.
+* **Volume:** VOLUME 06: THE ASSIMILATION LAYER (LEGACY INGRESS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 040: When a Marabunta node completes a computational task (e.g., a DiLoCo tensor gradient update or a MapReduce aggregation), it cannot simply broadcast the result. It must attach a Zero-Knowledge STARK receipt—a dense polynomial commitment proving that it executed the exact `wasm32-wasi` payload required, without exposing the underlying data or algorithms.
+* **Volume:** VOLUME VII: NEUROMANCER (THE PREDATOR DAEMONS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 041: As packets hit the `SwarmTransport` layer, they are piped into the `Harpy Eagle` queue. The daemon executes the Fast Reed-Solomon Interactive Oracle Proofs of Proximity (FRI) verification.
+* **Volume:** VOLUME VII: NEUROMANCER (THE PREDATOR DAEMONS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 042: The `Wild Dogs` daemon analyzes the density of the Kademlia routing buckets. If it detects a statistically impossible clustering of Node IDs in a specific <i>2<sup>160</sup></i> address space, it flags a potential state-actor attempting an Eclipse route hijack.
+* **Volume:** VOLUME VII: NEUROMANCER (THE PREDATOR DAEMONS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 043: As the network scales or shrinks, the mathematical mapping of data shards to their required Kademlia neighbors shifts. The `Crocodile` daemon constantly scavenges the local `BlobStore`. It identifies and relocates orphaned shards to new topological neighbors, ensuring the Reed-Solomon parity matrix remains intact despite extreme network churn.
+* **Volume:** VOLUME VII: NEUROMANCER (THE PREDATOR DAEMONS)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 044: Centrality Score:** Calculated via Kademlia XOR proximity to active job hashes.
+* **Volume:** VOLUME 08: FLUID TOPOLOGY & AUTONOMOUS ROLE ELECTION
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 045: Reliability Score:** Calculated via uptime percentage and successful ZK-STARK proof submissions.
+* **Volume:** VOLUME 08: FLUID TOPOLOGY & AUTONOMOUS ROLE ELECTION
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 046: While Conflict-Free Replicated Data Types (CRDTs) perfectly resolve concurrent updates without locking, they introduce a catastrophic long-term storage leak known as Tombstone Bloat. When a row or tensor is deleted in a distributed system, a "tombstone" must be retained infinitely to ensure that late-arriving packets from partitioned nodes correctly apply the deletion, rather than erroneously resurrecting the stale data. Over years, this metadata bloats the database linearly to infinity.
+* **Volume:** VOLUME 08: FLUID TOPOLOGY & AUTONOMOUS ROLE ELECTION
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 047: The `IsomorphicStateRing` neutralizes this via **Vector Clock Epoch Compaction**.
+* **Volume:** VOLUME 08: FLUID TOPOLOGY & AUTONOMOUS ROLE ELECTION
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 048: Once the Swarm mathematically verifies that the global Kademlia DHT has achieved a consensus threshold on a specific state epoch (e.g., all Tier-1 Aggregators cryptographically acknowledge Vector Clock $V_{100}$), the Swarm safely garbage-collects all tombstones prior to $V_{100}$. This halts the storage leak entirely, ensuring that the Swarm can maintain infinite temporal state without exhausting the physical NVMe drives of the edge nodes.
+* **Volume:** VOLUME 08: FLUID TOPOLOGY & AUTONOMOUS ROLE ELECTION
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 049: Because `wasm32-wasi` payloads boot in microseconds and are strictly memory-isolated, the `marabunta-visor` daemon acts as a hyper-efficient OS scheduler within its own process (`src/swarm/work.rs`). A single machine is not limited to one job or one topological role.
+* **Volume:** VOLUME 08: FLUID TOPOLOGY & AUTONOMOUS ROLE ELECTION
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 050: When a developer submits a `wasm32-wasi` payload via `mrb submit`, every node evaluating the bid runs the compiled Policy IR.
+* **Volume:** VOLUME 09: THE DSL COMPILER & DECENTRALIZED GOVERNANCE
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 051: Marabunta secures the runtime via **WASI-CAP (Capability-Based Security)**. Plugins are not granted blanket host access. When a transport plugin is initialized, the `PluginHost` binds it to an exclusive, randomized port matrix. When a storage plugin is loaded, it is passed a virtualized, chroot-jailed block device descriptor. The plugin physically cannot address memory or filesystem paths outside its explicitly granted capabilities.
+* **Volume:** VOLUME 10: RUNTIME EXTENSIBILITY & MCL REFERENCE
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 052: To interact with this modular infrastructure, developers and DevOps engineers utilize the **Marabunta Command Language (MCL)**.
+* **Volume:** VOLUME 10: RUNTIME EXTENSIBILITY & MCL REFERENCE
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 053: MCL is a formal, deterministic markup (typically expressed in YAML or JSON) that codifies the physical, economic, and geopolitical requirements of a computational workload. It serves as the "Instruction Manual" for the biological routing layer.
+* **Volume:** VOLUME 10: RUNTIME EXTENSIBILITY & MCL REFERENCE
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 054: The following is the high-level schema of an MCL manifest, demonstrating the precision with which a user can define their execution physics.
+* **Volume:** VOLUME 10: RUNTIME EXTENSIBILITY & MCL REFERENCE
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 055: MCL introduces **Thermodynamic Bidding**. Instead of a fixed cost, the user defines their maximum spend in MMX tokens and their `bidding_strategy`.
+* **Volume:** VOLUME 10: RUNTIME EXTENSIBILITY & MCL REFERENCE
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 056: MCL is not merely a configuration format; it is a mathematical contract. Once signed and submitted to a Gateway Assimilator, the MCL manifest is immutable, providing the ZK-STARK pipeline with the baseline constraints required to verify the integrity of the result.
+* **Volume:** VOLUME 10: RUNTIME EXTENSIBILITY & MCL REFERENCE
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 057: When a developer executes `$ mrb submit --manifest aml_job.mcl`, the CLI initiates a highly orchestrated sequence with the `ApiServer` operating on the Gateway Assimilator.
+* **Volume:** VOLUME 11: THE PROGRAMMATIC CONTROL PLANE (API & ROUTING MATRIX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 058: 1.  **Authentication & RBAC:** The Gateway validates the developer's WebAuthn PKI token, ensuring they possess the `submit_jobs` permission within the specific Jurisdiction defined in the MCL manifest.
+* **Volume:** VOLUME 11: THE PROGRAMMATIC CONTROL PLANE (API & ROUTING MATRIX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 059: 2.  **Synchronous AST Dry-Run:** The Gateway compiles the Python/Rust payload into `wasm32-wasi`. It verifies the memory bounds and ensures all imported host functions are safely stubbed by the `MantisJournal`. If the code contains an infinite loop detectable via static analysis, the deployment is rejected with an `HTTP 400 Bad Request`.
+* **Volume:** VOLUME 11: THE PROGRAMMATIC CONTROL PLANE (API & ROUTING MATRIX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 060: 3.  **Thermodynamic Escrow Lock:** The Gateway evaluates the `EnergyBudget` block of the MCL manifest. It calculates the projected cost based on the current global MMX spot market pricing and locks the required funds in a cryptographic escrow smart contract.
+* **Volume:** VOLUME 11: THE PROGRAMMATIC CONTROL PLANE (API & ROUTING MATRIX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 061: 4.  **The Epidemic Handoff:** Only after the payload achieves an `L0` or `L1` Switchboard verification status does the API return an `HTTP 201 Created` response to the developer. The Gateway then injects the WASM binary and the MCL constraints into the Kademlia DHT.
+* **Volume:** VOLUME 11: THE PROGRAMMATIC CONTROL PLANE (API & ROUTING MATRIX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 062: When a developer executes `$ mrb submit --manifest aml_job.mcl`, they do not need to provide a raw private key. They authenticate via an OpenID Connect (OIDC) JWT token. The Gateway validates the cryptographic signature of the IdP, maps the developer's corporate group (e.g., `JPMorgan_Data_Science_L3`) to the corresponding Marabunta Jurisdiction permissions, and transparently signs the MCL manifest on their behalf using the Gateway's HSM (Hardware Security Module).
+* **Volume:** VOLUME 11: THE PROGRAMMATIC CONTROL PLANE (API & ROUTING MATRIX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 063: A 100-million node network does not execute linearly. A massive MapReduce aggregation or a 350PB DiLoCo gradient sync may take minutes or hours to clear the Kademlia DHT. If an enterprise CI/CD pipeline or SIEM (Security Information and Event Management) dashboard is forced to continuously poll the Gateway API for status updates, the resulting traffic storm will degrade the Control Plane.
+* **Volume:** VOLUME 11: THE PROGRAMMATIC CONTROL PLANE (API & ROUTING MATRIX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 064: When the `Harpy` daemon mathematically verifies a ZK-STARK trace, or when the `IsomorphicStateRing` achieves global consensus on a CRDT merger, the Gateway immediately pushes a secure HTTPS POST request containing the event metadata and the cryptographic receipt directly to the subscribed corporate endpoint.
+* **Volume:** VOLUME 11: THE PROGRAMMATIC CONTROL PLANE (API & ROUTING MATRIX)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 065: This interface visualizes Kademlia XOR routing distances, epidemic gossip propagation, and energy-based market arbitrage in a fully interactive, 3D spatial environment rendered at 60 FPS directly within a web browser.
+* **Volume:** VOLUME 12: THE PANOPTICON OBSERVATORY (WEBGL WAR ROOM)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 066: 2.  Telemetry is pushed to the local Kademlia DHT neighbors. The local $5ms$ Latency Cohort aggregator compiles the telemetry of its 10,000 neighbors into a single, obfuscated statistical summary (e.g., "Cohort 0x4F: 80% Utilization, Avg Temp 65C").
+* **Volume:** VOLUME 12: THE PANOPTICON OBSERVATORY (WEBGL WAR ROOM)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 067: To mathematically verify the execution of a WebAssembly payload on an untrusted edge node in Beijing or Moscow, Marabunta utilizes the `risc0` zkVM to generate a cryptographic polynomial commitment—a Zero-Knowledge STARK (Scalable Transparent ARguments of Knowledge).
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 068: The `HighestSec Sandbox` maps the execution of the `wasm32-wasi` payload to an **Algebraic Intermediate Representation (AIR)**. This process, known as arithmetization, converts the WASM instructions into a set of polynomial constraints over a finite field.
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 069: When a Marabunta node completes a computational task (e.g., a DiLoCo tensor gradient update), it generates a dense 1MB STARK receipt. This receipt proves that the node executed the agreed-upon algorithm correctly, without exposing the underlying classified data used during the computation.
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 070: 1.  **WASM Boot Constraints:** The trace must prove that the exact hash of the requested binary (`wasm32-wasi`) was loaded into the VM's linear memory without modification.
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 071: The `Harpy Eagle` daemon receives the ZK-STARK receipt and evaluates the FRI (Fast Reed-Solomon Interactive Oracle Proofs of Proximity) commitment in approximately 12 milliseconds. Because the modified execution trace cannot mathematically satisfy the original AIR constraints, the `receipt.verify()` function fails instantly.
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 072: If a transatlantic fiber cable is physically severed, the Kademlia DHT suffers a catastrophic split-brain partition. The US-Swarm and EU-Swarm will continue mutating their local CRDT states independently.
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 073: When the physical connection heals, Marabunta executes **Merkle-DAG State Reconciliation**. The two divergent halves do not flood the network with millions of CRDT updates. Instead, the Tier-1 Aggregators exchange the cryptographic Merkle Roots of their local state histories. They geometrically traverse the tree downward, isolating the exact branches where divergence occurred, and executing mathematical CRDT merges only on the conflicting deltas, allowing two 50-million node swarms to cleanly suture together in seconds.
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 074: The ZK-STARK Halting Problem (Deterministic Fuel Metering)
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 075: A theoretical paradox arises at the Prover node. According to the Halting Problem, it is statically undecidable whether a given WebAssembly payload contains an infinite loop. If a malicious developer submits a `while(true)` payload, the executing node will run infinitely, attempting to generate an infinitely large STARK polynomial trace until the host crashes via an Out-Of-Memory (OOM) panic.
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 076: Marabunta mathematically bypasses the Halting Problem by embedding **Deterministic Fuel Metering** directly into the `wasm32-wasi` JIT compiler.
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 077: The execution trace is not only constrained by valid Program Counter ($PC_{next}$) transitions, but by a strictly decreasing thermodynamic "gas limit" defined in the MCL manifest. Every RISC-V instruction consumes a predetermined amount of fuel. If the fuel counter reaches zero before the payload exits, the Wasmtime hypervisor traps the execution deterministically.
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 078: The node successfully generates a mathematically valid ZK-STARK receipt proving an *aborted* state transition due to fuel exhaustion. The `Harpy Eagle` daemon verifies the 12ms proof, the malicious developer's MMX escrow is slashed for the wasted compute, and the node survives without entering an infinite loop.
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 079: The `EpidemicStateMap` tracks modified tensors and implements true Delta-Only Checkpointing via the `IsomorphicStateRing::flush_to_disk()` function. It asynchronously appends modified **Conflict-Free Replicated Data Types (CRDTs)** to a Write-Ahead Log (`.wal`), bypassing full-state serialization overhead for sub-millisecond synchronization.
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 080: In the Marabunta `IsomorphicStateRing`, conflict resolution is handled by the CRDT partial ordering (Last-Writer-Wins semantics on the *Nesterov Momentum* tensors).
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 081: If <i>hash(\sigma) > hash(\sigma')</i>, the conflict is resolved by the commutativity axiom. The STARK polynomial constraints force the Byzantine node to provide a ZK proof of the state transition that resulted in <i>\sigma'</i>. Since no valid proof can exist for the malicious state <i>\sigma'</i>, the node <i>b</i> is mathematically isolated.
+* **Volume:** VOLUME 13: FORMAL VERIFICATION & ZK-STARK CONSTRAINTS
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 082: The software available to the 100 million public "Dust" nodes—the `marabunta-visor`—is a neutered execution terminal. It contains the Chrysalis PoW grinder, the Kademlia DHT routing logic, and the `wasm32-wasi` sandbox. Crucially, it physically lacks the `Assimilator` and `Neuromancer` orchestration pipelines.
+* **Volume:** VOLUME 14: THE SOVEREIGNTY OF CONTROL (BINARY SEGMENTATION)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 083: A standard node cannot compile Abstract Syntax Trees (ASTs), it cannot parse Job Control Language (MCL) manifests, and it cannot inject new workloads into the Swarm.
+* **Volume:** VOLUME 14: THE SOVEREIGNTY OF CONTROL (BINARY SEGMENTATION)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 084: The `marabunta-visor` daemon is not just compiled for `x86_64-linux` or `aarch64-apple-darwin`. The entire Kademlia routing engine and WASM execution hypervisor compiles down to `wasm32-unknown-unknown`.
+* **Volume:** VOLUME 14: THE SOVEREIGNTY OF CONTROL (BINARY SEGMENTATION)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 085: 2.  **The Gossip:** The certificate is injected into the Kademlia DHT. Utilizing the `Plumtree` protocol, the kill-order propagates to 100 million nodes in $O(\log N)$ time (typically under 3 seconds globally).
+* **Volume:** VOLUME 14: THE SOVEREIGNTY OF CONTROL (BINARY SEGMENTATION)
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 086: When an Administrator submits an MCL (Marabunta Command Language) payload requesting a massive data extraction operation, the Gateway Assimilator shreds the target URLs into millions of micro-tasks.
+* **Volume:** VOLUME 16: PLANETARY ASYMMETRIC DATA ACQUISITION
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 087: The Administrator writes an MCL manifest with a strict Jurisdiction Fence: `allowed_zones: ["CN", "HK", "MO"]`.
+* **Volume:** VOLUME 16: PLANETARY ASYMMETRIC DATA ACQUISITION
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 088: In Marabunta, static assets are shredded into Reed-Solomon chunks and injected into the Kademlia DHT. Users access the content via its cryptographic hash (`blake3`) over the Sphinx UDP overlay.
+* **Volume:** VOLUME 16: PLANETARY ASYMMETRIC DATA ACQUISITION
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 089: If a botnet floods the Swarm with requests for a specific cryptographic hash, the `Wild Dogs` daemon detects the artificial latency spike in that specific XOR bucket. The Kademlia routing table dynamically shatters.
+* **Volume:** VOLUME 16: PLANETARY ASYMMETRIC DATA ACQUISITION
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 090: The global financial system remains entirely dependent on IBM z/OS Mainframes executing 50-year-old COBOL code via the Customer Information Control System (CICS). Marabunta bypasses the existential risk of mainframe migration by deploying the **CICS Transaction Gateway Assimilator**, a system designed to mathematically translate legacy IBM Assembler and COBOL directly into deterministic `wasm32-wasi` modules.
+* **Volume:** VOLUME 17: THE DEVELOPMENT HORIZON
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 091: 2.  **The COBOL-to-WASM Compiler:** A specialized Ahead-of-Time (AOT) toolchain translates the rigid, procedural COBOL logic into an Abstract Syntax Tree (AST), which is then compiled into a highly optimized `wasm32-wasi` binary.
+* **Volume:** VOLUME 17: THE DEVELOPMENT HORIZON
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+
+### CLAIM 092: Each node executes the transaction and generates a Zero-Knowledge STARK polynomial commitment. The nodes gossip their execution hashes back to the Gateway. The Gateway waits for a supermajority (e.g., 5 out of 7) identical hashes before returning the verified payload to the bank's terminal. This achieves 99.999% fault tolerance using volatile edge hardware.
+* **Volume:** VOLUME 17: THE DEVELOPMENT HORIZON
+* **Status:** TODO
+* **Fix_Proposed:** N/A
+

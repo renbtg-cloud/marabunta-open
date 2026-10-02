@@ -1,0 +1,155 @@
+# Marabunta - Licensed under the MIT License.
+# Marabunta Compute - Small Cluster Configuration (3 nodes)
+#
+# This configuration is for a small cluster setup with:
+# - 1 coordinator (also runs master)
+# - 2-3 worker nodes
+#
+# Deploy this on each node with appropriate modifications to:
+# - node.name
+# - network.bind_address
+# - network.public_address
+# - node role sections (coordinator/master/worker)
+#
+# Example deployment:
+#   Node 1 (coordinator + master): marabunta-coordinator --config small-cluster.toml
+#   Node 2 (worker): marabunta-worker --config small-cluster.toml
+#   Node 3 (worker): marabunta-worker --config small-cluster.toml
+
+# ============================================================================
+# Node Identity
+# ============================================================================
+[node]
+# Unique identifier - SET THIS DIFFERENTLY ON EACH NODE
+# id = "cluster-node-001"
+
+# Node name - CUSTOMIZE PER NODE
+name = "marabunta-cluster-node-1"
+
+# Region for all nodes in this cluster
+region = "us-east-1"
+
+# Tags - adjust per node
+tags = ["small-cluster", "x86_64"]
+
+# ============================================================================
+# Network Configuration
+# ============================================================================
+[network]
+# CUSTOMIZE: Set to this node's IP address
+bind_address = "0.0.0.0:7000"
+
+# CUSTOMIZE: Set to the public IP if behind NAT
+# public_address = "10.0.1.10:7000"
+
+# Bootstrap servers - all coordinator addresses
+# CUSTOMIZE: Add all coordinator IPs
+bootstrap_servers = [
+    "10.0.1.10:7000",
+    # Add more coordinators for HA setup
+]
+
+# Timeouts for cluster communication
+connect_timeout = "10s"
+request_timeout = "30s"
+
+# ============================================================================
+# Storage Configuration
+# ============================================================================
+[storage]
+# Data directory - use persistent storage
+data_dir = "/var/lib/marabunta"
+
+# Database path
+database_path = "/var/lib/marabunta/marabunta.db"
+
+# Checkpoint directory - should be on fast storage
+checkpoint_dir = "/var/lib/marabunta/checkpoints"
+
+# Checkpoint size limit
+max_checkpoint_size_mb = 512
+
+# ============================================================================
+# Coordinator Configuration (only on coordinator nodes)
+# ============================================================================
+[coordinator]
+# API port
+listen_port = 7000
+
+# Raft consensus port
+raft_port = 7001
+
+# Other coordinators (for HA, leave empty for single coordinator)
+# peers = ["10.0.1.11:7001", "10.0.1.12:7001"]
+peers = []
+
+# Raft settings
+election_timeout = "1s"
+heartbeat_interval = "200ms"
+
+# ============================================================================
+# Master Configuration (on coordinator node)
+# ============================================================================
+[master]
+# Master API port
+listen_port = 7100
+
+# Local coordinator
+coordinator_addresses = ["http://127.0.0.1:7000"]
+
+# Expected worker count
+max_workers = 100
+
+# Worker timeout - detect dead workers
+worker_timeout = "30s"
+
+# Scheduling frequency
+scheduling_interval = "100ms"
+
+# ============================================================================
+# Worker Configuration (on worker nodes)
+# ============================================================================
+[worker]
+# Master addresses to connect to
+# CUSTOMIZE: Set to actual master IP(s)
+master_addresses = ["http://10.0.1.10:7100"]
+
+# Concurrent task limit
+# Adjust based on node capabilities
+max_concurrent_tasks = 8
+
+# Optional resource limits
+cpu_limit = 0.9           # Use up to 90% CPU
+memory_limit_mb = 14336   # 14GB for 16GB machine
+
+# Communication intervals
+heartbeat_interval = "5s"
+checkpoint_interval = "30s"
+
+# ============================================================================
+# Logging Configuration
+# ============================================================================
+[logging]
+# Production log level
+level = "info"
+
+# JSON format for log aggregation
+format = "json"
+
+# Log to file
+file = "/var/log/marabunta/marabunta.log"
+
+# ============================================================================
+# Security Configuration
+# ============================================================================
+[security]
+# Enable TLS for cluster communication
+tls_enabled = true
+
+# Certificate paths
+cert_path = "/etc/marabunta/certs/node.crt"
+key_path = "/etc/marabunta/certs/node.key"
+ca_path = "/etc/marabunta/certs/ca.crt"
+
+# Shared authentication token
+auth_token = "cluster-secret-token-change-in-production"

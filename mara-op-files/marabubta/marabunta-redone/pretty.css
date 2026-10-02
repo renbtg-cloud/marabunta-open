@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@400;600;700&family=Fira+Code:wght@400&display=swap');
+
+:root {
+    --bg-main: #ffffff;
+    --text-main: #1a1a1a;
+    --text-muted: #6b7280;
+    --accent: #2563eb;
+    --border: #e5e7eb;
+    --code-bg: #1e1e1e;
+    --code-text: #e5e7eb;
+}
+
+@page {
+    size: letter;
+    margin: 0.75in 0.75in 1in 0.75in;
+    @bottom-center {
+        content: "cli and API calls are illustrative and may not reflect working commands";
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 7.5pt;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding-top: 10pt;
+    }
+}
+
+@page :left {
+    @top-left {
+        content: counter(page);
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 9pt;
+        font-weight: 600;
+        color: var(--accent);
+    }
+    @top-center {
+        content: "MARABUNTA ARCHITECTURE";
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 8pt;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+        text-transform: uppercase;
+    }
+}
+
+@page :right {
+    @top-right {
+        content: counter(page);
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 9pt;
+        font-weight: 600;
+        color: var(--accent);
+    }
+    @top-center {
+        content: string(chapter-title);
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 8pt;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+        text-transform: uppercase;
+    }
+}
+
+@page chapter-start {
+    @top-left { content: none; }
+    @top-right { content: none; }
+    @top-center { content: none; }
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    font-size: 10pt;
+    line-height: 1.6;
+    color: var(--text-main);
+    background: var(--bg-main);
+    text-align: left;
+    hyphens: none;
+}
+
+h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 28pt;
+    color: var(--text-main);
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    page-break-before: always;
+    page: chapter-start;
+    margin-top: 1.5in;
+    margin-bottom: 0.5in;
+    padding-bottom: 0.25in;
+    border-bottom: 4px solid var(--accent);
+    string-set: chapter-title content();
+}
+
+h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 16pt;
+    color: var(--accent);
+    margin-top: 2em;
+    margin-bottom: 0.75em;
+    letter-spacing: -0.01em;
+    page-break-after: avoid;
+}
+
+h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 11pt;
+    color: var(--text-main);
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    page-break-after: avoid;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 1.2em;
+    orphans: 3;
+    widows: 3;
+}
+
+p + p {
+    text-indent: 0;
+    margin-top: 0;
+}
+
+ul, ol {
+    margin-top: 0.5em;
+    margin-bottom: 1.5em;
+    padding-left: 1.5em;
+}
+
+li {
+    margin-bottom: 0.5em;
+}
+
+li::marker {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+pre {
+    font-family: 'Fira Code', monospace;
+    font-size: 8.5pt;
+    line-height: 1.4;
+    color: var(--code-text);
+    background-color: var(--code-bg);
+    padding: 1.25em;
+    margin: 1.5em 0;
+    border-radius: 6px;
+    border: 1px solid #333;
+    white-space: pre-wrap;
+    word-break: break-all;
+    page-break-inside: avoid;
+}
+
+code {
+    font-family: 'Fira Code', monospace;
+    font-size: 9pt;
+    background-color: #f1f5f9;
+    color: #e11d48;
+    padding: 0.15em 0.3em;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+}
+
+pre code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    border: none;
+}
+
+blockquote {
+    font-style: normal;
+    color: var(--text-main);
+    margin: 2em 0;
+    padding: 1em 1.5em;
+    border-left: 4px solid var(--accent);
+    background-color: #f8fafc;
+    font-weight: 500;
+    page-break-inside: avoid;
+}
+
+#TOC {
+    page-break-after: always;
+}
+
+#TOC::before {
+    content: "TABLE OF CONTENTS";
+    display: block;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20pt;
+    font-weight: 700;
+    margin-top: 1in;
+    margin-bottom: 0.5in;
+    border-bottom: 4px solid var(--text-main);
+    padding-bottom: 0.1in;
+}
+
+#TOC ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+#TOC > ul > li {
+    margin-top: 1.2em;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 11pt;
+    text-transform: uppercase;
+}
+
+#TOC ul ul {
+    padding-left: 1.5em;
+}
+
+#TOC ul ul li {
+    margin-top: 0.5em;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 10pt;
+    text-transform: none;
+}
+
+#TOC a {
+    color: var(--text-main);
+    text-decoration: none;
+}

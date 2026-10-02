@@ -1,0 +1,82 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta | Book VIII: Polyglot SDKs & The IDE Symbiont</title>
+    <link rel="stylesheet" href="marabunta-core.css">
+</head>
+<body>
+    <nav>
+        <h1>Marabunta Spec</h1>
+        <ul>
+            <li><a href="index.html">0. Master Index</a></li>
+            <li><a href="spec-gossip-dht.html">I. The Hive Mind & DHT</a></li>
+            <li><a href="spec-phantom-crypto.html">II. Phantom Cryptography</a></li>
+            <li><a href="spec-wasm-enclaves.html">III. WASM & Zero-Copy ABI</a></li>
+            <li><a href="spec-neuromancer.html">IV. Neuromancer Storage</a></li>
+            <li><a href="spec-mmx-economics.html">V. MMX Spot Market</a></li>
+            <li><a href="spec-highestsec.html">VI. HighestSec & ZKP</a></li>
+            <li><a href="spec-wan-topology.html">VII. Hyperscale Topology</a></li>
+            <li><a href="spec-developer-ux.html" class="active">VIII. Polyglot SDKs</a></li>
+            <li><a href="spec-control-plane.html">IX. The Control Plane</a></li>
+            <li><a href="spec-business-strategy.html">X. Strategic Usages</a></li>
+            <li><a href="spec-global-impact.html">XI. The 100 Entities Matrix</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Book VIII: Polyglot SDKs & The IDE Symbiont</h2>
+        <h3>The Architecture of Universal Execution</h3>
+        
+        <p>
+            A decentralized swarm is useless if it requires engineers to abandon their existing tooling. Modern enterprises are fractured: Data Scientists write Python, Quants guard legacy Fortran, and Systems Engineers write Rust. Marabunta unifies these domains through native SDKs and a deeply integrated IDE Control Plane known as the <strong>Symbiont</strong>.
+        </p>
+
+        <h3>8.1 Job Control Language (JCL) & Polyglot DAGs</h3>
+        <p>
+            Users do not write raw JSON manifests. Marabunta uses <strong>JCL</strong>, a functional, declarative syntax that defines data movement across the topology. The Python SDK translates high-level functions (like <code>@workflow</code> decorators) into JCL WASM payloads.
+        </p>
+
+        <pre><code># sdk/python/marabunta_sdk/workflow.py - Polyglot DAG Orchestration
+from marabunta_sdk import workflow, fortran_task, rust_task, ForEach, DataLocality
+
+climate_sim = fortran_task(source="monte_carlo.f90", func="calculate_entropy")
+variance_calc = rust_task(source="aggregator.rs", func="global_variance")
+
+@workflow(name="Global_Fluid_Analysis", retries=3)
+def fluid_dag(telemetry_data: list):
+    # Spray Fortran execution across nodes geographically closest to data chunks
+    with ForEach(items=telemetry_data, locality=DataLocality.NEAREST_NEIGHBOR) as loop:
+        sim_results = climate_sim(data="${chunk}")
+    
+    # Rust task waits for all Fortran WASM enclaves to commit to the DHT
+    final_variance = variance_calc(entropies=loop.gather(sim_results))
+    return final_variance</code></pre>
+
+        <h3>8.2 The IDE Symbiont (JetBrains / VS Code)</h3>
+        <p>
+            Marabunta abandons standard REST APIs for local development. The IDE plugin (the Symbiont) embeds a cryptographic Super-Peer Identity (<code>NodeRole::ControlPlaneIde</code>). The IDE itself acts as a mathematically verified node on the gossip network.
+        </p>
+
+        <div class="alert">
+            <strong>REAL-TIME ECONOMIC CODELENS:</strong> A local WebSocket daemon streams live MMX spot prices and thermal telemetry directly into the IDE. Above every <code>@workflow</code> block in your code, the IDE projects a live execution cost in USD based on current planetary spot prices and algorithmic complexity.
+        </div>
+
+        <h3>8.3 Mantis: Deterministic Time-Travel Debugging</h3>
+        <p>
+            Debugging a failure that occurred on a volatile edge node in Romania at 3:00 AM is historically impossible due to the Observer Effect. Marabunta solves this with <strong>Mantis</strong>.
+        </p>
+        
+        <p>
+            The WASM execution runtime on the edge node traps and journals every non-deterministic input (network, time, random) into a highly compressed ring buffer (<code>.mrb-dump</code>). If the enclave panics, the dump is pushed to the DHT. 
+        </p>
+        
+        <p>
+            The IDE Symbiont downloads this dump, spins up a local <code>Wasmtime</code> instance, loads the initial memory state, and feeds the runtime the exact recorded WASI hypercalls from the "tape". The developer can step backwards and forwards through the exact execution trace of the remote failure directly in their local editor.
+        </p>
+
+    </main>
+</body>
+</html>

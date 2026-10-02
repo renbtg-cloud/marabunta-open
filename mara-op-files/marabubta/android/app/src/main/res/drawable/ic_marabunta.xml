@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Marabunta Worker Icon
+    A hexagonal honeycomb-style icon representing distributed computing
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Background circle -->
+    <path
+        android:fillColor="#FFB300"
+        android:pathData="M54,54m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
+
+    <!-- Center hexagon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,28
+                          L70,38
+                          L70,58
+                          L54,68
+                          L38,58
+                          L38,38
+                          Z" />
+
+    <!-- Top hexagon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.8"
+        android:pathData="M54,12
+                          L66,20
+                          L66,36
+                          L54,44
+                          L42,36
+                          L42,20
+                          Z" />
+
+    <!-- Bottom hexagon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.8"
+        android:pathData="M54,52
+                          L66,60
+                          L66,76
+                          L54,84
+                          L42,76
+                          L42,60
+                          Z" />
+
+    <!-- Left hexagon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.6"
+        android:pathData="M32,32
+                          L44,40
+                          L44,56
+                          L32,64
+                          L20,56
+                          L20,40
+                          Z" />
+
+    <!-- Right hexagon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.6"
+        android:pathData="M76,32
+                          L88,40
+                          L88,56
+                          L76,64
+                          L64,56
+                          L64,40
+                          Z" />
+
+    <!-- Connection lines (inner details) -->
+    <path
+        android:strokeColor="#FFB300"
+        android:strokeWidth="2"
+        android:pathData="M54,44 L54,52" />
+    <path
+        android:strokeColor="#FFB300"
+        android:strokeWidth="2"
+        android:pathData="M44,38 L38,42" />
+    <path
+        android:strokeColor="#FFB300"
+        android:strokeWidth="2"
+        android:pathData="M64,38 L70,42" />
+
+</vector>

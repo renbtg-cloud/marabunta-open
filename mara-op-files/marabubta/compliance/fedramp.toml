@@ -1,0 +1,80 @@
+# Marabunta - Licensed under the MIT License.
+# FedRAMP Compliance Profile
+# Includes all HIPAA controls + additional federal requirements.
+
+[profile]
+name = "fedramp"
+version = "1.0"
+description = "FedRAMP High — US federal cloud security requirements"
+
+# All HIPAA controls (inherited)
+[[overrides]]
+key = "security.api_auth_required"
+value = true
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "FedRAMP AC-3: Access enforcement"
+
+[[overrides]]
+key = "security.auth_token_expiry"
+value = "28800s"
+ui_visibility = "visible_readonly"
+constraint_type = "max"
+justification = "FedRAMP AC-12: 8-hour session limit for federal systems"
+
+[[overrides]]
+key = "management.audit_max_entries"
+value = 1000000
+ui_visibility = "visible_readonly"
+constraint_type = "min"
+justification = "FedRAMP AU-11: Audit record retention"
+
+[[overrides]]
+key = "verification.default_replicas"
+value = 3
+ui_visibility = "visible_readonly"
+constraint_type = "min"
+justification = "FedRAMP SI-7: 3+ replicas for software/data integrity"
+
+[[overrides]]
+key = "neuromancer.enabled"
+value = true
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "FedRAMP SI-4: Continuous monitoring and anomaly detection"
+
+# FedRAMP-specific additions
+[[overrides]]
+key = "sandbox.default_memory_mb"
+value = 512
+ui_visibility = "visible_readonly"
+constraint_type = "min"
+justification = "FedRAMP SC-7: Sandboxed execution mandatory"
+
+[[overrides]]
+key = "postgres.enable_time_travel"
+value = true
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "FedRAMP AU-3: Full audit trail with temporal reconstruction"
+
+[[overrides]]
+key = "postgres.history_retention_days"
+value = 2190
+ui_visibility = "visible_readonly"
+constraint_type = "min"
+justification = "FedRAMP AU-11: 6-year audit record retention"
+
+[[overrides]]
+key = "verification.spot_check_rate"
+value = 0.10
+ui_visibility = "visible_readonly"
+constraint_type = "min"
+justification = "FedRAMP CA-7: Minimum 10% spot-check rate for continuous verification"
+
+[[overrides]]
+key = "failure.quorum_fraction"
+value = 0.67
+ui_visibility = "visible_readonly"
+constraint_type = "min"
+justification = "FedRAMP SC-36: Two-thirds quorum for distributed decision resilience"

@@ -1,0 +1,201 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta Compute - Jobs</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">&#x2b21;</div>
+                <h1>Marabunta <span>Compute</span></h1>
+            </div>
+            <nav>
+                <a href="/">Dashboard</a>
+                <a href="/jobs.html" class="active">Jobs</a>
+                <a href="/nodes.html">Nodes</a>
+                <a href="/instances.html">Instances</a>
+                <a href="/compute.html">Compute</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="page-header">
+                <h2>Jobs</h2>
+                <p>View, submit, and manage compute jobs</p>
+            </div>
+
+            <!-- Actions Bar -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-body" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button class="btn btn-secondary active" data-filter-status="all">All</button>
+                        <button class="btn btn-secondary" data-filter-status="running">Running</button>
+                        <button class="btn btn-secondary" data-filter-status="pending">Pending</button>
+                        <button class="btn btn-secondary" data-filter-status="completed">Completed</button>
+                        <button class="btn btn-secondary" data-filter-status="failed">Failed</button>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input type="text" id="job-search" class="form-input" placeholder="Search jobs...">
+                        <button id="submit-job-btn" class="btn btn-primary">&#43; Submit Job</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jobs Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Job List</h3>
+                    <button class="btn btn-sm btn-secondary" onclick="jobs.refresh()">&#8635; Refresh</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Job ID</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Progress</th>
+                                    <th>Tasks</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jobs-table-body">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 2rem;">
+                                        <div class="spinner" style="margin: 0 auto;"></div>
+                                        <p style="margin-top: 1rem; color: var(--text-secondary);">Loading jobs...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Statistics -->
+            <div class="grid-2" style="margin-top: 1.5rem;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Job Statistics</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                            <div>
+                                <div style="color: var(--text-secondary); font-size: 0.875rem;">Total Today</div>
+                                <div style="font-size: 1.5rem; font-weight: 600;">156</div>
+                            </div>
+                            <div>
+                                <div style="color: var(--text-secondary); font-size: 0.875rem;">Success Rate</div>
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--success);">94.2%</div>
+                            </div>
+                            <div>
+                                <div style="color: var(--text-secondary); font-size: 0.875rem;">Avg Duration</div>
+                                <div style="font-size: 1.5rem; font-weight: 600;">12m 34s</div>
+                            </div>
+                            <div>
+                                <div style="color: var(--text-secondary); font-size: 0.875rem;">Queue Depth</div>
+                                <div style="font-size: 1.5rem; font-weight: 600;">7</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Recent Completions</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="activity-list">
+                            <li class="activity-item">
+                                <div class="activity-icon success">&#10003;</div>
+                                <div class="activity-content">
+                                    <div class="title">data-analysis-001 completed</div>
+                                    <div class="time">5 minutes ago - 50 tasks in 8m 23s</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon success">&#10003;</div>
+                                <div class="activity-content">
+                                    <div class="title">batch-etl-123 completed</div>
+                                    <div class="time">15 minutes ago - 25 tasks in 3m 45s</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon error">&#10007;</div>
+                                <div class="activity-content">
+                                    <div class="title">image-processing failed</div>
+                                    <div class="time">1 hour ago - 36/80 tasks completed</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Submit Job Modal -->
+    <div id="submit-job-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Submit New Job</h3>
+                <button class="modal-close" data-close-modal>&times;</button>
+            </div>
+            <form id="submit-job-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="job-name">Job Name</label>
+                        <input type="text" id="job-name" class="form-input" placeholder="my-compute-job" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="job-priority">Priority</label>
+                        <select id="job-priority" class="form-select">
+                            <option value="low">Low</option>
+                            <option value="normal" selected>Normal</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="job-spec">Job Specification (JSON)</label>
+                        <textarea id="job-spec" class="form-textarea" placeholder='{"tasks": [{"name": "task-1", "payload": {"type": "shell", "command": "echo", "args": ["Hello"]}}]}' required></textarea>
+                    </div>
+
+                    <div style="background: var(--bg-dark); padding: 1rem; border-radius: 6px; margin-top: 1rem;">
+                        <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Example job specification:</p>
+                        <pre style="font-size: 0.75rem; color: var(--text-muted); overflow-x: auto;">{
+  "tasks": [
+    {
+      "name": "hello",
+      "payload": {
+        "type": "shell",
+        "command": "echo",
+        "args": ["Hello from Marabunta!"]
+      }
+    }
+  ],
+  "timeout_secs": 60
+}</pre>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Job</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

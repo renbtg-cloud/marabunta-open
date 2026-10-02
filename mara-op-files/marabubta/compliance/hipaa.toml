@@ -1,0 +1,66 @@
+# Marabunta - Licensed under the MIT License.
+# HIPAA Compliance Profile
+# Inherits all SOC2 controls + additional healthcare data protections.
+
+[profile]
+name = "hipaa"
+version = "1.0"
+description = "HIPAA — Protected Health Information safeguards"
+
+# SOC2 controls (inherited)
+[[overrides]]
+key = "security.api_auth_required"
+value = true
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "HIPAA 164.312(d): Authentication required for ePHI access"
+
+[[overrides]]
+key = "security.auth_token_expiry"
+value = "86400s"
+ui_visibility = "visible_readonly"
+constraint_type = "max"
+justification = "HIPAA 164.312(a)(2)(iii): Automatic session termination"
+
+[[overrides]]
+key = "management.audit_max_entries"
+value = 1000000
+ui_visibility = "visible_readonly"
+constraint_type = "min"
+justification = "HIPAA 164.312(b): Audit controls for ePHI access"
+
+[[overrides]]
+key = "verification.default_replicas"
+value = 2
+ui_visibility = "visible_readonly"
+constraint_type = "min"
+justification = "HIPAA 164.312(c)(1): Data integrity verification"
+
+[[overrides]]
+key = "neuromancer.enabled"
+value = true
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "HIPAA 164.312(a)(1): Intrusion detection required"
+
+# HIPAA-specific additions
+[[overrides]]
+key = "sandbox.default_memory_mb"
+value = 512
+ui_visibility = "visible_readonly"
+constraint_type = "min"
+justification = "HIPAA 164.312(a)(1): Sandboxed execution mandatory for ePHI workloads"
+
+[[overrides]]
+key = "postgres.enable_time_travel"
+value = true
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "HIPAA 164.312(b): Audit trail with point-in-time reconstruction"
+
+[[overrides]]
+key = "postgres.history_retention_days"
+value = 2190
+ui_visibility = "visible_readonly"
+constraint_type = "min"
+justification = "HIPAA 164.530(j)(2): 6-year retention for ePHI audit records"

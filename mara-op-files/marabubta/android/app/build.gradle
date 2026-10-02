@@ -1,0 +1,116 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.marabunta.worker'
+    compileSdk 34
+
+    signingConfigs {
+        release {
+            // Load from environment variables or local.properties
+            def props = new Properties()
+            def propsFile = rootProject.file('local.properties')
+            if (propsFile.exists()) {
+                props.load(new FileInputStream(propsFile))
+            }
+
+            storeFile file(System.getenv('KEYSTORE_PATH') ?: props.getProperty('signing.storeFile', 'release.keystore'))
+            storePassword System.getenv('KEYSTORE_PASSWORD') ?: props.getProperty('signing.storePassword', '')
+            keyAlias System.getenv('KEY_ALIAS') ?: props.getProperty('signing.keyAlias', 'marabunta')
+            keyPassword System.getenv('KEY_PASSWORD') ?: props.getProperty('signing.keyPassword', '')
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.marabunta.worker"
+        // Support Android 5.0+ (API 21) for maximum device coverage
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+
+        // Include native libraries for all common ABIs
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        }
+
+        // ProGuard/R8 rules
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+        }
+
+        release {
+            signingConfig signingConfigs.release
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    // Native library location
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
+
+    // Lint options
+    lint {
+        abortOnError false
+        checkReleaseBuilds true
+    }
+
+    // Packaging options
+    packagingOptions {
+        // Exclude duplicate files
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+
+        // Keep native libraries uncompressed for faster loading
+        jniLibs {
+            useLegacyPackaging false
+        }
+    }
+
+    // AAB bundle configuration for Play Store
+    bundle {
+        language {
+            enableSplit = true
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+}
+
+dependencies {
+    // AndroidX AppCompat - provides backward compatibility
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+
+    // Material Design Components (optional, for better UI)
+    implementation 'com.google.android.material:material:1.9.0'
+
+    // ConstraintLayout (optional, for complex layouts)
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // WorkManager for scheduled background work (optional)
+    implementation 'androidx.work:work-runtime:2.8.1'
+}

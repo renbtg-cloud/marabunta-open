@@ -1,0 +1,117 @@
+# Marabunta Compute - Development Dockerfile
+# Includes development tools and debugging support
+
+# =============================================================================
+# Stage 1: Development Build Stage
+# =============================================================================
+FROM rust:1.75-bookworm AS builder
+
+# Install build dependencies and development tools
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    gdb \
+    lldb \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install cargo tools for development
+RUN cargo install cargo-watch
+
+WORKDIR /app
+
+# Copy manifests
+COPY Cargo.toml Cargo.lock* ./
+
+# Create dummy source for dependency caching
+RUN mkdir -p src/bin && \
+    echo "fn main() {}" > src/bin/coordinator.rs && \
+    echo "fn main() {}" > src/bin/master.rs && \
+    echo "fn main() {}" > src/bin/worker.rs && \
+    echo "fn main() {}" > src/bin/marabunta.rs && \
+    echo "fn main() {}" > src/bin/marabunta-worker-windows.rs && \
+    echo "pub fn dummy() {}" > src/lib.rs
+
+# Build dependencies (debug mode for faster compilation)
+RUN cargo build --bins 2>/dev/null || true
+
+# Copy actual source
+COPY src ./src
+
+# Touch to rebuild
+RUN touch src/lib.rs src/bin/*.rs
+
+# Build debug binaries
+RUN cargo build --bin marabunta-coordinator --bin marabunta-master --bin marabunta-worker --bin marabunta
+
+# =============================================================================
+# Stage 2: Development Runtime Base
+# =============================================================================
+FROM debian:bookworm AS runtime-base
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    libssl3 \
+    curl \
+    procps \
+    htop \
+    strace \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd -r -u 1000 -m -s /bin/bash marabunta
+
+RUN mkdir -p /var/lib/marabunta /var/log/marabunta /etc/marabunta \
+    && chown -R marabunta:marabunta /var/lib/marabunta /var/log/marabunta /etc/marabunta
+
+# =============================================================================
+# Stage 3a: Coordinator Dev
+# =============================================================================
+FROM runtime-base AS coordinator
+
+COPY --from=builder /app/target/debug/marabunta-coordinator /usr/local/bin/
+
+USER marabunta
+WORKDIR /var/lib/marabunta
+EXPOSE 8080 8081
+
+ENTRYPOINT ["marabunta-coordinator"]
+CMD ["--bind", "0.0.0.0:8080"]
+
+# =============================================================================
+# Stage 3b: Master Dev
+# =============================================================================
+FROM runtime-base AS master
+
+COPY --from=builder /app/target/debug/marabunta-master /usr/local/bin/
+
+USER marabunta
+WORKDIR /var/lib/marabunta
+EXPOSE 9000 9001
+
+ENTRYPOINT ["marabunta-master"]
+CMD ["--bind", "0.0.0.0:9000"]
+
+# =============================================================================
+# Stage 3c: Worker Dev
+# =============================================================================
+FROM runtime-base AS worker
+
+COPY --from=builder /app/target/debug/marabunta-worker /usr/local/bin/
+
+USER marabunta
+WORKDIR /var/lib/marabunta
+
+ENTRYPOINT ["marabunta-worker"]
+
+# =============================================================================
+# Stage 3d: CLI Dev
+# =============================================================================
+FROM runtime-base AS cli
+
+COPY --from=builder /app/target/debug/marabunta /usr/local/bin/
+COPY --from=builder /app/target/debug/marabunta-coordinator /usr/local/bin/
+COPY --from=builder /app/target/debug/marabunta-master /usr/local/bin/
+COPY --from=builder /app/target/debug/marabunta-worker /usr/local/bin/
+
+USER marabunta
+WORKDIR /home/marabunta
+
+ENTRYPOINT ["/bin/bash"]

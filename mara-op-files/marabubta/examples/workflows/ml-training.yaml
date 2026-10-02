@@ -1,0 +1,341 @@
+# Marabunta - Licensed under the MIT License.
+# Machine Learning Training Pipeline
+# End-to-end ML workflow from data preparation to model deployment
+#
+# This workflow demonstrates:
+# - Data preparation and feature engineering
+# - Hyperparameter tuning with parallel experiments
+# - Model training and evaluation
+# - Model registry and deployment
+
+name: ml-model-training
+description: Train and deploy a machine learning model
+version: 2
+
+settings:
+  timeout: 8h
+  gpu_required: true
+  notification_slack: "#ml-alerts"
+
+params:
+  model_name:
+    type: string
+    required: true
+    description: Name for the trained model
+  dataset:
+    type: string
+    required: true
+    description: Path to training dataset
+  experiment_id:
+    type: string
+    default: "{{ uuid }}"
+  epochs:
+    type: integer
+    default: 100
+    min: 1
+    max: 1000
+  batch_size:
+    type: integer
+    default: 32
+    enum: [16, 32, 64, 128, 256]
+
+stages:
+  # Stage 1: Data preparation
+  data_prep:
+    tasks:
+      - name: load-dataset
+        type: python
+        script: |
+          import json
+          import random
+
+          # Simulated dataset loading
+          dataset_path = "{{ params.dataset }}"
+          print(f"Loading dataset from {dataset_path}")
+
+          # Generate synthetic data for demo
+          random.seed(42)
+          data = {
+              "features": [[random.random() for _ in range(10)] for _ in range(10000)],
+              "labels": [random.randint(0, 9) for _ in range(10000)]
+          }
+
+          with open("/ml/data/raw_data.json", "w") as f:
+              json.dump(data, f)
+          print(f"Loaded {len(data['labels'])} samples")
+        resources:
+          memory: 4GB
+          cpu: 2
+
+      - name: split-dataset
+        type: python
+        depends_on: [load-dataset]
+        script: |
+          import json
+          import random
+
+          with open("/ml/data/raw_data.json") as f:
+              data = json.load(f)
+
+          # 80/10/10 split
+          n = len(data["labels"])
+          indices = list(range(n))
+          random.shuffle(indices)
+
+          train_idx = indices[:int(n*0.8)]
+          val_idx = indices[int(n*0.8):int(n*0.9)]
+          test_idx = indices[int(n*0.9):]
+
+          splits = {
+              "train": {"features": [data["features"][i] for i in train_idx],
+                        "labels": [data["labels"][i] for i in train_idx]},
+              "val": {"features": [data["features"][i] for i in val_idx],
+                      "labels": [data["labels"][i] for i in val_idx]},
+              "test": {"features": [data["features"][i] for i in test_idx],
+                       "labels": [data["labels"][i] for i in test_idx]}
+          }
+
+          for split_name, split_data in splits.items():
+              with open(f"/ml/data/{split_name}.json", "w") as f:
+                  json.dump(split_data, f)
+              print(f"{split_name}: {len(split_data['labels'])} samples")
+        resources:
+          memory: 8GB
+          cpu: 2
+
+  # Stage 2: Feature engineering
+  feature_engineering:
+    depends_on: [data_prep]
+    tasks:
+      - name: compute-features
+        type: python
+        script: |
+          import json
+          import statistics
+
+          for split in ["train", "val", "test"]:
+              with open(f"/ml/data/{split}.json") as f:
+                  data = json.load(f)
+
+              # Compute additional features
+              enhanced_features = []
+              for feat in data["features"]:
+                  enhanced = feat + [
+                      sum(feat),                    # sum
+                      statistics.mean(feat),         # mean
+                      max(feat),                     # max
+                      min(feat),                     # min
+                      max(feat) - min(feat)          # range
+                  ]
+                  enhanced_features.append(enhanced)
+
+              data["features"] = enhanced_features
+              with open(f"/ml/data/{split}_enhanced.json", "w") as f:
+                  json.dump(data, f)
+              print(f"{split}: enhanced to {len(enhanced_features[0])} features")
+        resources:
+          memory: 8GB
+          cpu: 4
+
+  # Stage 3: Hyperparameter tuning (parallel experiments)
+  hyperparameter_tuning:
+    depends_on: [feature_engineering]
+    parallel: true
+    tasks:
+      - name: experiment-lr-001
+        type: python
+        script: |
+          import json
+          import random
+
+          # Simulated training with learning_rate=0.001
+          random.seed(1)
+          accuracy = 0.85 + random.random() * 0.05
+          result = {"learning_rate": 0.001, "accuracy": accuracy, "epochs": {{ params.epochs }}}
+          with open("/ml/experiments/lr_001.json", "w") as f:
+              json.dump(result, f)
+          print(f"LR=0.001: accuracy={accuracy:.4f}")
+        resources:
+          memory: 16GB
+          gpu: 1
+        timeout: 2h
+
+      - name: experiment-lr-01
+        type: python
+        script: |
+          import json
+          import random
+
+          # Simulated training with learning_rate=0.01
+          random.seed(2)
+          accuracy = 0.88 + random.random() * 0.05
+          result = {"learning_rate": 0.01, "accuracy": accuracy, "epochs": {{ params.epochs }}}
+          with open("/ml/experiments/lr_01.json", "w") as f:
+              json.dump(result, f)
+          print(f"LR=0.01: accuracy={accuracy:.4f}")
+        resources:
+          memory: 16GB
+          gpu: 1
+        timeout: 2h
+
+      - name: experiment-lr-1
+        type: python
+        script: |
+          import json
+          import random
+
+          # Simulated training with learning_rate=0.1
+          random.seed(3)
+          accuracy = 0.82 + random.random() * 0.05
+          result = {"learning_rate": 0.1, "accuracy": accuracy, "epochs": {{ params.epochs }}}
+          with open("/ml/experiments/lr_1.json", "w") as f:
+              json.dump(result, f)
+          print(f"LR=0.1: accuracy={accuracy:.4f}")
+        resources:
+          memory: 16GB
+          gpu: 1
+        timeout: 2h
+
+  # Stage 4: Select best model and retrain
+  final_training:
+    depends_on: [hyperparameter_tuning]
+    tasks:
+      - name: select-best-config
+        type: python
+        script: |
+          import json
+          import os
+
+          best_accuracy = 0
+          best_config = None
+
+          for filename in os.listdir("/ml/experiments"):
+              if filename.endswith(".json"):
+                  with open(f"/ml/experiments/{filename}") as f:
+                      result = json.load(f)
+                  if result["accuracy"] > best_accuracy:
+                      best_accuracy = result["accuracy"]
+                      best_config = result
+
+          with open("/ml/best_config.json", "w") as f:
+              json.dump(best_config, f)
+          print(f"Best config: LR={best_config['learning_rate']}, accuracy={best_accuracy:.4f}")
+        resources:
+          memory: 1GB
+          cpu: 1
+
+      - name: train-final-model
+        type: python
+        depends_on: [select-best-config]
+        script: |
+          import json
+          import random
+
+          with open("/ml/best_config.json") as f:
+              config = json.load(f)
+
+          print(f"Training final model with LR={config['learning_rate']}")
+
+          # Simulated final training
+          random.seed(42)
+          model = {
+              "name": "{{ params.model_name }}",
+              "experiment_id": "{{ params.experiment_id }}",
+              "config": config,
+              "metrics": {
+                  "train_accuracy": 0.95 + random.random() * 0.03,
+                  "val_accuracy": 0.92 + random.random() * 0.03,
+                  "test_accuracy": 0.91 + random.random() * 0.03
+              },
+              "epochs_trained": {{ params.epochs }},
+              "batch_size": {{ params.batch_size }}
+          }
+
+          with open("/ml/models/final_model.json", "w") as f:
+              json.dump(model, f, indent=2)
+          print(f"Final model: {json.dumps(model['metrics'], indent=2)}")
+        resources:
+          memory: 32GB
+          gpu: 2
+        timeout: 4h
+
+  # Stage 5: Model evaluation
+  evaluation:
+    depends_on: [final_training]
+    tasks:
+      - name: evaluate-model
+        type: python
+        script: |
+          import json
+
+          with open("/ml/models/final_model.json") as f:
+              model = json.load(f)
+
+          # Generate evaluation report
+          report = {
+              "model_name": model["name"],
+              "experiment_id": model["experiment_id"],
+              "test_accuracy": model["metrics"]["test_accuracy"],
+              "passed_threshold": model["metrics"]["test_accuracy"] > 0.90,
+              "recommendation": "deploy" if model["metrics"]["test_accuracy"] > 0.90 else "review"
+          }
+
+          with open("/ml/evaluation_report.json", "w") as f:
+              json.dump(report, f, indent=2)
+          print(f"Evaluation: {report['recommendation'].upper()}")
+
+          if not report["passed_threshold"]:
+              print("WARNING: Model did not meet accuracy threshold")
+        resources:
+          memory: 4GB
+          cpu: 2
+
+  # Stage 6: Register and deploy
+  deployment:
+    depends_on: [evaluation]
+    tasks:
+      - name: register-model
+        type: shell
+        script: |
+          echo "Registering model {{ params.model_name }} to model registry..."
+          # In production: mlflow models register or similar
+          cp /ml/models/final_model.json /ml/registry/{{ params.model_name }}_{{ params.experiment_id }}.json
+          echo "Model registered successfully"
+        resources:
+          memory: 1GB
+          cpu: 1
+
+      - name: deploy-model
+        type: shell
+        depends_on: [register-model]
+        script: |
+          echo "Deploying model {{ params.model_name }} to production..."
+          # In production: kubectl apply or cloud deployment
+          echo "Model deployed to endpoint: https://api.example.com/models/{{ params.model_name }}"
+        resources:
+          memory: 1GB
+          cpu: 1
+        when: "{{ evaluation.passed_threshold }}"
+
+# Artifacts and model outputs
+artifacts:
+  - path: /ml/models/final_model.json
+    retention: 90d
+    type: model
+  - path: /ml/evaluation_report.json
+    retention: 90d
+    type: report
+  - path: /ml/experiments/
+    retention: 30d
+    type: experiments
+
+# Notifications
+notifications:
+  on_success:
+    - type: slack
+      channel: "#ml-alerts"
+      message: "Model {{ params.model_name }} trained successfully!"
+  on_failure:
+    - type: email
+      to: ml-team@example.com
+      subject: "ML Pipeline Failed: {{ params.model_name }}"

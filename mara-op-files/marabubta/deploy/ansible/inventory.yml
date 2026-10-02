@@ -1,0 +1,31 @@
+# Marabunta - Licensed under the MIT License.
+---
+# Ansible inventory for Marabunta Swarm demo deployment.
+# Populate IPs from terraform output.
+
+all:
+  vars:
+    swarm_binary: /opt/marabunta/bin/swarm
+    swarm_config: /opt/marabunta/config.toml
+    swarm_port: 9000
+    api_port: 8080
+    webapp_dir: /opt/marabunta/webapp
+    plugin_dir: /opt/marabunta/plugins
+
+  children:
+    core:
+      hosts:
+        core-0:
+          ansible_host: "{{ core_ip_0 }}"
+          swarm_role: bootstrap
+        core-1:
+          ansible_host: "{{ core_ip_1 }}"
+          swarm_role: core
+        core-2:
+          ansible_host: "{{ core_ip_2 }}"
+          swarm_role: core
+
+    scale:
+      hosts:
+        # Populated dynamically from ASG instance list.
+        # Use `aws ec2 describe-instances --filters "Name=tag:Role,Values=scale"` to fetch.

@@ -1,0 +1,66 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Build artifacts
+target/
+*.rs.bk
+*.pdb
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Test files
+tests/
+examples/
+benches/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Docker (avoid recursive builds)
+docker/
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Packaging
+packaging/
+scripts/
+
+# Development
+.env
+.env.*
+*.log
+*.tmp
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Coverage and profiling
+coverage/
+*.profraw
+*.profdata
+lcov.info
+tarpaulin-report.html
+
+# Cargo lock for libraries (keep for binaries)
+# Cargo.lock
+
+# Local configuration
+config.local.toml
+*.local.*

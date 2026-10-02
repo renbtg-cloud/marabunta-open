@@ -1,0 +1,81 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta | Book VI: HighestSec, ZKP & Governance</title>
+    <link rel="stylesheet" href="marabunta-core.css">
+</head>
+<body>
+    <nav>
+        <h1>Marabunta Spec</h1>
+        <ul>
+            <li><a href="index.html">0. Master Index</a></li>
+            <li><a href="spec-gossip-dht.html">I. The Hive Mind & DHT</a></li>
+            <li><a href="spec-phantom-crypto.html">II. Phantom Cryptography</a></li>
+            <li><a href="spec-wasm-enclaves.html">III. WASM & Zero-Copy ABI</a></li>
+            <li><a href="spec-neuromancer.html">IV. Neuromancer Storage</a></li>
+            <li><a href="spec-mmx-economics.html">V. MMX Spot Market</a></li>
+            <li><a href="spec-highestsec.html" class="active">VI. HighestSec & ZKP</a></li>
+            <li><a href="spec-wan-topology.html">VII. Hyperscale Topology</a></li>
+            <li><a href="spec-developer-ux.html">VIII. Polyglot SDKs</a></li>
+            <li><a href="spec-control-plane.html">IX. The Control Plane</a></li>
+            <li><a href="spec-business-strategy.html">X. Strategic Usages</a></li>
+            <li><a href="spec-global-impact.html">XI. The 100 Entities Matrix</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Book VI: HighestSec, ZKP, & Global Jurisdiction</h2>
+        <h3>The Architecture of Cryptographic Compliance</h3>
+        
+        <p>
+            When deploying to heavily regulated industries (Defense, Banking, Healthcare), physical network isolation is impossible on a global spot market. Marabunta's <code>HighestSec</code> module replaces physical compliance boundaries with immutable, cryptographic mathematics.
+        </p>
+
+        <h3>6.1 Zone Certificates & Releasability</h3>
+        <p>
+            A node cannot simply join a restricted sub-mesh. It must be provisioned with a <code>ZoneMembershipCertificate</code>. This certificate defines the physical jurisdiction (e.g., <code>CountryCode::DE</code> for Germany) and the maximum <code>ClassificationLevel</code> the node is legally allowed to process.
+        </p>
+
+        <p>
+            The Swarm actively parses metadata tags (e.g., <code>GLOBAL_ALLIANCE_T1 SECRET</code> or <code>TRES SECRET UE</code>). If a user attempts to route an EU-classified payload to a node without the requisite European Zone Certificate, the cryptographic handshake fails instantly at the Phantom Protocol layer. The payload cannot physically move.
+        </p>
+
+        <div class="alert">
+            <strong>HYBRID SWARM (CLEARNET VS DARKNET):</strong> The certificate includes a <code>requires_clearnet</code> flag. Highly classified workloads mandate static IP attribution and mutually authenticated TLS (mTLS), entirely bypassing the highly evasive, anonymous routing of the DarkNet Spot Market.
+        </div>
+
+        <h3>6.2 Zero-Knowledge Proofs (zk-STARKs)</h3>
+        <p>
+            How does a Defense contractor trust a consumer GPU in a Tier-3 data center to calculate a fluid dynamics equation accurately without leaking the intellectual property?
+        </p>
+
+        <p>
+            Marabunta utilizes the <strong>risc0 zkVM</strong> to generate mathematically unforgeable proofs of execution. 
+        </p>
+        
+        <pre><code>// src/highestsec/zkp.rs - Execution Proof Generation
+pub struct ExecutionProof {
+    pub proof_bytes: Vec<u8>,
+    pub vkey_id: String,
+    pub public_inputs: Vec<[u8; 32]>,
+    pub execution_trace: Vec<FheOp>,
+}</code></pre>
+
+        <p>
+            The WASM execution trace is fed into a RISC-V guest program. The prover generates a <code>Receipt</code> (a zk-STARK proof). The receiving entity does not need to re-run the computation; they simply verify the STARK proof in milliseconds. This mathematically guarantees that the specific WebAssembly binary was executed perfectly against the encrypted input, without ever revealing the underlying plaintext data to the host node.
+        </p>
+
+        <h3>6.3 Fully Homomorphic Encryption (FHE)</h3>
+        <p>
+            For the absolute highest tier of execution, enclaves are a temporary band-aid. True blind compute means the host CPU never sees the plaintext data at all. 
+        </p>
+        <p>
+            Marabunta's endgame is executing WASM opcodes directly on encrypted ciphertext using FHE. The host processor only performs blind math. The results are returned to the client, who is the only entity possessing the private key necessary to decrypt the final mathematical state.
+        </p>
+
+    </main>
+</body>
+</html>

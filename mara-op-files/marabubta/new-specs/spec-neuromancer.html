@@ -1,0 +1,97 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta | Book IV: Neuromancer Storage Ecosystem</title>
+    <link rel="stylesheet" href="marabunta-core.css">
+</head>
+<body>
+    <nav>
+        <h1>Marabunta Spec</h1>
+        <ul>
+            <li><a href="index.html">0. Master Index</a></li>
+            <li><a href="spec-gossip-dht.html">I. The Hive Mind & DHT</a></li>
+            <li><a href="spec-phantom-crypto.html">II. Phantom Cryptography</a></li>
+            <li><a href="spec-wasm-enclaves.html">III. WASM & Zero-Copy ABI</a></li>
+            <li><a href="spec-neuromancer.html" class="active">IV. Neuromancer Storage</a></li>
+            <li><a href="spec-mmx-economics.html">V. MMX Spot Market</a></li>
+            <li><a href="spec-developer-ux.html">VI. SDKs & Orchestration</a></li>
+            <li><a href="spec-business-strategy.html">VII. Business & Strategic Usages</a></li>
+            <li><a href="spec-global-impact.html">VIII. The 100 Entities Matrix</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Book IV: Neuromancer Storage Ecosystem</h2>
+        <h3>The Architecture of the Biological Fungal Farm</h3>
+        
+        <p>
+            Centralized storage systems (AWS S3, Azure Blob) are the antithesis of the Swarm. If 50,000 nodes simultaneously request a 100GB training dataset from a centralized bucket, the resulting "thundering herd" will saturate the wide-area network (WAN), trigger rate limits, and bankrupt the operator via egress fees.
+        </p>
+
+        <p>
+            Marabunta completely replaces centralized object storage with <strong>Neuromancer</strong>, a localized, content-addressable storage fabric modeled after a parasitic fungal network. The ecosystem is regulated by specific, autonomous daemon "life forms" that aggressively ingest, compress, and defend the planetary state.
+        </p>
+
+        <h3>4.1 The Leafcutter Engine: Massive Data Ingestion</h3>
+        <p>
+            When a user submits a massive dataset to the swarm (e.g., 50TB of satellite imagery or LLM training weights), it is intercepted by the <code>Leafcutter Engine</code>. 
+        </p>
+        <p>
+            The Leafcutter does not store the file. It aggressively slices the data into millions of 1MB cryptographic "leaves" (shards). It calculates the Merkle Root of the dataset, compresses each leaf using <code>zstd</code> (or <code>lz4_flex</code> for low-entropy telemetry), and seeds them epidemically into the DHT.
+        </p>
+
+        <div class="alert">
+            <strong>REED-SOLOMON ERASURE CODING:</strong> Neuromancer does not use simple replication (which wastes space). It uses Reed-Solomon polynomial math. A 1MB leaf is fragmented into 10 pieces. To reconstruct the leaf, a node only needs to find <em>any 6</em> of the 10 fragments. This means 40% of the storage nodes holding your data can be physically incinerated, and the Swarm will instantly mathematically reconstruct the missing state without data loss.
+        </div>
+
+        <h3>4.2 The Amazonian Predators: Active Defense</h3>
+        <p>
+            Because the storage mesh is comprised of untrusted, anonymous edge hardware, malicious actors will attempt to poison the data or launch Sybil attacks (spinning up thousands of fake nodes to corrupt the majority consensus). Neuromancer protects the data via active, hostile daemons.
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Apex Daemon</th>
+                    <th>Biological Function</th>
+                    <th>Cryptographic Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>The Harpy Eagle</strong></td>
+                    <td>Apex Supervisor</td>
+                    <td>Sits at the aggregator layer. Analyzes the high-dimensional cosine similarity of DiLoCo gradient updates. If it detects a mathematically coordinated attempt to poison an AI model, it signs a lethal <code>HarpyStrike</code>.</td>
+                </tr>
+                <tr>
+                    <td><strong>Cordyceps Protocol</strong></td>
+                    <td>Parasitic Introspection</td>
+                    <td>When a node receives a verified <code>HarpyStrike</code>, Cordyceps seizes the local OS process. It forces the node to sign a cryptographic confession of its corrupted RAM state, broadcasts it to the DHT, and then triggers process suicide.</td>
+                </tr>
+                <tr>
+                    <td><strong>Wild Dogs</strong></td>
+                    <td>Pack Hunting</td>
+                    <td>Correlates multiple confirmed threats within a time window, clustering them by behavioral similarity vectors. Initiates coordinated BFT slashing against entire subnets of colluding malicious nodes.</td>
+                </tr>
+                <tr>
+                    <td><strong>The Spider</strong></td>
+                    <td>Garbage Collection</td>
+                    <td>Crawls the localized BlobStores of edge nodes. If a shard belongs to a mathematical job finalized 48 hours ago, the Spider unilaterally deletes the artifact, keeping the Swarm lean.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>4.3 The Retrovirus Engine: Epidemic Hot-Patching</h3>
+        <p>
+            Standard CI/CD pipelines cannot deploy updates to 100 million offline, firewalled IoT devices. Marabunta uses the <code>Retrovirus Engine</code>. 
+        </p>
+        <p>
+            When a critical security vulnerability is found in the WASM executor, the core maintainers sign a binary <code>.patch</code> file with the Master Authority Key. This patch is injected into the DHT. The Retrovirus epidemically infects the Swarm; nodes verify the signature and hot-reload their own execution engines in milliseconds without dropping active TCP connections or requiring a system reboot.
+        </p>
+
+    </main>
+</body>
+</html>

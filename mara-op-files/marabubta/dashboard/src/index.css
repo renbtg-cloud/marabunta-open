@@ -1,0 +1,53 @@
+/* Marabunta - Licensed under the MIT License.
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-marabunta-bg text-marabunta-t1 font-sans antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-marabunta-bg;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-marabunta-bg3 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-marabunta-muted;
+  }
+
+  /* Prevent iOS zoom on input focus */
+  @media screen and (max-width: 767px) {
+    input[type="date"],
+    select {
+      font-size: 16px;
+    }
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-marabunta-bgc border border-marabunta-border rounded-xl p-4;
+  }
+  .card-hover {
+    @apply bg-marabunta-bgc border border-marabunta-border rounded-xl p-4 transition-colors hover:border-marabunta-cyan;
+  }
+  .label {
+    @apply font-mono text-xs uppercase tracking-wider text-marabunta-muted;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

@@ -1,0 +1,144 @@
+# Marabunta - Licensed under the MIT License.
+# Marabunta Compute - Single Node Configuration
+#
+# This configuration runs all components on a single machine,
+# useful for development, testing, and small workloads.
+#
+# Usage:
+#   marabunta-coordinator --config single-node.toml
+#   marabunta-master --config single-node.toml
+#   marabunta-worker --config single-node.toml
+
+# ============================================================================
+# Node Identity
+# ============================================================================
+[node]
+# Unique identifier (auto-generated if not set)
+# id = "single-node-001"
+
+# Human-readable name
+name = "marabunta-single-node"
+
+# Geographic or logical region
+region = "local"
+
+# Tags for classification
+tags = ["development", "single-node", "all-in-one"]
+
+# ============================================================================
+# Network Configuration
+# ============================================================================
+[network]
+# Address to bind for incoming connections
+bind_address = "127.0.0.1:7000"
+
+# Public address (use bind_address if behind NAT)
+# public_address = "192.168.1.100:7000"
+
+# No bootstrap needed for single node
+bootstrap_servers = []
+
+# Connection timeouts
+connect_timeout = "5s"
+request_timeout = "30s"
+
+# ============================================================================
+# Storage Configuration
+# ============================================================================
+[storage]
+# Base directory for all data
+data_dir = "./data"
+
+# SQLite database path (defaults to data_dir/marabunta.db)
+# database_path = "./data/marabunta.db"
+
+# Checkpoint storage (defaults to data_dir/checkpoints)
+# checkpoint_dir = "./data/checkpoints"
+
+# Maximum checkpoint file size
+max_checkpoint_size_mb = 256
+
+# ============================================================================
+# Coordinator Configuration
+# ============================================================================
+[coordinator]
+# API port for clients
+listen_port = 7000
+
+# Raft port (not used in single-node, but required)
+raft_port = 7001
+
+# No peers in single-node setup
+peers = []
+
+# Raft timeouts (relaxed for single node)
+election_timeout = "5s"
+heartbeat_interval = "1s"
+
+# ============================================================================
+# Master Configuration
+# ============================================================================
+[master]
+# Port for worker connections
+listen_port = 7100
+
+# Connect to local coordinator
+coordinator_addresses = ["http://127.0.0.1:7000"]
+
+# Single node = limited workers
+max_workers = 10
+
+# Worker health monitoring
+worker_timeout = "30s"
+
+# Scheduling cycle
+scheduling_interval = "100ms"
+
+# ============================================================================
+# Worker Configuration
+# ============================================================================
+[worker]
+# Connect to local master
+master_addresses = ["http://127.0.0.1:7100"]
+
+# Concurrent tasks (adjust based on your hardware)
+# Default: number of CPU cores
+max_concurrent_tasks = 4
+
+# Resource limits (optional)
+# cpu_limit = 0.8        # Use at most 80% CPU
+# memory_limit_mb = 4096 # Use at most 4GB RAM
+
+# Heartbeat interval
+heartbeat_interval = "5s"
+
+# Checkpoint interval
+checkpoint_interval = "30s"
+
+# ============================================================================
+# Logging Configuration
+# ============================================================================
+[logging]
+# Log level: trace, debug, info, warn, error
+level = "info"
+
+# Output format: pretty, json, compact
+format = "pretty"
+
+# Log file (optional, logs to stderr if not set)
+# file = "./logs/marabunta.log"
+
+# ============================================================================
+# Security Configuration
+# ============================================================================
+[security]
+# TLS disabled for local development
+tls_enabled = false
+
+# Authentication token (optional for development)
+# auth_token = "dev-token-12345"
+
+# TLS certificates (if tls_enabled = true)
+# cert_path = "./certs/server.crt"
+# key_path = "./certs/server.key"
+# ca_path = "./certs/ca.crt"

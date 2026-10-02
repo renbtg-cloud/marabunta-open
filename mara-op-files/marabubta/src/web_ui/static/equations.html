@@ -1,0 +1,438 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta Compute - Equation Switchboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <style>
+        .switchboard-hero {
+            text-align: center;
+            padding: 2rem 0 1rem;
+        }
+
+        .switchboard-hero h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .switchboard-hero .subtitle {
+            color: var(--text-secondary, #8b949e);
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        /* Input Section */
+        .input-section {
+            background: var(--card-bg, #161b22);
+            border: 1px solid var(--border, #30363d);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .input-section label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary, #8b949e);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .format-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .format-tab {
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: transparent;
+            border: 1px solid var(--border, #30363d);
+            color: var(--text-secondary, #8b949e);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .format-tab:hover {
+            border-color: var(--accent, #58a6ff);
+            color: var(--text-primary, #c9d1d9);
+        }
+
+        .format-tab.active {
+            background: var(--accent, #58a6ff);
+            color: #0d1117;
+            border-color: var(--accent, #58a6ff);
+        }
+
+        .expression-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.75rem 1rem;
+            font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            background: var(--bg, #0d1117);
+            border: 1px solid var(--border, #30363d);
+            border-radius: 6px;
+            color: var(--text-primary, #c9d1d9);
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .expression-input:focus {
+            border-color: var(--accent, #58a6ff);
+        }
+
+        .expression-input::placeholder {
+            color: #484f58;
+        }
+
+        .preview-area {
+            min-height: 40px;
+            padding: 0.75rem 1rem;
+            margin-top: 0.75rem;
+            background: rgba(88, 166, 255, 0.05);
+            border: 1px solid rgba(88, 166, 255, 0.15);
+            border-radius: 6px;
+            font-size: 1.2rem;
+            text-align: center;
+            color: var(--text-primary, #c9d1d9);
+            overflow-x: auto;
+        }
+
+        .preview-area.empty {
+            color: #484f58;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        .solve-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .solve-btn {
+            padding: 0.75rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            background: var(--accent, #58a6ff);
+            color: #0d1117;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .solve-btn:hover {
+            box-shadow: 0 0 20px rgba(88, 166, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .solve-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .solve-status {
+            color: var(--text-secondary, #8b949e);
+            font-size: 0.85rem;
+        }
+
+        /* Option Menu */
+        .option-menu-section {
+            display: none;
+            margin: 1.5rem 0;
+        }
+
+        .option-menu-section.visible {
+            display: block;
+        }
+
+        .option-menu-section h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .option-menu-section .classification {
+            font-size: 0.85rem;
+            color: var(--text-secondary, #8b949e);
+            margin-bottom: 1rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(88, 166, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .handler-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .handler-card {
+            background: var(--card-bg, #161b22);
+            border: 1px solid var(--border, #30363d);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .handler-card:hover {
+            border-color: var(--accent, #58a6ff);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .handler-card.recommended {
+            border-color: var(--success, #3fb950);
+        }
+
+        .handler-card .handler-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .handler-card .handler-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary, #8b949e);
+            margin-bottom: 0.5rem;
+        }
+
+        .handler-card .handler-meta {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .handler-badge {
+            padding: 0.15rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-recommended { background: rgba(63, 185, 80, 0.15); color: #3fb950; }
+        .badge-applicable { background: rgba(88, 166, 255, 0.15); color: #58a6ff; }
+        .badge-marginal { background: rgba(210, 153, 34, 0.15); color: #d29922; }
+
+        .handler-time {
+            font-size: 0.7rem;
+            color: #6e7681;
+        }
+
+        /* Result Area */
+        .result-section {
+            display: none;
+            margin: 1.5rem 0;
+        }
+
+        .result-section.visible {
+            display: block;
+        }
+
+        .result-section h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .result-card {
+            background: var(--card-bg, #161b22);
+            border: 1px solid var(--border, #30363d);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .result-latex {
+            font-size: 1.4rem;
+            text-align: center;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: rgba(88, 166, 255, 0.05);
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+
+        .result-plain {
+            font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg, #0d1117);
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .result-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary, #8b949e);
+        }
+
+        /* Steps */
+        .steps-container {
+            margin-top: 1rem;
+        }
+
+        .step-item {
+            padding: 0.75rem 1rem;
+            border-left: 2px solid var(--border, #30363d);
+            margin-left: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-item .step-number {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--accent, #58a6ff);
+            text-transform: uppercase;
+        }
+
+        .step-item .step-desc {
+            font-size: 0.85rem;
+            margin: 0.25rem 0;
+        }
+
+        .step-item .step-expr {
+            font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary, #8b949e);
+        }
+
+        /* Error */
+        .error-banner {
+            background: rgba(248, 81, 73, 0.1);
+            border: 1px solid rgba(248, 81, 73, 0.3);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            color: #f85149;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .error-banner.visible {
+            display: block;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(88, 166, 255, 0.3);
+            border-top: 2px solid var(--accent, #58a6ff);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .switchboard-hero h2 { font-size: 1.5rem; }
+            .handler-grid { grid-template-columns: 1fr; }
+            .format-tabs { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">&#x2b21;</div>
+                <h1>Marabunta <span>Compute</span></h1>
+            </div>
+            <nav>
+                <a href="/">Dashboard</a>
+                <a href="/jobs.html">Jobs</a>
+                <a href="/nodes.html">Nodes</a>
+                <a href="/instances.html">Instances</a>
+                <a href="/compute.html">Compute</a>
+                <a href="/equations.html" class="active">Equations</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="switchboard-hero">
+                <h2>Equation Switchboard</h2>
+                <p class="subtitle">Submit mathematical expressions for distributed symbolic computation</p>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <label>Input Format</label>
+                <div class="format-tabs">
+                    <button class="format-tab active" data-format="plain_text" onclick="selectFormat(this)">Plain Text</button>
+                    <button class="format-tab" data-format="latex" onclick="selectFormat(this)">LaTeX</button>
+                    <button class="format-tab" data-format="mathml" onclick="selectFormat(this)">MathML</button>
+                    <button class="format-tab" data-format="ascii_math" onclick="selectFormat(this)">AsciiMath</button>
+                </div>
+
+                <label>Expression</label>
+                <textarea class="expression-input" id="expr-input"
+                    placeholder="e.g. x^2 + 3x + 2 = 0"
+                    oninput="updatePreview()"></textarea>
+
+                <div class="preview-area empty" id="preview">Type an expression to see a preview</div>
+
+                <div class="solve-row">
+                    <button class="solve-btn" id="solve-btn" onclick="submitExpression()">Solve</button>
+                    <span class="solve-status" id="solve-status"></span>
+                </div>
+            </div>
+
+            <!-- Error Banner -->
+            <div class="error-banner" id="error-banner"></div>
+
+            <!-- Option Menu (shown after submit) -->
+            <div class="option-menu-section" id="option-menu">
+                <h3>Available Solvers</h3>
+                <div class="classification" id="classification-info"></div>
+                <div class="handler-grid" id="handler-grid"></div>
+            </div>
+
+            <!-- Result Area (shown after handler execution) -->
+            <div class="result-section" id="result-section">
+                <h3>Result</h3>
+                <div class="result-card">
+                    <div class="result-latex" id="result-latex"></div>
+                    <div class="result-plain" id="result-plain"></div>
+                    <div class="steps-container" id="result-steps"></div>
+                    <div class="result-meta" id="result-meta"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/equations.js"></script>
+</body>
+</html>

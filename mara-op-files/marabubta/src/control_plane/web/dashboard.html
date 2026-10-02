@@ -1,0 +1,1698 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta Compute - Control Plane Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #1a1a1f;
+            --bg-secondary: #25252d;
+            --bg-tertiary: #2f2f3a;
+            --accent: #e07860;
+            --accent-hover: #f08870;
+            --text-primary: #e8e8ee;
+            --text-secondary: #a8a8b8;
+            --text-muted: #68687a;
+            --border: #3a3a48;
+            --success: #5fc878;
+            --warning: #f0ad4e;
+            --error: #d9534f;
+            --info: #5bc0de;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            grid-template-rows: 70px 1fr;
+            height: 100vh;
+            gap: 1px;
+            background: var(--border);
+        }
+
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--error);
+            transition: background 0.3s;
+        }
+
+        .status-dot.connected {
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-secondary);
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .sidebar h3 {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .region-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .region-item {
+            background: var(--bg-tertiary);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .region-item:hover {
+            background: var(--bg-primary);
+            transform: translateX(4px);
+        }
+
+        .region-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .region-stats {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .capacity-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-primary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .capacity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+            transition: width 0.5s ease;
+        }
+
+        /* Main area */
+        .main-area {
+            background: var(--bg-secondary);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            padding: 16px 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            background: var(--bg-primary);
+            color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Overview tab */
+        .big-numbers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .big-number {
+            background: var(--bg-tertiary);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .big-number-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .big-number-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .big-number-change {
+            font-size: 12px;
+            color: var(--success);
+            margin-top: 8px;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .chart-container {
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        #topology-canvas, #forecast-canvas {
+            width: 100%;
+            height: 300px;
+        }
+
+        /* Jobs tab */
+        .job-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .job-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .job-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .job-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .job-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .job-status.pending { background: var(--bg-primary); color: var(--text-secondary); }
+        .job-status.running { background: rgba(91, 192, 222, 0.2); color: var(--info); }
+        .job-status.completed { background: rgba(95, 200, 120, 0.2); color: var(--success); }
+        .job-status.failed { background: rgba(217, 83, 79, 0.2); color: var(--error); }
+
+        .job-progress {
+            margin-bottom: 12px;
+        }
+
+        .job-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .job-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+            transition: width 0.5s ease;
+        }
+
+        .job-progress-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .job-meta {
+            display: flex;
+            gap: 24px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .job-details {
+            display: none;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .job-details.expanded {
+            display: block;
+        }
+
+        .heatmap {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .heatmap-cell {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            transition: all 0.2s;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.1);
+        }
+
+        .heatmap-region {
+            font-weight: 600;
+        }
+
+        .heatmap-latency {
+            margin-top: 2px;
+            opacity: 0.8;
+        }
+
+        /* Nodes tab */
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-input {
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .node-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .node-table th {
+            background: var(--bg-primary);
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .node-table th:hover {
+            color: var(--accent);
+        }
+
+        .node-table td {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .node-table tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .node-table tr:hover {
+            background: var(--bg-primary);
+        }
+
+        .node-id {
+            font-family: monospace;
+            color: var(--accent);
+        }
+
+        .node-tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 2px 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Alerts tab */
+        .alert-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .alert-card {
+            background: var(--bg-tertiary);
+            border-left: 4px solid var(--info);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .alert-card.critical { border-left-color: var(--error); }
+        .alert-card.warning { border-left-color: var(--warning); }
+        .alert-card.info { border-left-color: var(--info); }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .alert-severity {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .alert-severity.critical { background: rgba(217, 83, 79, 0.2); color: var(--error); }
+        .alert-severity.warning { background: rgba(240, 173, 78, 0.2); color: var(--warning); }
+        .alert-severity.info { background: rgba(91, 192, 222, 0.2); color: var(--info); }
+
+        .alert-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .alert-message {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .alert-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--accent);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 16px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 2000;
+        }
+
+        .toast {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--info);
+            border-radius: 8px;
+            padding: 16px 20px;
+            min-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--error); }
+        .toast.warning { border-left-color: var(--warning); }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Sparkline */
+        .sparkline {
+            width: 100%;
+            height: 40px;
+            margin-top: 8px;
+        }
+
+        /* Responsive */
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            padding: 8px;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                grid-template-rows: 70px 1fr;
+                grid-template-areas: "header" "main";
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 71px;
+                left: 0;
+                bottom: 0;
+                width: 280px;
+                z-index: 100;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                border-right: 1px solid var(--border);
+                max-height: none;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-toggle {
+                display: flex;
+            }
+
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-stats {
+                gap: 16px;
+            }
+
+            .stat-value {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-stats .stat {
+                display: none;
+            }
+
+            .big-numbers {
+                grid-template-columns: 1fr;
+            }
+
+            .node-table {
+                font-size: 12px;
+            }
+
+            .node-table th, .node-table td {
+                padding: 8px;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .tab {
+                flex-shrink: 0;
+                min-height: 44px;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .filter-input {
+                min-height: 44px;
+                font-size: 16px;
+                width: 100%;
+            }
+
+            .btn {
+                min-height: 44px;
+            }
+
+            .alert-card {
+                flex-direction: column;
+            }
+
+            .job-meta {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .modal-content {
+                width: calc(100vw - 2rem);
+                max-height: calc(100vh - 2rem);
+            }
+
+            .toast {
+                min-width: unset;
+                max-width: calc(100vw - 3rem);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 0 12px;
+            }
+
+            .logo span {
+                display: none;
+            }
+
+            .tab-content {
+                padding: 16px;
+            }
+
+            .node-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                    <path d="M2 17l10 5 10-5"/>
+                    <path d="M2 12l10 5 10-5"/>
+                </svg>
+                <span>Marabunta Compute</span>
+            </div>
+            <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+                </svg>
+            </button>
+            <div class="header-stats">
+                <div class="stat">
+                    <div class="stat-value" id="total-flops">0</div>
+                    <div class="stat-label">TFLOPS</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="total-nodes">0</div>
+                    <div class="stat-label">Nodes</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="active-jobs">0</div>
+                    <div class="stat-label">Active Jobs</div>
+                </div>
+                <div class="connection-status">
+                    <div class="status-dot" id="status-dot"></div>
+                    <span id="status-text">Connecting...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h3>Regions</h3>
+            <div class="region-list" id="region-list">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+        <!-- Main Area -->
+        <div class="main-area">
+            <div class="tabs">
+                <button class="tab active" data-tab="overview">Overview</button>
+                <button class="tab" data-tab="jobs">Jobs</button>
+                <button class="tab" data-tab="nodes">Nodes</button>
+                <button class="tab" data-tab="alerts">Alerts</button>
+            </div>
+
+            <!-- Overview Tab -->
+            <div class="tab-content active" id="overview">
+                <div class="big-numbers">
+                    <div class="big-number">
+                        <div class="big-number-value" id="overview-flops">0</div>
+                        <div class="big-number-label">Total TFLOPS</div>
+                        <div class="big-number-change">+12% from yesterday</div>
+                    </div>
+                    <div class="big-number">
+                        <div class="big-number-value" id="overview-nodes">0</div>
+                        <div class="big-number-label">Active Nodes</div>
+                        <div class="big-number-change">+3 new nodes</div>
+                    </div>
+                    <div class="big-number">
+                        <div class="big-number-value" id="overview-jobs">0</div>
+                        <div class="big-number-label">Running Jobs</div>
+                        <div class="big-number-change">5 pending</div>
+                    </div>
+                </div>
+
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <div class="chart-title">Network Topology</div>
+                        <canvas id="topology-canvas"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Capacity Forecast (24h)</div>
+                        <canvas id="forecast-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jobs Tab -->
+            <div class="tab-content" id="jobs">
+                <div class="job-list" id="job-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Nodes Tab -->
+            <div class="tab-content" id="nodes">
+                <div class="filters">
+                    <input type="text" class="filter-input" id="filter-region" placeholder="Filter by region...">
+                    <input type="text" class="filter-input" id="filter-pool" placeholder="Filter by pool...">
+                    <select class="filter-input" id="filter-status">
+                        <option value="">All statuses</option>
+                        <option value="ready">Ready</option>
+                        <option value="busy">Busy</option>
+                        <option value="offline">Offline</option>
+                    </select>
+                </div>
+                <table class="node-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="id">ID</th>
+                            <th data-sort="region">Region</th>
+                            <th data-sort="status">Status</th>
+                            <th data-sort="load">Load</th>
+                            <th data-sort="cores">Cores</th>
+                            <th>Tags</th>
+                        </tr>
+                    </thead>
+                    <tbody id="node-table-body">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Alerts Tab -->
+            <div class="tab-content" id="alerts">
+                <div class="alert-list" id="alert-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="node-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Node Details</div>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="detail-grid" id="modal-details">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        // State
+        let ws = null;
+        let reconnectInterval = null;
+        let state = {
+            regions: [],
+            jobs: [],
+            nodes: [],
+            alerts: [],
+            stats: {
+                totalFlops: 0,
+                totalNodes: 0,
+                activeJobs: 0
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupTabs();
+            setupFilters();
+            setupSorting();
+            connectWebSocket();
+            fetchInitialData();
+        });
+
+        // Tab switching
+        function setupTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    document.getElementById(tabName).classList.add('active');
+                });
+            });
+        }
+
+        // WebSocket connection
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws/dashboard`;
+
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                console.log('WebSocket connected');
+                updateConnectionStatus(true);
+                clearInterval(reconnectInterval);
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    handleWebSocketMessage(data);
+                } catch (e) {
+                    console.error('Failed to parse WebSocket message:', e);
+                }
+            };
+
+            ws.onclose = () => {
+                console.log('WebSocket disconnected');
+                updateConnectionStatus(false);
+
+                // Reconnect after 5 seconds
+                reconnectInterval = setInterval(() => {
+                    console.log('Attempting to reconnect...');
+                    connectWebSocket();
+                }, 5000);
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        }
+
+        // Handle WebSocket messages
+        function handleWebSocketMessage(data) {
+            switch (data.type) {
+                case 'stats':
+                    updateStats(data.payload);
+                    break;
+                case 'job_update':
+                    updateJob(data.payload);
+                    break;
+                case 'node_update':
+                    updateNode(data.payload);
+                    break;
+                case 'alert':
+                    addAlert(data.payload);
+                    showToast('New Alert', data.payload.message, data.payload.severity);
+                    break;
+                case 'full_state':
+                    updateFullState(data.payload);
+                    break;
+            }
+        }
+
+        // Fetch initial data from REST API
+        async function fetchInitialData() {
+            try {
+                const response = await fetch('/cluster/status');
+                const stats = await response.json();
+                updateStats(stats);
+            } catch (e) {
+                console.error('Failed to fetch initial data:', e);
+            }
+        }
+
+        // Update connection status
+        function updateConnectionStatus(connected) {
+            const dot = document.getElementById('status-dot');
+            const text = document.getElementById('status-text');
+
+            if (connected) {
+                dot.classList.add('connected');
+                text.textContent = 'Connected';
+            } else {
+                dot.classList.remove('connected');
+                text.textContent = 'Disconnected';
+            }
+        }
+
+        // Update stats
+        function updateStats(stats) {
+            // Update header stats
+            document.getElementById('total-flops').textContent = stats.total_flops || 0;
+            document.getElementById('total-nodes').textContent = stats.healthy_masters || 0;
+            document.getElementById('active-jobs').textContent = stats.running_jobs || 0;
+
+            // Update overview tab
+            document.getElementById('overview-flops').textContent = stats.total_flops || 0;
+            document.getElementById('overview-nodes').textContent = stats.healthy_masters || 0;
+            document.getElementById('overview-jobs').textContent = stats.running_jobs || 0;
+
+            state.stats = stats;
+
+            // Update regions if provided
+            if (stats.regions) {
+                updateRegions(stats.regions);
+            }
+
+            // Update jobs if provided
+            if (stats.jobs) {
+                state.jobs = stats.jobs;
+                renderJobs();
+            }
+
+            // Redraw charts
+            drawTopology();
+            drawForecast();
+        }
+
+        // Update regions
+        function updateRegions(regions) {
+            state.regions = regions;
+            const list = document.getElementById('region-list');
+            list.innerHTML = '';
+
+            regions.forEach(region => {
+                const item = document.createElement('div');
+                item.className = 'region-item';
+
+                const capacity = region.available_capacity || Math.random();
+
+                item.innerHTML = `
+                    <div class="region-name">${region.name}</div>
+                    <div class="region-stats">
+                        ${region.total_workers || 0} workers · ${region.masters?.length || 0} masters
+                    </div>
+                    <div class="capacity-bar">
+                        <div class="capacity-fill" style="width: ${capacity * 100}%"></div>
+                    </div>
+                `;
+
+                list.appendChild(item);
+            });
+        }
+
+        // Update/add job
+        function updateJob(job) {
+            const index = state.jobs.findIndex(j => j.id === job.id);
+            if (index >= 0) {
+                state.jobs[index] = job;
+            } else {
+                state.jobs.unshift(job);
+            }
+            renderJobs();
+        }
+
+        // Render jobs
+        function renderJobs() {
+            const list = document.getElementById('job-list');
+            list.innerHTML = '';
+
+            state.jobs.forEach(job => {
+                const completed = job.completed_tasks || 0;
+                const total = job.total_tasks || 1;
+                const progress = (completed / total) * 100;
+
+                const card = document.createElement('div');
+                card.className = 'job-card';
+                card.innerHTML = `
+                    <div class="job-header">
+                        <div class="job-title">${job.name || 'Unnamed Job'}</div>
+                        <div class="job-status ${job.status}">${job.status}</div>
+                    </div>
+                    <div class="job-progress">
+                        <div class="job-progress-bar">
+                            <div class="job-progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="job-progress-text">${completed} / ${total} tasks completed</div>
+                    </div>
+                    <div class="job-meta">
+                        <span>Priority: ${job.priority || 0}</span>
+                        <span>Started: ${job.started_at ? new Date(job.started_at).toLocaleString() : 'N/A'}</span>
+                        ${job.running_tasks ? `<span>Running: ${job.running_tasks}</span>` : ''}
+                        ${job.failed_tasks ? `<span style="color: var(--error)">Failed: ${job.failed_tasks}</span>` : ''}
+                    </div>
+                    <div class="job-details" id="job-details-${job.id}">
+                        <div class="chart-title">Latency Heatmap by Region</div>
+                        <div class="heatmap" id="heatmap-${job.id}"></div>
+                        <div class="chart-title" style="margin-top: 16px;">Work Unit Throughput</div>
+                        <canvas class="sparkline" id="sparkline-${job.id}"></canvas>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    const details = document.getElementById(`job-details-${job.id}`);
+                    details.classList.toggle('expanded');
+                    if (details.classList.contains('expanded')) {
+                        drawHeatmap(job.id);
+                        drawSparkline(job.id);
+                    }
+                });
+
+                list.appendChild(card);
+            });
+        }
+
+        // Draw heatmap
+        function drawHeatmap(jobId) {
+            const heatmap = document.getElementById(`heatmap-${jobId}`);
+            if (!heatmap) return;
+
+            heatmap.innerHTML = '';
+
+            // Mock data - in real scenario, fetch from API
+            const regions = ['us-east', 'us-west', 'eu-west', 'ap-south'];
+            regions.forEach(region => {
+                const latency = Math.floor(Math.random() * 200) + 10;
+                const intensity = Math.min(latency / 200, 1);
+                const r = Math.floor(224 + intensity * (217 - 224));
+                const g = Math.floor(120 + intensity * (83 - 120));
+                const b = Math.floor(96 + intensity * (79 - 96));
+
+                const cell = document.createElement('div');
+                cell.className = 'heatmap-cell';
+                cell.style.background = `rgb(${r}, ${g}, ${b})`;
+                cell.innerHTML = `
+                    <div class="heatmap-region">${region}</div>
+                    <div class="heatmap-latency">${latency}ms</div>
+                `;
+                heatmap.appendChild(cell);
+            });
+        }
+
+        // Draw sparkline
+        function drawSparkline(jobId) {
+            const canvas = document.getElementById(`sparkline-${jobId}`);
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Mock data
+            const points = 50;
+            const data = Array.from({ length: points }, () => Math.random() * 0.8 + 0.2);
+
+            ctx.strokeStyle = '#e07860';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            data.forEach((value, i) => {
+                const x = (i / (points - 1)) * width;
+                const y = height - (value * height);
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+        }
+
+        // Update/add node
+        function updateNode(node) {
+            const index = state.nodes.findIndex(n => n.id === node.id);
+            if (index >= 0) {
+                state.nodes[index] = node;
+            } else {
+                state.nodes.push(node);
+            }
+            renderNodes();
+        }
+
+        // Render nodes
+        function renderNodes() {
+            const tbody = document.getElementById('node-table-body');
+            tbody.innerHTML = '';
+
+            const filtered = filterNodes();
+
+            filtered.forEach(node => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="node-id">${node.id}</td>
+                    <td>${node.region || 'unknown'}</td>
+                    <td><span class="job-status ${node.status}">${node.status}</span></td>
+                    <td>${(node.current_load * 100).toFixed(1)}%</td>
+                    <td>${node.capabilities?.cpu_cores || 'N/A'}</td>
+                    <td>
+                        <div class="node-tags">
+                            ${node.tags ? node.tags.map(tag => `<span class="tag">${tag}</span>`).join('') : ''}
+                        </div>
+                    </td>
+                `;
+
+                row.addEventListener('click', () => showNodeModal(node));
+                tbody.appendChild(row);
+            });
+        }
+
+        // Filter nodes
+        function filterNodes() {
+            const region = document.getElementById('filter-region').value.toLowerCase();
+            const pool = document.getElementById('filter-pool').value.toLowerCase();
+            const status = document.getElementById('filter-status').value;
+
+            return state.nodes.filter(node => {
+                if (region && !node.region?.toLowerCase().includes(region)) return false;
+                if (pool && !node.pool?.toLowerCase().includes(pool)) return false;
+                if (status && node.status !== status) return false;
+                return true;
+            });
+        }
+
+        // Setup filters
+        function setupFilters() {
+            ['filter-region', 'filter-pool', 'filter-status'].forEach(id => {
+                document.getElementById(id).addEventListener('input', renderNodes);
+            });
+        }
+
+        // Setup sorting
+        function setupSorting() {
+            document.querySelectorAll('.node-table th[data-sort]').forEach(th => {
+                th.addEventListener('click', () => {
+                    const field = th.dataset.sort;
+                    state.nodes.sort((a, b) => {
+                        if (a[field] < b[field]) return -1;
+                        if (a[field] > b[field]) return 1;
+                        return 0;
+                    });
+                    renderNodes();
+                });
+            });
+        }
+
+        // Show node modal
+        function showNodeModal(node) {
+            const modal = document.getElementById('node-modal');
+            const details = document.getElementById('modal-details');
+
+            details.innerHTML = `
+                <div class="detail-label">ID</div>
+                <div class="detail-value node-id">${node.id}</div>
+
+                <div class="detail-label">Address</div>
+                <div class="detail-value">${node.address || 'N/A'}</div>
+
+                <div class="detail-label">Region</div>
+                <div class="detail-value">${node.region || 'N/A'}</div>
+
+                <div class="detail-label">Status</div>
+                <div class="detail-value"><span class="job-status ${node.status}">${node.status}</span></div>
+
+                <div class="detail-label">CPU Cores</div>
+                <div class="detail-value">${node.capabilities?.cpu_cores || 'N/A'}</div>
+
+                <div class="detail-label">Memory</div>
+                <div class="detail-value">${node.capabilities?.memory_mb ? (node.capabilities.memory_mb / 1024).toFixed(1) + ' GB' : 'N/A'}</div>
+
+                <div class="detail-label">Disk</div>
+                <div class="detail-value">${node.capabilities?.disk_mb ? (node.capabilities.disk_mb / 1024).toFixed(1) + ' GB' : 'N/A'}</div>
+
+                <div class="detail-label">GPU</div>
+                <div class="detail-value">${node.capabilities?.has_gpu ? 'Yes' : 'No'}</div>
+
+                <div class="detail-label">Current Load</div>
+                <div class="detail-value">${(node.current_load * 100).toFixed(1)}%</div>
+
+                <div class="detail-label">Running Tasks</div>
+                <div class="detail-value">${node.running_tasks?.length || 0}</div>
+
+                <div class="detail-label">Last Heartbeat</div>
+                <div class="detail-value">${node.last_heartbeat ? new Date(node.last_heartbeat).toLocaleString() : 'N/A'}</div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('node-modal').classList.remove('active');
+        }
+
+        // Add alert
+        function addAlert(alert) {
+            state.alerts.unshift(alert);
+            renderAlerts();
+        }
+
+        // Render alerts
+        function renderAlerts() {
+            const list = document.getElementById('alert-list');
+            list.innerHTML = '';
+
+            state.alerts.forEach((alert, index) => {
+                const card = document.createElement('div');
+                card.className = `alert-card ${alert.severity}`;
+                card.innerHTML = `
+                    <div class="alert-content">
+                        <div class="alert-header">
+                            <span class="alert-severity ${alert.severity}">${alert.severity}</span>
+                            <span class="alert-title">${alert.title}</span>
+                        </div>
+                        <div class="alert-message">${alert.message}</div>
+                        <div class="alert-time">${new Date(alert.timestamp).toLocaleString()}</div>
+                    </div>
+                    <div class="alert-actions">
+                        ${alert.action ? `<button class="btn btn-primary" onclick="handleAlertAction('${alert.id}', '${alert.action}')">Take Action</button>` : ''}
+                        <button class="btn btn-secondary" onclick="dismissAlert(${index})">Dismiss</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        // Handle alert action
+        async function handleAlertAction(alertId, action) {
+            try {
+                await fetch(`/alerts/${alertId}/action`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action })
+                });
+                showToast('Action Taken', 'Alert action executed successfully', 'success');
+            } catch (e) {
+                showToast('Error', 'Failed to execute action', 'error');
+            }
+        }
+
+        // Dismiss alert
+        function dismissAlert(index) {
+            state.alerts.splice(index, 1);
+            renderAlerts();
+        }
+
+        // Show toast notification
+        function showToast(title, message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-title">${title}</div>
+                <div class="toast-message">${message}</div>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        // Draw topology visualization
+        function drawTopology() {
+            const canvas = document.getElementById('topology-canvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Simple hierarchical topology
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) / 3;
+
+            // Draw coordinator (center)
+            ctx.fillStyle = '#e07860';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 15, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw masters (circle around center)
+            const masters = state.stats.healthy_masters || 3;
+            ctx.fillStyle = '#5bc0de';
+
+            for (let i = 0; i < masters; i++) {
+                const angle = (i / masters) * Math.PI * 2;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+
+                // Connection line
+                ctx.strokeStyle = '#3a3a48';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+
+                // Master node
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Labels
+            ctx.fillStyle = '#e8e8ee';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Coordinator', centerX, centerY + 30);
+        }
+
+        // Draw forecast chart
+        function drawForecast() {
+            const canvas = document.getElementById('forecast-canvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Generate 24-hour forecast data
+            const hours = 24;
+            const data = Array.from({ length: hours }, (_, i) => {
+                const base = 0.6;
+                const variation = Math.sin(i / 3) * 0.2;
+                const noise = (Math.random() - 0.5) * 0.1;
+                return Math.max(0, Math.min(1, base + variation + noise));
+            });
+
+            // Draw grid
+            ctx.strokeStyle = '#2f2f3a';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 4; i++) {
+                const y = (i / 4) * height;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+
+            // Draw area
+            ctx.fillStyle = 'rgba(224, 120, 96, 0.1)';
+            ctx.beginPath();
+            ctx.moveTo(0, height);
+            data.forEach((value, i) => {
+                const x = (i / (hours - 1)) * width;
+                const y = height - (value * height * 0.8);
+                ctx.lineTo(x, y);
+            });
+            ctx.lineTo(width, height);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw line
+            ctx.strokeStyle = '#e07860';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            data.forEach((value, i) => {
+                const x = (i / (hours - 1)) * width;
+                const y = height - (value * height * 0.8);
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
+
+            // Draw labels
+            ctx.fillStyle = '#68687a';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('Now', 5, height - 5);
+            ctx.textAlign = 'right';
+            ctx.fillText('+24h', width - 5, height - 5);
+        }
+
+        // Update full state
+        function updateFullState(payload) {
+            if (payload.regions) state.regions = payload.regions;
+            if (payload.jobs) state.jobs = payload.jobs;
+            if (payload.nodes) state.nodes = payload.nodes;
+            if (payload.alerts) state.alerts = payload.alerts;
+            if (payload.stats) state.stats = payload.stats;
+
+            updateRegions(state.regions);
+            renderJobs();
+            renderNodes();
+            renderAlerts();
+            drawTopology();
+            drawForecast();
+        }
+
+        // Simulate demo data if WebSocket is not available
+        setTimeout(() => {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                console.log('Simulating demo data...');
+
+                // Demo stats
+                updateStats({
+                    total_flops: 42,
+                    healthy_masters: 5,
+                    running_jobs: 3,
+                    pending_jobs: 2,
+                    completed_jobs: 47,
+                    failed_jobs: 1,
+                    regions: [
+                        { name: 'us-east-1', total_workers: 120, masters: ['m1', 'm2'], available_capacity: 0.75 },
+                        { name: 'us-west-2', total_workers: 95, masters: ['m3'], available_capacity: 0.60 },
+                        { name: 'eu-west-1', total_workers: 78, masters: ['m4'], available_capacity: 0.82 },
+                        { name: 'ap-south-1', total_workers: 52, masters: ['m5'], available_capacity: 0.45 }
+                    ],
+                    jobs: [
+                        { id: '1', name: 'Monte Carlo Simulation', status: 'running', priority: 10, total_tasks: 1000, completed_tasks: 674, running_tasks: 45, failed_tasks: 0, started_at: new Date(Date.now() - 3600000).toISOString() },
+                        { id: '2', name: 'Protein Folding Analysis', status: 'running', priority: 8, total_tasks: 500, completed_tasks: 128, running_tasks: 22, failed_tasks: 1, started_at: new Date(Date.now() - 1800000).toISOString() },
+                        { id: '3', name: 'Climate Model Training', status: 'pending', priority: 5, total_tasks: 2000, completed_tasks: 0, running_tasks: 0, failed_tasks: 0 }
+                    ]
+                });
+
+                // Demo nodes
+                for (let i = 0; i < 15; i++) {
+                    updateNode({
+                        id: `worker-${String(i).padStart(8, '0')}`,
+                        region: ['us-east-1', 'us-west-2', 'eu-west-1'][i % 3],
+                        status: ['ready', 'busy', 'ready'][i % 3],
+                        current_load: Math.random(),
+                        capabilities: {
+                            cpu_cores: [4, 8, 16][i % 3],
+                            memory_mb: 8192 + (i * 1024),
+                            disk_mb: 102400,
+                            has_gpu: i % 4 === 0
+                        },
+                        tags: i % 2 === 0 ? ['compute', 'gpu'] : ['compute'],
+                        running_tasks: i % 3 === 1 ? ['task-1', 'task-2'] : [],
+                        last_heartbeat: new Date().toISOString()
+                    });
+                }
+
+                // Demo alerts
+                addAlert({
+                    id: '1',
+                    severity: 'warning',
+                    title: 'High Latency Detected',
+                    message: 'Region us-west-2 is experiencing elevated latency (avg 250ms)',
+                    timestamp: new Date().toISOString(),
+                    action: 'rebalance'
+                });
+
+                addAlert({
+                    id: '2',
+                    severity: 'info',
+                    title: 'New Workers Joined',
+                    message: '5 new worker nodes have joined the cluster in eu-west-1',
+                    timestamp: new Date(Date.now() - 300000).toISOString()
+                });
+            }
+        }, 2000);
+        // Sidebar toggle for mobile
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+        }
+    </script>
+</body>
+</html>

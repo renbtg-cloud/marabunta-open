@@ -1,0 +1,21 @@
+# Local configuration file for Android SDK path
+# Copy this to local.properties and update the path
+
+# Windows example:
+# sdk.dir=C\:\\Users\\YourName\\AppData\\Local\\Android\\Sdk
+
+# macOS example:
+# sdk.dir=/Users/YourName/Library/Android/sdk
+
+# Linux example:
+sdk.dir=/home/renbt/Android/Sdk
+
+# NDK path (required for native library builds)
+# ndk.dir=/home/renbt/Android/Sdk/ndk/25.2.9519653
+
+# Release signing configuration
+# Generate a keystore with: ./setup-signing.sh
+signing.storeFile=release.keystore
+signing.storePassword=changeme
+signing.keyAlias=marabunta
+signing.keyPassword=changeme

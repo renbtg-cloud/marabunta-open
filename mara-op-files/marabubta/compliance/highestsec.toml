@@ -1,0 +1,40 @@
+# Marabunta - Licensed under the MIT License.
+[profile]
+name = "highestsec"
+version = "1.0"
+description = "Sealed computation / highestsec-grade compliance profile. Locks all security-critical settings at compile time."
+
+[[overrides]]
+key = "allow_plaintext"
+value = false
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "Sealed computation requires encrypted transport"
+
+[[overrides]]
+key = "allow_unsigned_gossip"
+value = false
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "Sealed computation requires signed gossip for trust model integrity"
+
+[[overrides]]
+key = "enable_neuromancer"
+value = true
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "Anomaly detection required for sealed workload security_domain"
+
+[[overrides]]
+key = "enable_gdpr"
+value = true
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "Data protection compliance required for sealed computation"
+
+[[overrides]]
+key = "enable_sealed_execution"
+value = true
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "Core feature — must be enabled"

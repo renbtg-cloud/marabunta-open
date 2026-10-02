@@ -1,0 +1,154 @@
+@page {
+  size: A4;
+  margin: 25mm;
+  @bottom-right {
+    content: counter(page);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #666;
+    font-size: 9pt;
+  }
+  @bottom-left {
+    content: "THE MARABUNTA BIBLE";
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #999;
+    font-size: 8pt;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+}
+
+body {
+  font-family: "Georgia", "Times New Roman", serif;
+  color: #1a1a1a;
+  font-size: 11pt;
+  line-height: 1.7;
+  text-align: justify;
+}
+
+h1 {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  color: #000;
+  font-size: 24pt;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #eaeaea;
+  padding-bottom: 0.5rem;
+  page-break-before: always;
+}
+
+h2 {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  color: #222;
+  font-size: 18pt;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+}
+
+h3 {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  color: #333;
+  font-size: 14pt;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-bottom: 1.25rem;
+}
+
+ul, ol {
+  margin-bottom: 1.25rem;
+  padding-left: 2rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
+
+blockquote {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 10.5pt;
+  font-style: italic;
+  color: #4a5568;
+  margin: 2rem 0;
+  border-left: 4px solid #3182ce;
+  background: #f7fafc;
+  padding: 1rem 1.5rem;
+  border-radius: 0 4px 4px 0;
+}
+
+pre {
+  font-family: "Menlo", "Consolas", "Courier New", monospace;
+  font-size: 9pt;
+  background-color: #f8f9fa;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  margin-bottom: 1.5rem;
+  color: #2d3748;
+}
+
+code {
+  font-family: "Menlo", "Consolas", "Courier New", monospace;
+  background-color: #edf2f7;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  color: #e53e3e;
+}
+
+a {
+  color: #3182ce;
+  text-decoration: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 10pt;
+}
+
+th, td {
+  padding: 0.75rem;
+  border: 1px solid #cbd5e0;
+  text-align: left;
+}
+
+th {
+  background-color: #edf2f7;
+  font-weight: 600;
+}
+
+/* Table of Contents Styling */
+#TOC {
+  margin-bottom: 3rem;
+  page-break-after: always;
+}
+
+#TOC > ul {
+  padding-left: 0;
+  list-style-type: none;
+}
+
+#TOC ul {
+  list-style-type: none;
+}
+
+#TOC a {
+  color: #2d3748;
+  text-decoration: none;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.8;
+}
+
+#TOC a:hover {
+  color: #3182ce;
+  text-decoration: underline;
+}

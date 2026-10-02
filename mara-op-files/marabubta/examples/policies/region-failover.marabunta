@@ -1,0 +1,265 @@
+# Region Failover Policy
+# Multi-region placement with automatic failover capabilities
+#
+# This policy demonstrates:
+# - Geographic distribution
+# - Failover configuration
+# - Regional affinity and anti-affinity
+# - SLA-based routing
+
+# Primary region preference
+policy "region-primary-us-east" {
+    version = 1
+    description = "Primary region routing to US-East for North American users"
+    author = "platform-team"
+    authority_domain = "regions.us"
+
+    enabled = true
+
+    condition {
+        any {
+            # Jobs from US-based submitters
+            submitter_matches {
+                in_domain = "users.us"
+            }
+            # Jobs explicitly requesting US region
+            job_matches {
+                tags = ["region:us", "region:us-east"]
+            }
+        }
+    }
+
+    effects {
+        # Strongly prefer US-East region
+        prefer {
+            selector = tag("region:us-east")
+            weight = 0.95
+        }
+
+        # Secondary preference for US-West (for failover)
+        prefer {
+            selector = tag("region:us-west")
+            weight = 0.6
+        }
+
+        # Co-locate tasks from same job in same region
+        affinity {
+            with = same_job
+            scope = region
+            weight = 0.8
+        }
+
+        # Spread across availability zones within region
+        anti_affinity {
+            with = same_job
+            scope = rack  # Different racks/AZs
+            weight = 0.5
+        }
+    }
+
+    governance {
+        override_policy = blueprint {
+            min_priority = 50
+        }
+        conflict_priority = 60
+    }
+}
+
+# European region routing
+policy "region-primary-eu" {
+    version = 1
+    description = "Primary region routing to EU for European users"
+    author = "platform-team"
+    authority_domain = "regions.eu"
+
+    enabled = true
+
+    condition {
+        any {
+            submitter_matches {
+                in_domain = "users.eu"
+            }
+            job_matches {
+                tags = ["region:eu", "region:eu-west", "region:eu-central"]
+            }
+        }
+    }
+
+    effects {
+        # Prefer EU regions
+        prefer {
+            selector = tag_any("region:eu-west", "region:eu-central")
+            weight = 0.95
+        }
+
+        # GDPR compliance - require EU for sensitive data
+        require {
+            selector = tag("gdpr_compliant:true")
+        }
+
+        # Exclude non-EU regions for data residency
+        exclude {
+            selector = not(tag_any("region:eu-west", "region:eu-central", "region:eu-north"))
+        }
+    }
+
+    governance {
+        override_policy = mandatory  # Data residency cannot be overridden
+        conflict_priority = 90
+    }
+}
+
+# Automatic failover policy
+policy "automatic-failover" {
+    version = 1
+    description = "Automatic failover when primary region is degraded"
+    author = "sre-team"
+    authority_domain = "regions.*"
+
+    enabled = true
+
+    condition {
+        all {
+            # When a region has health issues
+            any {
+                job_matches {
+                    tags = ["failover:enabled", "ha:required"]
+                }
+            }
+            # Check for regional degradation (would be dynamic in practice)
+            not {
+                time_window {
+                    # Placeholder - in practice this would check regional health
+                    cron = "* * 30 2 *"  # Never matches (Feb 30)
+                }
+            }
+        }
+    }
+
+    effects {
+        # When failover triggers, use secondary regions
+        prefer {
+            selector = tag("failover_tier:secondary")
+            weight = 0.9
+        }
+
+        # Exclude degraded primary region
+        exclude {
+            selector = tag("region_status:degraded")
+        }
+
+        # Increase task redundancy during failover
+        custom_score {
+            function_id = "increase_redundancy"
+            params = {
+                factor = 1.5
+            }
+        }
+    }
+
+    governance {
+        override_policy = mandatory
+        conflict_priority = 95
+    }
+}
+
+# Cross-region replication for critical workloads
+policy "cross-region-replication" {
+    version = 1
+    description = "Replicate critical tasks across multiple regions"
+    author = "platform-team"
+    authority_domain = "regions.*"
+
+    enabled = true
+
+    condition {
+        all {
+            job_matches {
+                tags = ["critical", "replicated"]
+                priority_range = [80, 100]
+            }
+        }
+    }
+
+    effects {
+        # Require tasks to be spread across regions
+        anti_affinity {
+            with = same_job
+            scope = region
+            weight = 1.0  # Hard requirement
+        }
+
+        # Require at least 2 different regions
+        require {
+            selector = tag_any("region:us-east", "region:us-west", "region:eu-west")
+        }
+
+        # Higher priority for cross-region tasks
+        set_priority {
+            priority = 10
+            mode = add
+        }
+
+        # Disallow preemption for critical replicated workloads
+        disallow_preemption
+    }
+
+    governance {
+        override_policy = mandatory
+        conflict_priority = 85
+    }
+}
+
+# Cost optimization - use cheaper regions during off-peak
+policy "region-cost-optimization" {
+    version = 1
+    description = "Route to cheaper regions during off-peak hours"
+    author = "finops-team"
+    authority_domain = "regions.*"
+
+    enabled = true
+
+    condition {
+        all {
+            # Low priority batch jobs
+            job_matches {
+                priority_range = [0, 30]
+                job_type = ["batch", "etl"]
+            }
+            # During off-peak hours (nights and weekends)
+            any {
+                time_window {
+                    cron = "0 0-6 * * *"  # Midnight to 6 AM
+                }
+                time_window {
+                    cron = "0 * * * SAT,SUN"  # Weekends
+                }
+            }
+        }
+    }
+
+    effects {
+        # Prefer cheaper/spot regions
+        prefer {
+            selector = tag("cost_tier:economy")
+            weight = 0.85
+        }
+
+        # Use spot capacity when available
+        prefer {
+            selector = tag("capacity_type:spot")
+            weight = 0.7
+        }
+
+        # Charge against economy quota
+        charge_quota {
+            quota_id = "batch-economy"
+            multiplier = 0.5  # Half cost during off-peak
+        }
+    }
+
+    governance {
+        override_policy = advisory
+        conflict_priority = 20
+    }
+}

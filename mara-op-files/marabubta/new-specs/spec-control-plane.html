@@ -1,0 +1,99 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta | Book IX: The Control Plane & 3D Telemetry</title>
+    <link rel="stylesheet" href="marabunta-core.css">
+</head>
+<body>
+    <nav>
+        <h1>Marabunta Spec</h1>
+        <ul>
+            <li><a href="index.html">0. Master Index</a></li>
+            <li><a href="spec-gossip-dht.html">I. The Hive Mind & DHT</a></li>
+            <li><a href="spec-phantom-crypto.html">II. Phantom Cryptography</a></li>
+            <li><a href="spec-wasm-enclaves.html">III. WASM & Zero-Copy ABI</a></li>
+            <li><a href="spec-neuromancer.html">IV. Neuromancer Storage</a></li>
+            <li><a href="spec-mmx-economics.html">V. MMX Spot Market</a></li>
+            <li><a href="spec-highestsec.html">VI. HighestSec & ZKP</a></li>
+            <li><a href="spec-wan-topology.html">VII. Hyperscale Topology</a></li>
+            <li><a href="spec-developer-ux.html">VIII. Polyglot SDKs</a></li>
+            <li><a href="spec-control-plane.html" class="active">IX. The Control Plane</a></li>
+            <li><a href="spec-business-strategy.html">X. Strategic Usages</a></li>
+            <li><a href="spec-global-impact.html">XI. The 100 Entities Matrix</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Book IX: The Control Plane & 3D Telemetry</h2>
+        <h3>The Architecture of High-Authority Observability</h3>
+        
+        <p>
+            Observing a 100-million node superorganism requires moving beyond flat metrics and standard 2D dashboards. Marabunta's <strong>Control Plane</strong> (located in <code>src/control_plane/</code>) provides a high-authority, real-time command surface that visualizes the planetary mesh as a multi-dimensional topological organism.
+        </p>
+
+        <h3>9.1 The 3D Observatory (Three.js Engine)</h3>
+        <p>
+            The Marabunta Dashboard utilizes a custom Three.js engine (<code>dashboard/src/three/</code>) to visualize the DHT in real-time. Instead of a list of servers, operators interact with a live 3D force-directed graph.
+        </p>
+
+        <div class="alert">
+            <strong>CLUSTERING ALGORITHMS:</strong> The Observatory supports multiple layout engines to surface hidden architectural bottlenecks. The <code>SpectralLayout</code> visualizes node connectivity clusters, while the <code>GeographicLayout</code> projects the Swarm onto a 3D terrestrial globe, highlighting physical fiber-cut vulnerabilities and regional data center hotspots.
+        </div>
+
+        <h3>9.2 Real-Time Telemetry Firehose (WebSocket API)</h3>
+        <p>
+            Standard polling (HTTP GET) is too slow for a 100-million node swarm. The Control Plane exposes a <strong>Binary Telemetry Firehose</strong> via WebSockets. This firehose streams live events, MMX spot price shifts, and thermal/memory telemetry directly into the dashboard and IDE Symbionts with sub-50ms latency.
+        </p>
+
+        <pre><code>// src/control_plane/websocket.rs - High-Velocity Telemetry
+pub async fn broadcast_telemetry(bus: Arc<SwarmBus>, sockets: &WebSocketPool) {
+    while let Some(event) = bus.recv().await {
+        // Serialize to highly compressed binary format (FlatBuffers)
+        let payload = compress_event(&event);
+        sockets.send_all(payload).await;
+    }
+}</code></pre>
+
+        <h3>9.3 Role-Based Command Surfaces (RBAC)</h3>
+        <p>
+            The Control Plane enforces strict hierarchical access. Navigation is dynamically tailored to the operator's mission-critical role (<code>dashboard/src/app/Sidebar.tsx</code>).
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Operator Role</th>
+                    <th>Command Access</th>
+                    <th>Observability Gutter</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>The Operator</strong></td>
+                    <td>Node Control, Global Kill Switches, Spot Market Overrides.</td>
+                    <td>3D Topology, Active Alerts, Audit Trail.</td>
+                </tr>
+                <tr>
+                    <td><strong>Security Auditor</strong></td>
+                    <td>Cryptographic Verification Logs, Compliance Posture.</td>
+                    <td>Audit Trail Explorer, HighestSec Jurisdiction Maps.</td>
+                </tr>
+                <tr>
+                    <td><strong>Team Lead</strong></td>
+                    <td>Resource Allocation, Budgeting, Job Submission.</td>
+                    <td>Team Dashboards, Cost Analysis.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>9.4 The Topological Kill Switch</h3>
+        <p>
+            In the event of a global coordinated attack or a runaway recursive compute loop, the Control Plane provides the <strong>Topological Kill Switch</strong>. Signed by the Operator's Super-Peer key, this command broadcasts a BGP-style route blackhole via the gossip network, instantaneously quarantining entire subnets or halting all execution across specific geographic sectors without requiring access to the physical node hardware.
+        </p>
+
+    </main>
+</body>
+</html>

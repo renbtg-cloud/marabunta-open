@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Service identifier -->
+    <key>Label</key>
+    <string>com.marabuntacompute.swarm</string>
+
+    <!-- Binary and arguments -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/marabunta-swarm</string>
+        <string>--config</string>
+        <string>/usr/local/etc/marabunta/swarm.toml</string>
+    </array>
+
+    <!-- Start automatically at boot/login -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Restart policy: restart if the process exits with a non-zero status -->
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+
+    <!-- Minimum interval between restarts (prevents tight restart loops) -->
+    <key>ThrottleInterval</key>
+    <integer>10</integer>
+
+    <!-- Working directory for the process -->
+    <key>WorkingDirectory</key>
+    <string>/var/lib/marabunta</string>
+
+    <!-- Stdout and stderr log files -->
+    <key>StandardOutPath</key>
+    <string>/usr/local/var/log/marabunta/swarm.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/usr/local/var/log/marabunta/swarm.err</string>
+
+    <!-- Environment variables -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>RUST_LOG</key>
+        <string>info</string>
+    </dict>
+
+    <!-- Resource limits: raise open file descriptor limit for networking -->
+    <key>SoftResourceLimits</key>
+    <dict>
+        <key>NumberOfFiles</key>
+        <integer>65536</integer>
+    </dict>
+
+    <key>HardResourceLimits</key>
+    <dict>
+        <key>NumberOfFiles</key>
+        <integer>65536</integer>
+    </dict>
+
+    <!-- Mark as a background process (lower scheduling priority) -->
+    <key>ProcessType</key>
+    <string>Background</string>
+
+    <!-- Disable the process from creating a window server connection -->
+    <key>AbandonProcessGroup</key>
+    <false/>
+</dict>
+</plist>

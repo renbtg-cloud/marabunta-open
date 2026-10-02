@@ -1,0 +1,92 @@
+# Marabunta - Licensed under the MIT License.
+---
+# Setup playbook: install dependencies, create directories, configure systemd.
+
+- name: Setup Marabunta Swarm nodes
+  hosts: all
+  become: true
+  tasks:
+    - name: Install system packages
+      apt:
+        name:
+          - curl
+          - jq
+          - python3
+          - python3-pip
+          - python3-numpy
+          - htop
+          - net-tools
+        state: present
+        update_cache: true
+
+    - name: Create marabunta directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: "0755"
+      loop:
+        - /opt/marabunta
+        - /opt/marabunta/bin
+        - /opt/marabunta/data
+        - /opt/marabunta/plugins
+        - /opt/marabunta/webapp
+        - /opt/marabunta/logs
+
+    - name: Create systemd service for swarm node
+      copy:
+        dest: /etc/systemd/system/marabunta-swarm.service
+        content: |
+          [Unit]
+          Description=Marabunta Swarm Node
+          After=network.target
+
+          [Service]
+          Type=simple
+          User=ubuntu
+          WorkingDirectory=/opt/marabunta
+          ExecStart=/opt/marabunta/bin/swarm --config /opt/marabunta/config.toml
+          Restart=on-failure
+          RestartSec=5
+          StandardOutput=append:/opt/marabunta/logs/swarm.log
+          StandardError=append:/opt/marabunta/logs/swarm.log
+          LimitNOFILE=65536
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: true
+
+- name: Setup financial plugin on core-0
+  hosts: core-0
+  become: true
+  tasks:
+    - name: Create systemd service for financial plugin
+      copy:
+        dest: /etc/systemd/system/marabunta-financial-plugin.service
+        content: |
+          [Unit]
+          Description=Marabunta Financial Demo Plugin
+          After=marabunta-swarm.service
+          Requires=marabunta-swarm.service
+
+          [Service]
+          Type=simple
+          User=ubuntu
+          WorkingDirectory=/opt/marabunta/plugins/financial-demo
+          ExecStart=/usr/bin/python3 main.py
+          Restart=on-failure
+          RestartSec=5
+          StandardOutput=append:/opt/marabunta/logs/financial-plugin.log
+          StandardError=append:/opt/marabunta/logs/financial-plugin.log
+          Environment=SWARM_SOCKET=/tmp/marabunta/plugins/financial-demo.sock
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: true

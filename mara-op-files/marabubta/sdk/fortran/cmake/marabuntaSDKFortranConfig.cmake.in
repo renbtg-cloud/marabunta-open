@@ -1,0 +1,42 @@
+@PACKAGE_INIT@
+
+#==============================================================================
+# MarabuntaSDKFortranConfig.cmake
+#
+# CMake package configuration file for Marabunta SDK Fortran bindings.
+#
+# This file is included by find_package(MarabuntaSDKFortran) and provides:
+#   - MarabuntaSDK::Fortran target
+#   - MarabuntaSDKFortran_FOUND variable
+#   - MarabuntaSDKFortran_VERSION variable
+#
+# Usage in your CMakeLists.txt:
+#   find_package(MarabuntaSDKFortran REQUIRED)
+#   target_link_libraries(my_program MarabuntaSDK::Fortran)
+#
+# (c) 2024 Marabunta Compute Project
+#==============================================================================
+
+include(CMakeFindDependencyMacro)
+
+# Find the underlying C library
+find_library(MARABUNTA_SDK_LIBRARY
+    NAMES marabunta_sdk libmarabunta_sdk
+    PATHS
+        ${CMAKE_CURRENT_LIST_DIR}/../../../lib
+        /usr/local/lib
+        /usr/lib
+)
+
+if(NOT MARABUNTA_SDK_LIBRARY)
+    message(WARNING "marabunta_sdk C library not found - Fortran bindings may not link correctly")
+endif()
+
+# Include the targets file
+include("${CMAKE_CURRENT_LIST_DIR}/MarabuntaSDKFortranTargets.cmake")
+
+# Set found variable
+set(MarabuntaSDKFortran_FOUND TRUE)
+
+# Check required components
+check_required_components(MarabuntaSDKFortran)

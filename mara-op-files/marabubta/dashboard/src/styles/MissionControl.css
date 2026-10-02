@@ -1,0 +1,98 @@
+/* Marabunta - Licensed under the MIT License.
+/* marabunta-compute/dashboard/src/styles/MissionControl.css */
+:root {
+  /* Color Palette: Stark, Unambiguous, High-Contrast */
+  --bg-primary: #0a0a0a;  /* Near black for main background */
+  --bg-secondary: #1a1a1a;/* Dark gray for panels, sidebars */
+  --border-primary: #333; /* Borders for layout elements */
+  --border-secondary: #555; /* Borders for interactive elements */
+
+  --text-primary: #e5e5e5;  /* Off-white for body text */
+  --text-secondary: #888;  /* Gray for secondary info */
+  --text-monospace: #00ff00; /* Green for code, IDs, technical data */
+
+  /* State Colors: Universal & Critical */
+  --color-ok: #00b894;      /* A clear, calm green */
+  --color-warning: #fdd835; /* A bright, unmissable yellow */
+  --color-critical: #d81b60;/* A deep, urgent magenta/red */
+  --color-info: #00a8ff;    /* A neutral, informative blue */
+
+  /* Sizing */
+  --sidebar-width: 220px;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+  font-size: 14px;
+}
+
+.app-layout {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-primary);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.sidebar-header {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border-primary);
+}
+.sidebar-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-monospace);
+  letter-spacing: 2px;
+}
+.sidebar-role {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 2px 8px;
+  background-color: var(--color-info);
+  color: var(--bg-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.sidebar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+.sidebar-nav li a {
+  display: block;
+  padding: 0.6rem 1rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+}
+.sidebar-nav li.active a,
+.sidebar-nav li a:hover {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-left-color: var(--color-info);
+}
+
+.main-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}

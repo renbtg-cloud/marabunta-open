@@ -1,0 +1,132 @@
+# Marabunta - Licensed under the MIT License.
+# Marabunta Compute - Development Setup
+#
+# Lightweight configuration for local development and testing.
+# Includes hot-reload, debug logging, and exposed ports for debugging.
+#
+# Usage:
+#   docker-compose -f docker-compose.dev.yml up --build   # Build and start
+#   docker-compose -f docker-compose.dev.yml up           # Start only
+#   docker-compose -f docker-compose.dev.yml down -v      # Stop and clean
+
+services:
+  # ============================================================================
+  # Coordinator - Development mode
+  # ============================================================================
+  coordinator:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+      target: coordinator
+    container_name: marabunta-coordinator-dev
+    ports:
+      - "8080:8080"
+      - "8081:8081"  # Debug port
+    environment:
+      - RUST_LOG=debug
+      - RUST_BACKTRACE=1
+      - MARABUNTA_COORDIGLOBAL_ALLIANCE_T1R_BIND=0.0.0.0:8080
+      - MARABUNTA_DEV_MODE=true
+    volumes:
+      - ../src:/app/src:ro
+      - ../Cargo.toml:/app/Cargo.toml:ro
+      - ../Cargo.lock:/app/Cargo.lock:ro
+      - dev-coordinator-data:/var/lib/marabunta
+    networks:
+      - marabunta-dev-network
+    # No health check in dev for faster startup
+
+  # ============================================================================
+  # Master - Development mode
+  # ============================================================================
+  master:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+      target: master
+    container_name: marabunta-master-dev
+    ports:
+      - "9000:9000"
+      - "9001:9001"  # Debug port
+    environment:
+      - RUST_LOG=debug
+      - RUST_BACKTRACE=1
+      - MARABUNTA_MASTER_BIND=0.0.0.0:9000
+      - MARABUNTA_COORDIGLOBAL_ALLIANCE_T1R_URL=http://coordinator:8080
+      - MARABUNTA_DEV_MODE=true
+    volumes:
+      - ../src:/app/src:ro
+      - ../Cargo.toml:/app/Cargo.toml:ro
+      - ../Cargo.lock:/app/Cargo.lock:ro
+      - dev-master-data:/var/lib/marabunta
+    networks:
+      - marabunta-dev-network
+    depends_on:
+      - coordinator
+
+  # ============================================================================
+  # Single Worker - Development mode
+  # ============================================================================
+  worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+      target: worker
+    container_name: marabunta-worker-dev
+    environment:
+      - RUST_LOG=debug
+      - RUST_BACKTRACE=1
+      - MARABUNTA_MASTER_URL=http://master:9000
+      - MARABUNTA_COORDIGLOBAL_ALLIANCE_T1R_URL=http://coordinator:8080
+      - MARABUNTA_DEV_MODE=true
+    volumes:
+      - ../src:/app/src:ro
+      - ../Cargo.toml:/app/Cargo.toml:ro
+      - ../Cargo.lock:/app/Cargo.lock:ro
+      - dev-worker-data:/var/lib/marabunta
+    networks:
+      - marabunta-dev-network
+    depends_on:
+      - master
+
+  # ============================================================================
+  # CLI - Interactive shell for testing
+  # ============================================================================
+  cli:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+      target: cli
+    container_name: marabunta-cli-dev
+    stdin_open: true
+    tty: true
+    environment:
+      - RUST_LOG=debug
+      - MARABUNTA_MASTER_URL=http://master:9000
+      - MARABUNTA_COORDIGLOBAL_ALLIANCE_T1R_URL=http://coordinator:8080
+    volumes:
+      - ../src:/app/src:ro
+      - ../Cargo.toml:/app/Cargo.toml:ro
+      - ../Cargo.lock:/app/Cargo.lock:ro
+      - ./test-jobs:/jobs:ro
+    networks:
+      - marabunta-dev-network
+    depends_on:
+      - master
+    profiles:
+      - cli
+
+# ==============================================================================
+# Networks
+# ==============================================================================
+networks:
+  marabunta-dev-network:
+    driver: bridge
+
+# ==============================================================================
+# Volumes
+# ==============================================================================
+volumes:
+  dev-coordinator-data:
+  dev-master-data:
+  dev-worker-data:

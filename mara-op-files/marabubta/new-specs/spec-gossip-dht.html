@@ -1,0 +1,108 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta | Book I: The Hive Mind & DHT</title>
+    <link rel="stylesheet" href="marabunta-core.css">
+</head>
+<body>
+    <nav>
+        <h1>Marabunta Spec</h1>
+        <ul>
+            <li><a href="index.html">0. Master Index</a></li>
+            <li><a href="spec-gossip-dht.html" class="active">I. The Hive Mind & DHT</a></li>
+            <li><a href="spec-phantom-crypto.html">II. Phantom Cryptography</a></li>
+            <li><a href="spec-wasm-enclaves.html">III. WASM & Zero-Copy ABI</a></li>
+            <li><a href="spec-neuromancer.html">IV. Neuromancer Storage</a></li>
+            <li><a href="spec-mmx-economics.html">V. MMX Spot Market</a></li>
+            <li><a href="spec-developer-ux.html">VI. SDKs & Orchestration</a></li>
+            <li><a href="spec-business-strategy.html">VII. Business & Strategic Usages</a></li>
+            <li><a href="spec-global-impact.html">VIII. The 100 Entities Matrix</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Book I: The Hive Mind & Kademlia Core</h2>
+        <h3>The Architecture of Emergent Orchestration</h3>
+        
+        <p>
+            Traditional compute architectures rely on centralized control planes (e.g., Kubernetes API Servers, Apache Mesos, AWS Step Functions). In a 100-million node environment characterized by volatile edge networks and hostile hardware, a centralized scheduler represents an unrecoverable single point of failure and an insurmountable bottleneck.
+        </p>
+
+        <p>
+            Marabunta abandons top-down orchestration. Instead, it utilizes <strong>Epidemic State Propagation</strong> operating over a heavily modified, BFT-secured Kademlia Distributed Hash Table (DHT). The Swarm does not possess a general giving orders; it possesses mathematical physics that govern local node behavior.
+        </p>
+
+        <h3>1.1 Epidemic Gossip Protocol & Dotted Version Vectors</h3>
+        <p>
+            State management across 100 million nodes is achieved via the Gossip Protocol. Nodes continuously whisper tiny, highly compressed UDP payloads to their immediate topological neighbors. These payloads contain state transitions regarding active workloads, node health, and spot market prices.
+        </p>
+
+        <div class="alert">
+            <strong>CAUSAL CONSISTENCY:</strong> To achieve lock-free consistency without a global clock, Marabunta utilizes a proprietary implementation of <code>Dotted Version Vectors</code>. This allows independent, disconnected sub-swarms (e.g., nodes in a submarine cut off from the global internet) to continue computing and deterministically merge their conflicting states once the network partition heals.
+        </div>
+
+        <pre><code>// src/swarm/gossip.rs - Dotted Version Vector Merge Logic
+pub fn merge_gossip_state(local_state: &mut VVector, peer_state: &VVector) {
+    for (node_id, peer_dot) in peer_state.iter() {
+        let local_dot = local_state.get(node_id).unwrap_or(&0);
+        if peer_dot > local_dot {
+            // Apply cryptographically verified state transition
+            apply_transition(&peer_dot.payload);
+            local_state.insert(*node_id, *peer_dot);
+        }
+    }
+}</code></pre>
+
+        <h3>1.2 Swarm Psyche & Telemetry Pheromones</h3>
+        <p>
+            Task placement in Marabunta is not commanded; it is attracted. Nodes constantly emit high-frequency telemetry data, synthetic analogs to biological pheromones, which map the multi-dimensional capacity of the cluster. This is managed by the <code>SwarmPsyche</code> struct.
+        </p>
+
+        <p>Instead of merely tracking CPU utilization percentages, the Psyche evaluates deep heuristics to predict node reliability before routing mission-critical WebAssembly payloads.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Psyche Facet</th>
+                    <th>Data Source</th>
+                    <th>Routing Implication</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Exertion</strong></td>
+                    <td>Thermal throttling, CPU queue depth</td>
+                    <td>Rejects heavy <code>fortran_task</code> DAGs if Exertion > 85%.</td>
+                </tr>
+                <tr>
+                    <td><strong>Vitality</strong></td>
+                    <td>Historical chunk success rate, OOM kills</td>
+                    <td>High Vitality nodes attract long-running, stateful database queries.</td>
+                </tr>
+                <tr>
+                    <td><strong>Momentum</strong></td>
+                    <td>Throughput velocity, spot instance preemption rate</td>
+                    <td>Low Momentum indicates highly volatile hardware (e.g., AWS Spot). Only ephemeral, stateless map-reduce tasks are routed here.</td>
+                </tr>
+                <tr>
+                    <td><strong>Cohesion</strong></td>
+                    <td>Network latency, BGP route stability</td>
+                    <td>Determines eligibility for participating in the BFT Hashgraph consensus. Low cohesion nodes are stripped of voting rights.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>1.3 Data Gravity Routing</h3>
+        <p>
+            When a massive workload is injected into the DHT (e.g., analyzing 10 Terabytes of satellite telemetry), hauling that data across a saturated WAN to a central compute cluster is thermodynamically inefficient. 
+        </p>
+        <p>
+            Marabunta utilizes <strong>Data Gravity Routing</strong>. The computational task is injected into the DHT and naturally propagates toward the nodes that possess the strongest "data pheromones" for the required `ChunkId`. The WebAssembly execution payload (kilobytes) is moved to where the raw data (terabytes) physically resides, enabling ultra-fast edge processing.
+        </p>
+
+    </main>
+</body>
+</html>

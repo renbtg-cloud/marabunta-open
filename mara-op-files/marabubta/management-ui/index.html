@@ -1,0 +1,385 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Marabunta Swarm Management Console - Monitor and manage your distributed compute swarm">
+    <meta name="theme-color" content="#0f1117" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f8f9fb" media="(prefers-color-scheme: light)">
+    <meta name="color-scheme" content="dark light">
+
+    <!-- Favicon: inline SVG hexagonal swarm icon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4L56 18v28L32 60 8 46V18z' fill='%234f6ef7' opacity='0.9'/%3E%3Cpath d='M32 12L48 21v18L32 48 16 39V21z' fill='%230f1117'/%3E%3Ccircle cx='32' cy='30' r='6' fill='%234f6ef7'/%3E%3Ccircle cx='22' cy='24' r='3' fill='%2310b981'/%3E%3Ccircle cx='42' cy='24' r='3' fill='%2310b981'/%3E%3Ccircle cx='22' cy='36' r='3' fill='%2310b981'/%3E%3Ccircle cx='42' cy='36' r='3' fill='%2310b981'/%3E%3C/svg%3E">
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="styles.css" as="style">
+    <link rel="preload" href="app.js" as="script">
+
+    <title>Swarm Management Console</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <!-- Skip-to-content link for accessibility -->
+    <a href="#main" class="sr-only sr-only-focusable">Skip to main content</a>
+
+    <!-- Global alert banner slot -->
+    <div id="alert-banner" class="alert-banner-container" role="alert" aria-live="assertive"></div>
+
+    <!-- ================================================================
+         HEADER BAR
+         ================================================================ -->
+    <header class="app-header" role="banner">
+        <div class="header-left">
+            <!-- Swarm logo (inline SVG) -->
+            <div class="swarm-logo" aria-hidden="true">
+                <svg viewBox="0 0 36 36" width="28" height="28" fill="none">
+                    <path d="M18 2L33 10.5v17L18 36 3 27.5v-17z" stroke="currentColor" stroke-width="2" fill="var(--color-accent)" opacity="0.15"/>
+                    <path d="M18 8L28 13.5v11L18 30 8 24.5v-11z" stroke="var(--color-accent)" stroke-width="1.5" fill="none"/>
+                    <circle cx="18" cy="19" r="3.5" fill="var(--color-accent)"/>
+                    <circle cx="12" cy="15" r="1.8" fill="var(--color-success)" opacity="0.8"/>
+                    <circle cx="24" cy="15" r="1.8" fill="var(--color-success)" opacity="0.8"/>
+                    <circle cx="12" cy="23" r="1.8" fill="var(--color-success)" opacity="0.8"/>
+                    <circle cx="24" cy="23" r="1.8" fill="var(--color-success)" opacity="0.8"/>
+                </svg>
+            </div>
+            <h1 class="swarm-name" id="swarm-name">Loading...</h1>
+            <span class="swarm-uptime" id="swarm-uptime" aria-label="Swarm uptime"></span>
+        </div>
+
+        <div class="header-center">
+            <!-- Mini psyche bar shown in header -->
+            <div class="psyche-mini-bar" id="psyche-mini" role="meter" aria-label="Swarm Psyche" aria-valuemin="0" aria-valuemax="100">
+                <div class="psyche-mini-segment" data-facet="resilience" title="Resilience"></div>
+                <div class="psyche-mini-segment" data-facet="efficiency" title="Efficiency"></div>
+                <div class="psyche-mini-segment" data-facet="coherence" title="Coherence"></div>
+                <div class="psyche-mini-segment" data-facet="vitality" title="Vitality"></div>
+                <div class="psyche-mini-segment" data-facet="intelligence" title="Intelligence"></div>
+                <div class="psyche-mini-segment" data-facet="reach" title="Reach"></div>
+                <div class="psyche-mini-segment" data-facet="integrity" title="Integrity"></div>
+            </div>
+            <span class="archetype-badge" id="archetype-badge" aria-label="Swarm archetype"></span>
+        </div>
+
+        <div class="header-right">
+            <!-- Connection status indicator -->
+            <div class="connection-indicator" id="connection-status" aria-label="Connection status" role="status">
+                <span class="status-dot status-dot--alive" aria-hidden="true"></span>
+                <span class="status-text">Connected</span>
+            </div>
+
+            <!-- Vision selector dropdown -->
+            <div class="vision-selector-wrapper">
+                <label for="vision-select" class="sr-only">Management Vision</label>
+                <select id="vision-select" class="vision-select" aria-label="Select management vision">
+                    <option value="">Loading visions...</option>
+                </select>
+            </div>
+
+            <!-- Theme toggle button -->
+            <button class="btn btn-icon" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme (T)">
+                <svg class="icon icon-sun" viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <circle cx="10" cy="10" r="3.5"/>
+                    <line x1="10" y1="1.5" x2="10" y2="4"/>
+                    <line x1="10" y1="16" x2="10" y2="18.5"/>
+                    <line x1="1.5" y1="10" x2="4" y2="10"/>
+                    <line x1="16" y1="10" x2="18.5" y2="10"/>
+                    <line x1="4" y1="4" x2="5.8" y2="5.8"/>
+                    <line x1="14.2" y1="14.2" x2="16" y2="16"/>
+                    <line x1="4" y1="16" x2="5.8" y2="14.2"/>
+                    <line x1="14.2" y1="5.8" x2="16" y2="4"/>
+                </svg>
+                <svg class="icon icon-moon" viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path d="M17 11.5A7.5 7.5 0 118.5 3 5.5 5.5 0 0017 11.5z"/>
+                </svg>
+            </button>
+
+            <!-- Sidebar toggle (mobile) -->
+            <button class="btn btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar navigation" aria-expanded="false" aria-controls="sidebar">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <line x1="3" y1="5" x2="17" y2="5"/>
+                    <line x1="3" y1="10" x2="17" y2="10"/>
+                    <line x1="3" y1="15" x2="17" y2="15"/>
+                </svg>
+            </button>
+
+            <!-- Command palette button -->
+            <button class="btn btn-icon" id="cmd-palette-btn" aria-label="Command palette (Ctrl+K)" title="Command palette (Ctrl+K)">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <rect x="2" y="2" width="16" height="16" rx="3"/>
+                    <path d="M6 13l3-3-3-3"/>
+                    <line x1="11" y1="13" x2="14" y2="13"/>
+                </svg>
+                <kbd class="shortcut-hint">Ctrl+K</kbd>
+            </button>
+        </div>
+    </header>
+
+    <!-- ================================================================
+         SIDEBAR NAVIGATION
+         ================================================================ -->
+    <nav class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+        <ul class="nav-list" id="nav-list" role="menubar" aria-label="Navigation sections">
+            <!-- Navigation items are populated dynamically by the active vision.
+                 Each item follows this structure:
+                 <li class="nav-item" role="none">
+                     <a href="#section" class="nav-link" role="menuitem" aria-current="page">
+                         <svg class="nav-icon">...</svg>
+                         <span class="nav-label">Section Name</span>
+                         <span class="nav-badge">3</span>
+                     </a>
+                 </li>
+            -->
+        </ul>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-stat" id="node-count-badge" aria-label="Node count">
+                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <circle cx="8" cy="5" r="3"/>
+                    <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+                </svg>
+                <span>0 nodes</span>
+            </div>
+            <div class="sidebar-stat" id="alert-count-badge" aria-label="Alert count">
+                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path d="M8 1.5L14.5 13H1.5z"/>
+                    <line x1="8" y1="6" x2="8" y2="9"/>
+                    <circle cx="8" cy="11" r="0.5" fill="currentColor"/>
+                </svg>
+                <span>0 alerts</span>
+            </div>
+            <div class="sidebar-stat sidebar-stat--version" id="version-badge" aria-label="Version">
+                <span class="version-text">v0.0.0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ================================================================
+         MAIN CONTENT AREA
+         ================================================================ -->
+    <main id="main" class="main-content" role="main" aria-label="Dashboard content">
+        <!-- Breadcrumb trail -->
+        <nav class="breadcrumb" id="breadcrumb" aria-label="Breadcrumb">
+            <ol class="breadcrumb-list">
+                <li class="breadcrumb-item"><span aria-current="page">Dashboard</span></li>
+            </ol>
+        </nav>
+
+        <!-- Loading skeleton (shown before first data load) -->
+        <div class="loading-skeleton" id="loading-skeleton" aria-label="Loading content" role="status">
+            <span class="sr-only">Loading dashboard data...</span>
+            <div class="skeleton-row">
+                <div class="skeleton-card skeleton-pulse">
+                    <div class="skeleton-line skeleton-line--title"></div>
+                    <div class="skeleton-line skeleton-line--value"></div>
+                    <div class="skeleton-line skeleton-line--subtitle"></div>
+                </div>
+                <div class="skeleton-card skeleton-pulse">
+                    <div class="skeleton-line skeleton-line--title"></div>
+                    <div class="skeleton-line skeleton-line--value"></div>
+                    <div class="skeleton-line skeleton-line--subtitle"></div>
+                </div>
+                <div class="skeleton-card skeleton-pulse">
+                    <div class="skeleton-line skeleton-line--title"></div>
+                    <div class="skeleton-line skeleton-line--value"></div>
+                    <div class="skeleton-line skeleton-line--subtitle"></div>
+                </div>
+                <div class="skeleton-card skeleton-pulse">
+                    <div class="skeleton-line skeleton-line--title"></div>
+                    <div class="skeleton-line skeleton-line--value"></div>
+                    <div class="skeleton-line skeleton-line--subtitle"></div>
+                </div>
+            </div>
+            <div class="skeleton-row">
+                <div class="skeleton-chart skeleton-pulse"></div>
+                <div class="skeleton-chart skeleton-pulse"></div>
+            </div>
+            <div class="skeleton-table skeleton-pulse">
+                <div class="skeleton-line skeleton-line--header"></div>
+                <div class="skeleton-line skeleton-line--row"></div>
+                <div class="skeleton-line skeleton-line--row"></div>
+                <div class="skeleton-line skeleton-line--row"></div>
+                <div class="skeleton-line skeleton-line--row"></div>
+                <div class="skeleton-line skeleton-line--row"></div>
+            </div>
+        </div>
+
+        <!-- Vision content injected here by app.js -->
+        <div id="vision-content" class="vision-content" aria-live="polite"></div>
+    </main>
+
+    <!-- ================================================================
+         COMMAND PALETTE (Ctrl+K)
+         ================================================================ -->
+    <dialog id="cmd-palette" class="command-palette" aria-label="Command palette" aria-modal="true">
+        <div class="cmd-palette-backdrop"></div>
+        <div class="cmd-palette-dialog" role="combobox" aria-expanded="true" aria-haspopup="listbox" aria-owns="cmd-results">
+            <div class="cmd-palette-header">
+                <svg class="cmd-search-icon" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <circle cx="7" cy="7" r="5"/>
+                    <line x1="11" y1="11" x2="14" y2="14"/>
+                </svg>
+                <input
+                    type="text"
+                    id="cmd-search"
+                    class="cmd-search-input"
+                    placeholder="Type a command or search..."
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    aria-label="Search commands"
+                    aria-autocomplete="list"
+                    aria-controls="cmd-results"
+                    aria-activedescendant=""
+                >
+                <kbd class="cmd-palette-escape">Esc</kbd>
+            </div>
+            <div class="cmd-palette-divider"></div>
+            <ul id="cmd-results" class="cmd-results" role="listbox" aria-label="Command results">
+                <li class="cmd-empty-state" role="option" aria-disabled="true">
+                    <span class="cmd-empty-text">Start typing to search visions, nodes, jobs, and actions...</span>
+                </li>
+            </ul>
+            <div class="cmd-palette-footer">
+                <span class="cmd-hint"><kbd>&uarr;</kbd><kbd>&darr;</kbd> Navigate</span>
+                <span class="cmd-hint"><kbd>Enter</kbd> Select</span>
+                <span class="cmd-hint"><kbd>Esc</kbd> Close</span>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- ================================================================
+         MODAL CONTAINER
+         ================================================================ -->
+    <dialog id="modal-container" class="modal-overlay" aria-modal="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-dialog" role="document">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-title"></h2>
+                <button class="btn btn-icon modal-close" aria-label="Close dialog">
+                    <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <line x1="4" y1="4" x2="12" y2="12"/>
+                        <line x1="12" y1="4" x2="4" y2="12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-footer" id="modal-footer"></div>
+        </div>
+    </dialog>
+
+    <!-- ================================================================
+         TOAST NOTIFICATION CONTAINER
+         ================================================================ -->
+    <div id="toast-container" class="toast-container" role="status" aria-live="polite" aria-relevant="additions removals">
+        <!-- Toasts are dynamically inserted here:
+             <div class="toast toast--info" role="alert">
+                 <div class="toast-icon">...</div>
+                 <div class="toast-content">
+                     <p class="toast-message">Message text</p>
+                 </div>
+                 <div class="toast-progress"></div>
+                 <button class="toast-dismiss" aria-label="Dismiss">...</button>
+             </div>
+        -->
+    </div>
+
+    <!-- ================================================================
+         DETAIL PANEL (slide-in from right)
+         ================================================================ -->
+    <aside id="detail-panel" class="detail-panel" role="complementary" aria-label="Detail panel" aria-hidden="true">
+        <div class="detail-panel-header">
+            <h2 class="detail-panel-title" id="detail-panel-title"></h2>
+            <button class="btn btn-icon detail-panel-close" aria-label="Close detail panel" title="Close (Esc)">
+                <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="4" y1="4" x2="12" y2="12"/>
+                    <line x1="12" y1="4" x2="4" y2="12"/>
+                </svg>
+            </button>
+        </div>
+        <div class="detail-panel-body" id="detail-panel-content">
+            <!-- Detail content injected dynamically -->
+        </div>
+        <div class="detail-panel-footer" id="detail-panel-footer"></div>
+    </aside>
+
+    <!-- ================================================================
+         KEYBOARD HELP OVERLAY
+         ================================================================ -->
+    <dialog id="keyboard-help" class="keyboard-help-dialog" aria-label="Keyboard shortcuts" aria-modal="true">
+        <div class="keyboard-help-content">
+            <div class="keyboard-help-header">
+                <h2>Keyboard Shortcuts</h2>
+                <button class="btn btn-icon modal-close" aria-label="Close">
+                    <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <line x1="4" y1="4" x2="12" y2="12"/>
+                        <line x1="12" y1="4" x2="4" y2="12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="keyboard-help-body">
+                <section class="shortcut-group">
+                    <h3>General</h3>
+                    <dl class="shortcut-list">
+                        <div class="shortcut-item">
+                            <dt><kbd>Ctrl</kbd> + <kbd>K</kbd></dt>
+                            <dd>Open command palette</dd>
+                        </div>
+                        <div class="shortcut-item">
+                            <dt><kbd>?</kbd></dt>
+                            <dd>Show keyboard shortcuts</dd>
+                        </div>
+                        <div class="shortcut-item">
+                            <dt><kbd>T</kbd></dt>
+                            <dd>Toggle theme</dd>
+                        </div>
+                        <div class="shortcut-item">
+                            <dt><kbd>R</kbd></dt>
+                            <dd>Refresh current view</dd>
+                        </div>
+                        <div class="shortcut-item">
+                            <dt><kbd>/</kbd></dt>
+                            <dd>Focus search</dd>
+                        </div>
+                        <div class="shortcut-item">
+                            <dt><kbd>Esc</kbd></dt>
+                            <dd>Close panel / modal / palette</dd>
+                        </div>
+                    </dl>
+                </section>
+                <section class="shortcut-group">
+                    <h3>Navigation</h3>
+                    <dl class="shortcut-list">
+                        <div class="shortcut-item">
+                            <dt><kbd>1</kbd> - <kbd>7</kbd></dt>
+                            <dd>Switch to vision by number</dd>
+                        </div>
+                        <div class="shortcut-item">
+                            <dt><kbd>J</kbd></dt>
+                            <dd>Next item in list</dd>
+                        </div>
+                        <div class="shortcut-item">
+                            <dt><kbd>K</kbd></dt>
+                            <dd>Previous item in list</dd>
+                        </div>
+                        <div class="shortcut-item">
+                            <dt><kbd>Enter</kbd></dt>
+                            <dd>Open selected item</dd>
+                        </div>
+                    </dl>
+                </section>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- ================================================================
+         SCREEN READER ANNOUNCEMENTS
+         ================================================================ -->
+    <div id="sr-announcements" class="sr-only" aria-live="assertive" aria-atomic="true" role="log"></div>
+
+    <!-- Main application script -->
+    <script src="app.js"></script>
+</body>
+</html>

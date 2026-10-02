@@ -1,0 +1,304 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta Compute - Nodes</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">&#x2b21;</div>
+                <h1>Marabunta <span>Compute</span></h1>
+            </div>
+            <nav>
+                <a href="/">Dashboard</a>
+                <a href="/jobs.html">Jobs</a>
+                <a href="/nodes.html" class="active">Nodes</a>
+                <a href="/instances.html">Instances</a>
+                <a href="/compute.html">Compute</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="page-header">
+                <h2>Nodes</h2>
+                <p>Monitor worker nodes and cluster resources</p>
+            </div>
+
+            <!-- Node Summary -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="label">Total Nodes</div>
+                    <div class="value" id="total-nodes-count">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Online</div>
+                    <div class="value" id="online-nodes-count" style="color: var(--success);">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Total Cores</div>
+                    <div class="value" id="total-cores">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Total Memory</div>
+                    <div class="value" id="total-memory">-</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-body" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button class="btn btn-secondary active" data-filter-node-status="all">All</button>
+                        <button class="btn btn-secondary" data-filter-node-status="ready">Ready</button>
+                        <button class="btn btn-secondary" data-filter-node-status="busy">Busy</button>
+                        <button class="btn btn-secondary" data-filter-node-status="draining">Draining</button>
+                        <button class="btn btn-secondary" data-filter-node-status="offline">Offline</button>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input type="text" id="node-search" class="form-input" placeholder="Search nodes...">
+                        <button class="btn btn-secondary" onclick="nodes.refresh()">&#8635; Refresh</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nodes Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Worker Nodes</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Node ID</th>
+                                    <th>Type</th>
+                                    <th>Cores</th>
+                                    <th>Memory</th>
+                                    <th>Region</th>
+                                    <th>Load</th>
+                                    <th>Thermal</th>
+                                    <th>Tasks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="nodes-table-body">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 2rem;">
+                                        <div class="spinner" style="margin: 0 auto;"></div>
+                                        <p style="margin-top: 1rem; color: var(--text-secondary);">Loading nodes...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node Types Distribution -->
+            <div class="grid-2" style="margin-top: 1.5rem;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Node Types</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Servers</span>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="progress-bar" style="width: 150px;">
+                                        <div class="fill" style="width: 60%"></div>
+                                    </div>
+                                    <span style="min-width: 40px;">76</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Desktops</span>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="progress-bar" style="width: 150px;">
+                                        <div class="fill" style="width: 25%"></div>
+                                    </div>
+                                    <span style="min-width: 40px;">32</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Raspberry Pi</span>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="progress-bar" style="width: 150px;">
+                                        <div class="fill" style="width: 15%"></div>
+                                    </div>
+                                    <span style="min-width: 40px;">20</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Regional Distribution</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>us-east-1</span>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="progress-bar" style="width: 150px;">
+                                        <div class="fill" style="width: 66%"></div>
+                                    </div>
+                                    <span style="min-width: 40px;">85</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>us-west-1</span>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="progress-bar" style="width: 150px;">
+                                        <div class="fill" style="width: 22%"></div>
+                                    </div>
+                                    <span style="min-width: 40px;">28</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>eu-west-1</span>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="progress-bar" style="width: 150px;">
+                                        <div class="fill" style="width: 12%"></div>
+                                    </div>
+                                    <span style="min-width: 40px;">15</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Node Events -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h3>Recent Node Events</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="activity-list">
+                        <li class="activity-item">
+                            <div class="activity-icon info">&#43;</div>
+                            <div class="activity-content">
+                                <div class="title">worker-xyz789 joined the cluster</div>
+                                <div class="time">2 minutes ago - server, 32 cores, 128GB RAM</div>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon warning">&#8722;</div>
+                            <div class="activity-content">
+                                <div class="title">worker-abc123 entered draining mode</div>
+                                <div class="time">15 minutes ago - scheduled maintenance</div>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon error">&#10007;</div>
+                            <div class="activity-content">
+                                <div class="title">worker-def456 went offline</div>
+                                <div class="time">1 hour ago - connection lost, 3 tasks reassigned</div>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon success">&#10003;</div>
+                            <div class="activity-content">
+                                <div class="title">worker-ghi789 recovered</div>
+                                <div class="time">2 hours ago - back online after restart</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Capacity Planning -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h3>Capacity Overview</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Resource</th>
+                                    <th>Total</th>
+                                    <th>In Use</th>
+                                    <th>Available</th>
+                                    <th>Utilization</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>CPU Cores</td>
+                                    <td>1,600</td>
+                                    <td>1,168</td>
+                                    <td>432</td>
+                                    <td>
+                                        <div class="utilization-meter">
+                                            <div class="bar">
+                                                <div class="fill medium" style="width: 73%"></div>
+                                            </div>
+                                            <span class="percent">73%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Memory</td>
+                                    <td>6.25 TB</td>
+                                    <td>4.38 TB</td>
+                                    <td>1.87 TB</td>
+                                    <td>
+                                        <div class="utilization-meter">
+                                            <div class="bar">
+                                                <div class="fill medium" style="width: 70%"></div>
+                                            </div>
+                                            <span class="percent">70%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>GPU Units</td>
+                                    <td>64</td>
+                                    <td>58</td>
+                                    <td>6</td>
+                                    <td>
+                                        <div class="utilization-meter">
+                                            <div class="bar">
+                                                <div class="fill high" style="width: 91%"></div>
+                                            </div>
+                                            <span class="percent">91%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Disk Space</td>
+                                    <td>50 TB</td>
+                                    <td>22 TB</td>
+                                    <td>28 TB</td>
+                                    <td>
+                                        <div class="utilization-meter">
+                                            <div class="bar">
+                                                <div class="fill low" style="width: 44%"></div>
+                                            </div>
+                                            <span class="percent">44%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+# Marabunta - Licensed under the MIT License.
+# Conditional Workflow Example
+# Demonstrates branching logic, conditional execution, and dynamic routing
+#
+# This workflow shows:
+# - Conditional task execution based on previous results
+# - Dynamic branching
+# - Error handling with fallbacks
+# - Loops and iterations
+
+name: conditional-processing
+description: Process data with conditional logic and branching
+version: 1
+
+settings:
+  timeout: 1h
+  max_retries: 2
+
+params:
+  data_source:
+    type: string
+    required: true
+    enum: [api, database, file]
+    description: Source of input data
+  enable_validation:
+    type: boolean
+    default: true
+  quality_threshold:
+    type: number
+    default: 0.95
+    min: 0.0
+    max: 1.0
+  processing_mode:
+    type: string
+    default: standard
+    enum: [standard, fast, thorough]
+
+# Variables that can be set during execution
+variables:
+  data_quality_score: 0
+  record_count: 0
+  needs_review: false
+
+stages:
+  # Stage 1: Data acquisition - different path based on source
+  acquire:
+    tasks:
+      - name: fetch-from-api
+        type: python
+        when: "{{ params.data_source == 'api' }}"
+        script: |
+          import json
+          import random
+
+          # Simulate API fetch
+          random.seed(42)
+          records = [{"id": i, "value": random.random()} for i in range(1000)]
+          with open("/work/data.json", "w") as f:
+              json.dump({"source": "api", "records": records}, f)
+          print(f"Fetched {len(records)} records from API")
+        resources:
+          memory: 512MB
+
+      - name: fetch-from-database
+        type: python
+        when: "{{ params.data_source == 'database' }}"
+        script: |
+          import json
+          import random
+
+          # Simulate database query
+          random.seed(43)
+          records = [{"id": i, "value": random.random()} for i in range(5000)]
+          with open("/work/data.json", "w") as f:
+              json.dump({"source": "database", "records": records}, f)
+          print(f"Queried {len(records)} records from database")
+        resources:
+          memory: 1GB
+
+      - name: fetch-from-file
+        type: shell
+        when: "{{ params.data_source == 'file' }}"
+        command: |
+          # Simulate file read
+          echo '{"source": "file", "records": [{"id": 1, "value": 0.5}]}' > /work/data.json
+          echo "Loaded data from file"
+        resources:
+          memory: 256MB
+
+  # Stage 2: Validation (conditional)
+  validation:
+    depends_on: [acquire]
+    when: "{{ params.enable_validation }}"
+    tasks:
+      - name: validate-schema
+        type: python
+        script: |
+          import json
+
+          with open("/work/data.json") as f:
+              data = json.load(f)
+
+          # Validate schema
+          errors = []
+          if "records" not in data:
+              errors.append("Missing 'records' field")
+          elif not isinstance(data["records"], list):
+              errors.append("'records' must be a list")
+          else:
+              for i, record in enumerate(data["records"][:10]):  # Check first 10
+                  if "id" not in record:
+                      errors.append(f"Record {i} missing 'id'")
+                  if "value" not in record:
+                      errors.append(f"Record {i} missing 'value'")
+
+          result = {"valid": len(errors) == 0, "errors": errors}
+          with open("/work/validation_result.json", "w") as f:
+              json.dump(result, f)
+
+          if errors:
+              raise ValueError(f"Schema validation failed: {errors}")
+          print("Schema validation passed")
+        on_failure: abort_workflow
+
+      - name: check-data-quality
+        type: python
+        depends_on: [validate-schema]
+        script: |
+          import json
+          import random
+
+          with open("/work/data.json") as f:
+              data = json.load(f)
+
+          records = data["records"]
+
+          # Compute quality metrics
+          null_count = sum(1 for r in records if r.get("value") is None)
+          outlier_count = sum(1 for r in records if r.get("value", 0) < 0 or r.get("value", 0) > 1)
+          duplicate_ids = len(records) - len(set(r["id"] for r in records))
+
+          quality_score = 1.0 - (null_count + outlier_count + duplicate_ids) / max(len(records), 1)
+
+          result = {
+              "quality_score": quality_score,
+              "record_count": len(records),
+              "null_count": null_count,
+              "outlier_count": outlier_count,
+              "duplicate_count": duplicate_ids,
+              "meets_threshold": quality_score >= {{ params.quality_threshold }}
+          }
+
+          with open("/work/quality_result.json", "w") as f:
+              json.dump(result, f)
+
+          # Set workflow variables
+          print(f"::set-variable::data_quality_score={quality_score}")
+          print(f"::set-variable::record_count={len(records)}")
+          print(f"::set-variable::needs_review={not result['meets_threshold']}")
+
+          print(f"Quality score: {quality_score:.2%}")
+
+  # Stage 3: Processing - different paths based on mode and quality
+  processing:
+    depends_on: [validation]
+    tasks:
+      # Standard processing
+      - name: process-standard
+        type: python
+        when: "{{ params.processing_mode == 'standard' }}"
+        script: |
+          import json
+
+          with open("/work/data.json") as f:
+              data = json.load(f)
+
+          # Standard processing
+          processed = []
+          for record in data["records"]:
+              processed.append({
+                  "id": record["id"],
+                  "original": record["value"],
+                  "normalized": record["value"] * 100,
+                  "category": "high" if record["value"] > 0.5 else "low"
+              })
+
+          with open("/work/processed.json", "w") as f:
+              json.dump(processed, f)
+          print(f"Standard processing: {len(processed)} records")
+        resources:
+          memory: 2GB
+          cpu: 2
+
+      # Fast processing - less computation
+      - name: process-fast
+        type: python
+        when: "{{ params.processing_mode == 'fast' }}"
+        script: |
+          import json
+
+          with open("/work/data.json") as f:
+              data = json.load(f)
+
+          # Fast processing - minimal transformation
+          processed = [{"id": r["id"], "value": r["value"]} for r in data["records"]]
+
+          with open("/work/processed.json", "w") as f:
+              json.dump(processed, f)
+          print(f"Fast processing: {len(processed)} records")
+        resources:
+          memory: 1GB
+          cpu: 1
+
+      # Thorough processing - additional analysis
+      - name: process-thorough
+        type: python
+        when: "{{ params.processing_mode == 'thorough' }}"
+        script: |
+          import json
+          import statistics
+
+          with open("/work/data.json") as f:
+              data = json.load(f)
+
+          values = [r["value"] for r in data["records"]]
+          mean_val = statistics.mean(values)
+          std_val = statistics.stdev(values) if len(values) > 1 else 0
+
+          # Thorough processing with z-scores
+          processed = []
+          for record in data["records"]:
+              z_score = (record["value"] - mean_val) / std_val if std_val > 0 else 0
+              processed.append({
+                  "id": record["id"],
+                  "original": record["value"],
+                  "z_score": z_score,
+                  "percentile": sum(1 for v in values if v <= record["value"]) / len(values),
+                  "is_outlier": abs(z_score) > 2
+              })
+
+          with open("/work/processed.json", "w") as f:
+              json.dump(processed, f)
+          print(f"Thorough processing: {len(processed)} records, {sum(1 for p in processed if p['is_outlier'])} outliers")
+        resources:
+          memory: 4GB
+          cpu: 4
+
+  # Stage 4: Review handling (conditional based on quality)
+  review:
+    depends_on: [processing]
+    when: "{{ variables.needs_review }}"
+    tasks:
+      - name: flag-for-review
+        type: python
+        script: |
+          import json
+
+          with open("/work/quality_result.json") as f:
+              quality = json.load(f)
+
+          review_request = {
+              "status": "pending_review",
+              "reason": "Data quality below threshold",
+              "quality_score": quality["quality_score"],
+              "threshold": {{ params.quality_threshold }},
+              "issues": {
+                  "nulls": quality["null_count"],
+                  "outliers": quality["outlier_count"],
+                  "duplicates": quality["duplicate_count"]
+              }
+          }
+
+          with open("/work/review_request.json", "w") as f:
+              json.dump(review_request, f, indent=2)
+          print("Data flagged for manual review")
+          print(json.dumps(review_request, indent=2))
+        resources:
+          memory: 256MB
+
+      - name: notify-reviewers
+        type: shell
+        depends_on: [flag-for-review]
+        command: |
+          echo "Sending review notification..."
+          echo "Quality score: {{ variables.data_quality_score }}"
+          echo "Records: {{ variables.record_count }}"
+
+  # Stage 5: Output generation
+  output:
+    depends_on: [processing]
+    tasks:
+      - name: generate-summary
+        type: python
+        script: |
+          import json
+          import os
+
+          with open("/work/processed.json") as f:
+              processed = json.load(f)
+
+          # Load quality if it exists
+          quality = {}
+          if os.path.exists("/work/quality_result.json"):
+              with open("/work/quality_result.json") as f:
+                  quality = json.load(f)
+
+          summary = {
+              "workflow": "conditional-processing",
+              "data_source": "{{ params.data_source }}",
+              "processing_mode": "{{ params.processing_mode }}",
+              "validation_enabled": {{ params.enable_validation | lower }},
+              "records_processed": len(processed),
+              "quality_score": quality.get("quality_score", "N/A"),
+              "output_file": "/work/processed.json"
+          }
+
+          with open("/work/summary.json", "w") as f:
+              json.dump(summary, f, indent=2)
+          print("Summary:")
+          print(json.dumps(summary, indent=2))
+        resources:
+          memory: 512MB
+
+      - name: export-results
+        type: shell
+        depends_on: [generate-summary]
+        script: |
+          echo "Exporting results..."
+          cp /work/processed.json /output/{{ params.data_source }}_results.json
+          cp /work/summary.json /output/{{ params.data_source }}_summary.json
+          echo "Results exported to /output/"
+
+# Error handling
+error_handlers:
+  - match: "Schema validation failed"
+    action: abort
+    notification:
+      type: email
+      to: data-team@example.com
+
+  - match: ".*timeout.*"
+    action: retry
+    max_retries: 2
+
+# Artifacts
+artifacts:
+  - path: /work/processed.json
+    retention: 7d
+  - path: /work/summary.json
+    retention: 30d
+  - path: /work/review_request.json
+    retention: 30d
+    when: "{{ variables.needs_review }}"

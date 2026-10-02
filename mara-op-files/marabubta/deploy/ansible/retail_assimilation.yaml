@@ -1,0 +1,61 @@
+# Marabunta - Licensed under the MIT License.
+---
+# Marabunta Swarm: Point-of-Sale (POS) Assimilation Playbook
+# 
+# This playbook targets a corporate inventory environment (e.g., 10,000 retail cash registers).
+# It silently deploys the Marabunta `Dust` binary as a background Windows Service.
+# This aggregates the retail footprint into a localized, air-gapped BFT Hashgraph,
+# allowing edge inference without relying on a centralized corporate VPN.
+
+- name: Assimilate Corporate Hardware into the Marabunta Swarm
+  hosts: all_corporate_pos_terminals
+  become: yes
+  
+  vars:
+    binary_url: "https://marabunta.sh/bin/windows-x86_64/marabunta-swarm.exe"
+    install_dir: "C:\Marabunta"
+    genesis_file: "corp_retail_genesis.toml"
+
+  tasks:
+    - name: Ensure Marabunta installation directory exists
+      win_file:
+        path: "{{ install_dir }}"
+        state: directory
+
+    - name: Download the Marabunta binary (Zero-Copy Rust Executable)
+      win_get_url:
+        url: "{{ binary_url }}"
+        dest: "{{ install_dir }}\marabunta-swarm.exe"
+        force: no
+
+    - name: Deploy the Sovereign Corporate Genesis Block
+      win_copy:
+        src: "files/{{ genesis_file }}"
+        dest: "{{ install_dir }}\genesis.toml"
+
+    - name: Install Marabunta as a Background Windows Service (Dust Mode)
+      win_service:
+        name: MarabuntaDust
+        path: >-
+          {{ install_dir }}\marabunta-swarm.exe 
+          --mode dust 
+          --genesis {{ install_dir }}\genesis.toml 
+          --hidden
+        display_name: "Windows Analytics Telemetry (Marabunta)"
+        description: "Provides decentralized edge analytics for the retail mesh."
+        state: started
+        start_mode: auto
+
+    - name: Verify Plumtree Epidemic Gossip Port (UDP)
+      win_firewall_rule:
+        name: "Marabunta Gossip"
+        localport: 9000
+        action: allow
+        direction: in
+        protocol: udp
+        state: present
+        enabled: yes
+
+    - name: Output Swarm Assimilation Status
+      debug:
+        msg: "Terminal successfully assimilated. Localized BFT Hashgraph is active."

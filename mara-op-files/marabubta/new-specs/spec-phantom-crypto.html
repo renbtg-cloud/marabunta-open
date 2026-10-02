@@ -1,0 +1,91 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta | Book II: Phantom Cryptography</title>
+    <link rel="stylesheet" href="marabunta-core.css">
+</head>
+<body>
+    <nav>
+        <h1>Marabunta Spec</h1>
+        <ul>
+            <li><a href="index.html">0. Master Index</a></li>
+            <li><a href="spec-gossip-dht.html">I. The Hive Mind & DHT</a></li>
+            <li><a href="spec-phantom-crypto.html" class="active">II. Phantom Cryptography</a></li>
+            <li><a href="spec-wasm-enclaves.html">III. WASM & Zero-Copy ABI</a></li>
+            <li><a href="spec-neuromancer.html">IV. Neuromancer Storage</a></li>
+            <li><a href="spec-mmx-economics.html">V. MMX Spot Market</a></li>
+            <li><a href="spec-developer-ux.html">VI. SDKs & Orchestration</a></li>
+            <li><a href="spec-business-strategy.html">VII. Business & Strategic Usages</a></li>
+            <li><a href="spec-global-impact.html">VIII. The 100 Entities Matrix</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Book II: Phantom Cryptography</h2>
+        <h3>The Architecture of Mathematical Immunity</h3>
+        
+        <p>
+            Standard transport security (TLS 1.3) is insufficient for a decentralized, planetary-scale superorganism. TLS relies on centralized Certificate Authorities (CAs) and fixed IP addresses, both of which represent massive vulnerabilities to state-level kinetic strikes, DNS hijacking, and future "store-and-decrypt" attacks by quantum adversaries.
+        </p>
+
+        <p>
+            Marabunta abandons standard PKI in favor of the proprietary <strong>Phantom Protocol</strong>. Every facet of the Swarm is engineered to evade surveillance, resist physical node capture, and mathematically enforce geographic data boundaries.
+        </p>
+
+        <h3>2.1 ML-KEM Post-Quantum Gossip</h3>
+        <p>
+            Every internode communication—from tiny telemetry pings to massive WASM payload transfers—is encrypted using ephemeral key exchanges negotiated via <strong>ML-KEM (Kyber)</strong>. This is a NIST-standardized post-quantum cryptographic algorithm immune to decryption by future quantum computers (e.g., Shor's algorithm).
+        </p>
+
+        <div class="alert">
+            <strong>CHAOTIC MULTIPLEXING:</strong> To prevent deep packet inspection (DPI) from mapping the Swarm topology, the Phantom Protocol utilizes chaotic multiplexing. State updates are fragmented and sprayed across multiple parallel UDP streams. Node identities are not fixed; they are aggressively rotated via the <code>Micro-Epoch Identity Rotation</code> subsystem.
+        </div>
+
+        <h3>2.2 The Asymmetric Membrane & Write-Only Embassies</h3>
+        <p>
+            For enterprise and banking entities subject to extreme regulatory compliance (HighestSec), Marabunta supports a "Hybrid Swarm" architecture via the <code>Membrane</code> subsystem. 
+        </p>
+        <p>
+            Regulated workloads execute on highly-auditable, static-IP <strong>ClearNet</strong> nodes situated inside corporate data centers. When these nodes encounter a massive, generic compute bottleneck (e.g., end-of-day financial reconciliation), they offload the work to the untrusted <strong>DarkNet</strong> spot market via a <code>WriteOnlyEmbassy</code>. 
+        </p>
+
+        <pre><code>// src/swarm/membrane.rs - Embassy Permeability Check
+pub struct PermeabilityRule {
+    pub direction: Direction,
+    pub payload_hash: [u8; 32],
+}
+
+impl Membrane {
+    pub fn enforce_crossing(&self, payload: &Payload) -> Result<(), EmbassyError> {
+        if self.rule.direction == Direction::Egress && !payload.is_zkp_verified() {
+            // Drop payload. DarkNet nodes cannot pull data; 
+            // ClearNet nodes must push data strictly via Write-Only streams.
+            return Err(EmbassyError::TopologyViolation);
+        }
+        Ok(())
+    }
+}</code></pre>
+
+        <h3>2.3 Geographic Sovereignty via Zone Certificates</h3>
+        <p>
+            Data residency laws (GDPR, ITAR) demand that specific datasets never physically traverse geographic borders. Marabunta enforces this cryptographically. 
+        </p>
+        <p>
+            Nodes are provisioned with <code>ZoneMembership</code> certificates. Before a task or a Neuromancer storage fragment is routed to a peer, the Phantom Protocol verifies the peer's Zone Certificate. If a node in North America attempts to claim a GDPR-restricted European payload, the routing heuristic mathematically rejects the connection, rendering data exfiltration impossible at the protocol level.
+        </p>
+
+        <h3>2.4 The Cryptographic Dead Man's Switch</h3>
+        <p>
+            Executing highly sensitive code on hardware situated in hostile or untrusted Tier-3 data centers requires protection against physical extraction (cold-boot attacks).
+        </p>
+
+        <div class="alert alert-critical">
+            <strong>PHYSICAL BREACH RESPONSE:</strong> Marabunta utilizes a hardware-bound Dead Man's Switch. The <code>marabunta-visor</code> daemon hooks into Linux <code>sysfs</code> to monitor chassis intrusion sensors and hypervisor integrity. If a physical breach is detected, the runtime triggers the <code>zeroize</code> crate, instantly flooding the entire WebAssembly linear memory arena and all cryptographic keypairs with zeros, rendering the node cryptographically dead before the RAM can be extracted.
+        </div>
+
+    </main>
+</body>
+</html>

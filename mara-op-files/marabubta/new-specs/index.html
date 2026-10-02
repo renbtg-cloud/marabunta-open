@@ -1,0 +1,97 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta | Global Architecture & Strategy</title>
+    <link rel="stylesheet" href="marabunta-core.css">
+</head>
+<body>
+    <nav>
+        <h1>Marabunta Spec</h1>
+        <ul>
+            <li><a href="index.html" class="active">0. Master Index</a></li>
+            <li><a href="spec-gossip-dht.html">I. The Hive Mind & DHT</a></li>
+            <li><a href="spec-phantom-crypto.html">II. Phantom Cryptography</a></li>
+            <li><a href="spec-wasm-enclaves.html">III. WASM & Zero-Copy ABI</a></li>
+            <li><a href="spec-neuromancer.html">IV. Neuromancer Storage</a></li>
+            <li><a href="spec-mmx-economics.html">V. MMX Spot Market</a></li>
+            <li><a href="spec-developer-ux.html">VI. SDKs & Orchestration</a></li>
+            <li><a href="spec-business-strategy.html">VII. Business & Strategic Usages</a></li>
+            <li><a href="spec-global-impact.html">VIII. The 100 Entities Matrix</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Marabunta Superorganism</h2>
+        <h3>Architecture, Capabilities, and Global Strategy</h3>
+        
+
+        <p>
+            Welcome to the master technical specification for Marabunta. This document maps the transition from centralized cloud computing monopolies to a fully decentralized, Byzantine-fault-tolerant distributed operating system built in asynchronous Rust.
+        </p>
+
+        <p>
+            Marabunta operates without a "master" node. Complex macro-behaviors, planetary-scale LLM training, and massive data ingestion arise entirely from simple, localized micro-interactions governed by cryptographic mathematics and thermodynamic economics.
+        </p>
+
+        <h3>High-Level Topology</h3>
+        <div class="svg-container">
+            <svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+                <style>
+                    .node { fill: #06b6d4; }
+                    .edge { stroke: #3f3f46; stroke-width: 1.5; }
+                    .dark-edge { stroke: #ef4444; stroke-width: 2; stroke-dasharray: 4; }
+                    .text { fill: #a1a1aa; font-family: monospace; font-size: 12px; }
+                </style>
+                
+                <!-- Central Swarm Area -->
+                <circle cx="300" cy="150" r="100" fill="none" stroke="#18181b" stroke-width="2"/>
+                
+                <!-- Nodes -->
+                <!-- ClearNet / Core -->
+                <circle cx="250" cy="100" r="8" class="node"/>
+                <circle cx="350" cy="120" r="10" class="node"/>
+                <circle cx="280" cy="190" r="12" class="node"/>
+                
+                <!-- DarkNet / Spot Market -->
+                <circle cx="150" cy="50" r="6" fill="#f59e0b"/>
+                <circle cx="450" cy="80" r="5" fill="#f59e0b"/>
+                <circle cx="480" cy="220" r="7" fill="#f59e0b"/>
+                <circle cx="120" cy="200" r="6" fill="#f59e0b"/>
+
+                <!-- Edges: Gossip -->
+                <line x1="250" y1="100" x2="350" y2="120" class="edge"/>
+                <line x1="250" y1="100" x2="280" y2="190" class="edge"/>
+                <line x1="350" y1="120" x2="280" y2="190" class="edge"/>
+                
+                <!-- Edges: Embassy -->
+                <line x1="250" y1="100" x2="150" y2="50" class="dark-edge"/>
+                <line x1="350" y1="120" x2="450" y2="80" class="dark-edge"/>
+                <line x1="280" y1="190" x2="480" y2="220" class="dark-edge"/>
+                <line x1="280" y1="190" x2="120" y2="200" class="dark-edge"/>
+
+                <!-- Labels -->
+                <text x="280" y="140" class="text" text-anchor="middle">DHT Kademlia Core</text>
+                <text x="490" y="70" class="text" fill="#f59e0b">Spot Market (Untrusted)</text>
+                <text x="100" y="40" class="text" fill="#f59e0b">Spot Market (Untrusted)</text>
+            </svg>
+        </div>
+
+        <h3>Specification Books</h3>
+        <p>Use the sidebar navigation to access the deep architectural internals of each subsystem. The engineering methodologies detailed herein bypass traditional REST architectures, mapping deterministic WebAssembly execution directly to bare-metal resources across global topologies.</p>
+        
+        <ul>
+            <li><strong>Book I: The Hive Mind</strong> - Vector clocks, Epidemic State Propagation.</li>
+            <li><strong>Book II: Phantom Cryptography</strong> - Subverting quantum decryption, Ephemeral Keys.</li>
+            <li><strong>Book III: Blind Computation</strong> - WebAssembly JCL enclaves, Zero-copy ABI bindings.</li>
+            <li><strong>Book IV: Neuromancer Storage</strong> - Reed-Solomon fragmentation, Zstd/lz4_flex routing.</li>
+            <li><strong>Book V: MMX Spot Market</strong> - Energy Oracle, Joule-based global algorithmic pricing.</li>
+            <li><strong>Book VI: Orchestration</strong> - Python DAGs, Mantis Time-Travel Debugging.</li>
+            <li><strong>Book VII: Business Usages</strong> - DiLoCo AI Training, Sovereign FinOps arbitrage.</li>
+            <li><strong>Book VIII: 100 Entities Matrix</strong> - The global, geopolitical threat/advantage index.</li>
+        </ul>
+    </main>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<idea-plugin>
+    <id>com.marabunta.rover</id>
+    <name>Marabunta Symbiont (Rust Rover)</name>
+    <vendor email="admin@marabunta.net" url="https://marabunta.net">Marabunta Swarm</vendor>
+
+    <description><![CDATA[
+        Alien tech implementation of the Marabunta Control Plane for JetBrains IDEs.
+        Provides the Glass Box of Shame for legacy topologies (Terraform, Docker, K8s).
+    ]]></description>
+
+    <!-- Product and plugin compatibility requirements. -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <editorNotificationProvider implementation="com.marabunta.rover.LegacyTopologyInterceptor"/>
+        
+        <!-- Register the notification group we use in TopologicalWaiverPanel -->
+        <notificationGroup id="Marabunta Swarm Events" displayType="BALLOON" />
+        
+        <!-- Economic CodeLens / Spot Market Live Projections -->
+        <codeInsight.lineMarkerProvider language="ANY" implementationClass="com.marabunta.rover.EconomicCodeLens"/>
+    </extensions>
+
+    <actions>
+        <!-- Future placeholder for SwarmSimulatorAction, GodModeAction, etc. -->
+    </actions>
+</idea-plugin>

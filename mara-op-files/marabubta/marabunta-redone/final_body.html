@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>MARABUNTA REDONE</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="pretty.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">MARABUNTA REDONE</h1>
+</header>
+<h1 id="preface-asymmetric-distributed-compute">PREFACE: ASYMMETRIC
+DISTRIBUTED COMPUTE</h1>
+<p>General Purpose Hyper-Resilient Edge Supercomputing.</p>
+<p>The Hyperscaler Paradigm is physically constrained by <strong>Data
+Gravity</strong> and <strong>Egress Economics</strong>. When processing
+massive datasets at the point of origin—or when executing logic within
+restricted, air-gapped jurisdictions—transmitting data to a centralized
+cluster violates the fundamental laws of network physics and sovereign
+economics.</p>
+<p>Marabunta is an asymmetric execution substrate. It provides a
+sovereign alternative for environments where the data must remain at the
+origin.</p>
+<p>The Marabunta Swarm is a decentralized mesh designed to coordinate
+arbitrary heterogeneous topologies. It inhabit high-density enterprise
+clusters, air-gapped corporate intranets, and consumer silicon alike,
+harnessing ambient thermodynamic dissipation to execute massive,
+deterministic workloads.</p>
+<p>This document details the mechanical implementation of the core
+pillars required for sovereign edge compute: * <strong>Physical
+Identity:</strong> Deriving cryptographic proof of existence from CPU
+thermodynamic expenditure. * <strong>Deterministic Sandboxing:</strong>
+Executing untrusted code within strict memory and fuel boundaries. *
+<strong>Segmented Routing:</strong> Maintaining network consensus across
+firewalled and high-latency topologies.</p>
+<p>This is the technical specification of a production-ready distributed
+engine.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustrative: Monitoring local node integration with the global mesh</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mrb swarm status <span class="at">--comprehensive</span></span></code></pre></div>
+<h1 id="volume-1-the-thermodynamic-foundation">VOLUME 1: THE
+THERMODYNAMIC FOUNDATION</h1>
+<h2 id="identity-in-a-zero-trust-vacuum-the-chrysalis-grinder">1.1
+Identity in a Zero-Trust Vacuum (The Chrysalis Grinder)</h2>
+<p>Centralized Identity Management (IAM) is an architectural bottleneck
+in decentralized networks. Marabunta replaces the master server with a
+hardware-anchored identity system.</p>
+<p>To participate in the Swarm, a node must bleed computational energy.
+During the initial boot phase, the node executes the <strong>Chrysalis
+Grinder</strong>, a memory-hard Proof-of-Work (PoW) algorithm. By
+saturating the L3 cache and the main memory bus using a unique hardware
+seed and core identifier, the node derives its sovereign
+<strong>NodeId</strong>.</p>
+<p>Let <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20E" alt="E"
+title="E" class="math inline" /> be the minimum thermodynamic energy
+expenditure required to discover a valid cryptographic nonce <img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20n" alt="n"
+title="n" class="math inline" />, where <img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20D" alt="D"
+title="D" class="math inline" /> is the target network difficulty, <img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20L_%7Bmem%7D"
+alt="L_{mem}" title="L_{mem}" class="math inline" /> is the latency of
+the main memory bus, and <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20%5Cmu"
+alt="\mu" title="\mu" class="math inline" /> is the cache miss rate. The
+fundamental work equation is bounded by:</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20E%20%5Cge%20%5Cleft%28%20%5Cfrac%7B2%5E%7B256%7D%7D%7BD%7D%20%5Cright%29%20%5Ctimes%20%5CBig%28%20P_%7Bidle%7D%20%5Ccdot%20t_%7Bhash%7D%20%2B%20P_%7Bactive%7D%20%5Ccdot%20%5Cmu%20%5Ccdot%20L_%7Bmem%7D%20%5CBig%29"
+alt="E \ge \left( \frac{2^{256}}{D} \right) \times \Big( P_{idle} \cdot t_{hash} + P_{active} \cdot \mu \cdot L_{mem} \Big)"
+title="E \ge \left( \frac{2^{256}}{D} \right) \times \Big( P_{idle} \cdot t_{hash} + P_{active} \cdot \mu \cdot L_{mem} \Big)"
+class="math display" /></p>
+<p>This process mathematically neuters the efficiency of custom ASICs,
+which inherently possess low <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20L_%7Bmem%7D"
+alt="L_{mem}" title="L_{mem}" class="math inline" /> but suffer a
+massive <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20%5Cmu"
+alt="\mu" title="\mu" class="math inline" /> penalty under this specific
+memory-hard algorithm. A Marabunta identity is a cryptographic receipt
+of physical work.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustrative: Commencing hardware-anchored identity derivation</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mrb identity derive <span class="at">--difficulty</span> 0x000FFFF...</span></code></pre></div>
+<h2 id="the-thermal-guillotine">1.2 The Thermal Guillotine</h2>
+<p>Because Marabunta can execute untrusted code on consumer-grade
+hardware, it must assume environments where thermal dissipation is
+unmanaged. To prevent malicious algorithms or runaway simulations from
+causing physical damage to host silicon, the system implements the
+<strong>Thermal Guillotine</strong>.</p>
+<p>The orchestrator continuously monitors physical CPU temperatures. Let
+<img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20T_%7Bcore%7D%28t%29"
+alt="T_{core}(t)" title="T_{core}(t)" class="math inline" /> represent
+the internal silicon temperature at time <img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20t" alt="t"
+title="t" class="math inline" />, and <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20T_%7Bcrit%7D"
+alt="T_{crit}" title="T_{crit}" class="math inline" /> represent the
+absolute thermal ceiling (e.g., <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%2091%5E%5Ccirc%20C"
+alt="91^\circ C" title="91^\circ C" class="math inline" />). The
+protection mechanism executes when the following threshold is
+breached:</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5Cint_%7Bt_0%7D%5E%7Bt_1%7D%20%5Cfrac%7Bd%20T_%7Bcore%7D%7D%7Bdt%7D%20dt%20%5Cge%20T_%7Bcrit%7D%20%5Cimplies%20Interrupt%28Epoch_%7BWASM%7D%29"
+alt="\int_{t_0}^{t_1} \frac{d T_{core}}{dt} dt \ge T_{crit} \implies Interrupt(Epoch_{WASM})"
+title="\int_{t_0}^{t_1} \frac{d T_{core}}{dt} dt \ge T_{crit} \implies Interrupt(Epoch_{WASM})"
+class="math display" /></p>
+<p>If the threshold is breached—or if sensors are masked by a
+hypervisor—the daemon executes a hard interruption. By advancing the
+execution epoch of the underlying WebAssembly engine, the orchestrator
+terminates the process from outside its own execution boundary.</p>
+<pre class="http"><code>// Illustrative: Hardware health report during a sustained load event
+GET /api/v1/node/thermal
+{
+  &quot;state&quot;: &quot;WARNING&quot;,
+  &quot;temperature&quot;: 88.2,
+  &quot;throttle_applied&quot;: true
+}</code></pre>
+<h2 id="the-paranoid-micro-audit">1.3 The PARANOID Micro-Audit</h2>
+<p>High-priority tasks require consistent memory latency. To filter out
+weak hardware or virtualized environments that swap memory to disk, the
+orchestrator enforces a <strong>Micro-Audit</strong> (verify_mode:
+PARANOID).</p>
+<p>The orchestrator demands the node allocate a 256MB matrix and execute
+a deterministic transformation within <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%202%2C500ms"
+alt="2,500ms" title="2,500ms" class="math inline" />. We utilize
+<code>black_box</code> compiler directives to ensure the OS cannot
+optimize the allocation away. Let <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20%5Ctau_%7Balloc%7D"
+alt="\tau_{alloc}" title="\tau_{alloc}" class="math inline" /> be the
+time to allocate and <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20%5Ctau_%7Btransform%7D"
+alt="\tau_{transform}" title="\tau_{transform}" class="math inline" />
+be the time to complete the deterministic hash matrix <img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20H_%7Bmatrix%7D"
+alt="H_{matrix}" title="H_{matrix}" class="math inline" />. The
+condition for network acceptance is:</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5Ctau_%7Balloc%7D%20%2B%20%5Ctau_%7Btransform%7D%28H_%7Bmatrix%7D%29%20%5Cle%202500%5Ctext%7Bms%7D"
+alt="\tau_{alloc} + \tau_{transform}(H_{matrix}) \le 2500\text{ms}"
+title="\tau_{alloc} + \tau_{transform}(H_{matrix}) \le 2500\text{ms}"
+class="math display" /></p>
+<p>If the node fails this latency test, it is rejected from the
+high-performance queue. Only bare-metal hardware with high-speed
+physical RAM is permitted to claim sensitive payloads.</p>
+<h1 id="volume-2-the-topology-of-chaos">VOLUME 2: THE TOPOLOGY OF
+CHAOS</h1>
+<h2 id="statistical-kademlia-density-estimation">2.1 Statistical
+Kademlia Density Estimation</h2>
+<p>Marabunta strictly caps its local Kademlia representation to <img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20k%20%3D%2010%2C000"
+alt="k = 10,000" title="k = 10,000" class="math inline" /> peers to
+preserve host RAM. To accurately monitor a planetary-scale network
+without catastrophic memory exhaustion, the daemon utilizes
+<strong>Statistical Kademlia Density Estimation</strong>.</p>
+<p>By measuring the mathematical XOR distance to its closest neighbors,
+the node probabilistically extrapolates the global topology. If <img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20b_%7Bmax%7D"
+alt="b_{max}" title="b_{max}" class="math inline" /> is the index of the
+deepest populated k-bucket (representing the longest shared binary
+prefix), the estimated global network size <img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20%5Chat%7BN%7D"
+alt="\hat{N}" title="\hat{N}" class="math inline" /> is derived as:</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5Chat%7BN%7D%20%3D%202%5E%7Bb_%7Bmax%7D%7D%20%5Ctimes%20%5Cleft%28%20%5Cfrac%7Bk%7D%7Bp_%7Bcollision%7D%7D%20%5Cright%29"
+alt="\hat{N} = 2^{b_{max}} \times \left( \frac{k}{p_{collision}} \right)"
+title="\hat{N} = 2^{b_{max}} \times \left( \frac{k}{p_{collision}} \right)"
+class="math display" /></p>
+<p>The orchestrator maintains <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20O%28%5Clog%20N%29"
+alt="O(\log N)" title="O(\log N)" class="math inline" /> routing
+efficiency and accurate global telemetry without holding the entire
+network state in memory.</p>
+<pre class="http"><code>// Illustrative: Fetching extrapolated Swarm topology
+GET /api/v1/swarm/density
+{
+  &quot;known_peers&quot;: 10000,
+  &quot;estimated_global_scale&quot;: 12500400,
+  &quot;confidence_interval&quot;: 0.95
+}</code></pre>
+<h2 id="thermodynamic-gossip-jitter">2.2 Thermodynamic Gossip
+Jitter</h2>
+<p>Epidemic Gossip protocols suffer from “thundering herd” bottlenecks.
+To maintain thermodynamic equilibrium, Marabunta implements
+<strong>Adaptive Gossip Jitter</strong>.</p>
+<p>The background daemon dynamically evaluates the extrapolated node
+count <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20%5Chat%7BN%7D"
+alt="\hat{N}" title="\hat{N}" class="math inline" />. As the network
+scales, the base heartbeat interval <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20%5CDelta%20t"
+alt="\Delta t" title="\Delta t" class="math inline" /> aggressively
+decelerates, and a randomized exponential backoff <img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20J" alt="J"
+title="J" class="math inline" /> is injected.</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5CDelta%20t%20%3D%20%5Ctau_%7Bbase%7D%20%5Ctimes%20%5Clceil%20%5Clog_%7B10%7D%28%5Chat%7BN%7D%29%20%5Crceil%20%2B%20J%280%2C%20%5Ctau_%7Bbase%7D%29"
+alt="\Delta t = \tau_{base} \times \lceil \log_{10}(\hat{N}) \rceil + J(0, \tau_{base})"
+title="\Delta t = \tau_{base} \times \lceil \log_{10}(\hat{N}) \rceil + J(0, \tau_{base})"
+class="math display" /></p>
+<p>This mathematically guarantees that the global packet rate remains
+bounded and asymptotic, preventing the 460-million packet/sec meltdown
+that would otherwise DDoS residential ISP backbones.</p>
+<h2 id="instantaneous-work-resolution-o1-data-gravity">2.3 Instantaneous
+Work Resolution (O(1) Data Gravity)</h2>
+<p>A traditional orchestrator scanning a million pending tasks performs
+an <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20O%28N%29"
+alt="O(N)" title="O(N)" class="math inline" /> linear search, pinning
+the CPU at 100% just looking for work. Marabunta completely decouples
+task tracking from execution loops.</p>
+<p>The <code>KnowledgeStore</code> maintains a strict <img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20O%281%29"
+alt="O(1)" title="O(1)" class="math inline" /> indexed queue of
+unassigned chunks. When a 64-core enterprise node requests work, the CPU
+instantly pops contiguous task fragments off the stack in constant time.
+The CPU spends zero cycles scanning arrays, unlocking 100% of the
+silicon for the WebAssembly sandbox. # VOLUME 4: ENTERPRISE
+SOVEREIGNTY</p>
+<h2 id="the-corporate-intranet-illusion">4.1 The Corporate Intranet
+Illusion</h2>
+<p>Standard peer-to-peer (P2P) architectures assume a flat, universally
+routable public internet. When executing workloads across a midsize
+industry or university—where 99% of nodes reside behind strict corporate
+firewalls with zero inbound or outbound WAN access—traditional Kademlia
+DHTs instantly fail.</p>
+<p>A sub-swarm of 500 air-gapped office workstations cannot download
+massive datasets from AWS S3, nor can they route computed results back
+to a global orchestrator. The network segments shatter into isolated
+enclaves.</p>
+<p>To seamlessly integrate these high-density clusters, Marabunta
+introduces <strong>Hierarchical Membrane Routing</strong>.</p>
+<h2 id="the-egress-diode-air-gapped-proxying">4.2 The Egress Diode
+(Air-Gapped Proxying)</h2>
+<p>A designated edge node with authorized WAN access (e.g., an IT
+administrator’s workstation) is promoted to a <strong>Membrane
+Gateway</strong>. This node acts as an <strong>Egress Diode</strong>,
+establishing an absolute one-way proxy between the corporate DMZ and the
+global Swarm.</p>
+<p>When air-gapped internal workers attempt to stream the 1.5TB datalake
+via the Zero-Footprint WASI host-function, the Membrane Gateway
+intercepts the traffic. It natively spins up a lightweight HTTP Forward
+Proxy on a designated port.</p>
+<p>Let <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20B_%7Bwan%7D"
+alt="B_{wan}" title="B_{wan}" class="math inline" /> be the external
+bandwidth of the Gateway, and <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20%5Csum%20B_%7Blan%7D"
+alt="\sum B_{lan}" title="\sum B_{lan}" class="math inline" /> be the
+aggregate consumption of the internal workers. The Gateway serves as a
+localized caching funnel, satisfying the condition:</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5Csum%20B_%7Blan%7D%20%5Cle%20B_%7Bwan%7D%20%20%20%20%20imes%20Cache_%7Bhit%5C_rate%7D"
+alt="\sum B_{lan} \le B_{wan}     imes Cache_{hit\_rate}"
+title="\sum B_{lan} \le B_{wan}     imes Cache_{hit\_rate}"
+class="math display" /></p>
+<p>Internal nodes safely pull global state without ever exposing the
+corporate LAN to external internet routing tables.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustrative: Promoting a node to a Membrane Gateway</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mrb network promote <span class="at">--role</span> gateway <span class="at">--internal</span> 192.168.1.100:9001</span></code></pre></div>
+<h2 id="hierarchical-back-routing">4.3 Hierarchical Back-Routing</h2>
+<p>When the internal corporate aggregator completes stitching together a
+50MB wave-equation result, it cannot open a direct TCP socket to the
+global USP Orchestrator (<img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20O" alt="O"
+title="O" class="math inline" />) due to firewall restrictions
+(<code>EHOSTUNREACH</code>).</p>
+<p>Instead, the internal aggregator (<img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20n_i" alt="n_i"
+title="n_i" class="math inline" />) encapsulates the payload into an
+<code>EgressRelay</code> message. The Membrane Gateway (<img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20G_m" alt="G_m"
+title="G_m" class="math inline" />) unwraps this envelope,
+cryptographically signs it with its own identity, and forwards it to the
+global mesh. The routing trajectory becomes a Directed Acyclic Graph
+(DAG):</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20Route%28n_i%20%20%20%20o%20O%29%20%3D%20%28n_i%20%5Cxrightarrow%7B%20%20%20ext%7BLAN%7D%7D%20G_m%29%20%5Cland%20%28G_m%20%5Cxrightarrow%7B%20ext%7BWAN%7D%7D%20O%29"
+alt="Route(n_i    o O) = (n_i \xrightarrow{   ext{LAN}} G_m) \land (G_m \xrightarrow{ ext{WAN}} O)"
+title="Route(n_i    o O) = (n_i \xrightarrow{   ext{LAN}} G_m) \land (G_m \xrightarrow{ ext{WAN}} O)"
+class="math display" /></p>
+<p>This allows the Swarm to dynamically nest infinite layers of isolated
+sub-swarms, aggregating petabytes of compute power without compromising
+enterprise security postures.</p>
+<pre class="http"><code>// Illustrative: Membrane Gateway relay telemetry
+GET /api/v1/membrane/telemetry
+{
+  &quot;active_tunnels&quot;: 499,
+  &quot;bytes_exfiltrated&quot;: 52428800,
+  &quot;dropped_packets&quot;: 0
+}</code></pre>
+<h1 id="volume-5-the-cryptographic-economy">VOLUME 5: THE CRYPTOGRAPHIC
+ECONOMY</h1>
+<h2 id="the-ledger-of-sovereignty">5.1 The Ledger of Sovereignty</h2>
+<p>A distributed execution engine requires an underlying economic
+mechanism to incentivize the donation of idle compute cycles. However,
+issuing digital credits using localized databases is inherently
+insecure. A malicious actor with filesystem access could arbitrarily
+modify their local SQLite ledger to inflate their balance.</p>
+<p>Marabunta mathematically anchors its micro-credit system (MMX) to the
+cryptographic execution trace of the physics solver.</p>
+<h2 id="ed25519-replay-immunity">5.2 Ed25519 Replay Immunity</h2>
+<p>To prevent database tampering and receipt forgery, every MMX
+settlement is explicitly signed by the Orchestrator’s
+<code>NodeIdentity</code>.</p>
+<p>To prevent Replay Attacks—where a worker exports a valid 10 MMX
+receipt and duplicates it 1,000 times to inflate their tax deduction—the
+Orchestrator injects a strictly monotonic UNIX timestamp into the
+signature payload. The signature <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20%5Csigma"
+alt="\sigma" title="\sigma" class="math inline" /> is an
+<code>Ed25519</code> function over the concatenated byte-array of the
+chunk ID (<img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20C_%7Bid%7D"
+alt="C_{id}" title="C_{id}" class="math inline" />), worker ID (<img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20W_%7Bid%7D"
+alt="W_{id}" title="W_{id}" class="math inline" />), credit amount (<img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20A" alt="A"
+title="A" class="math inline" />), and timestamp (<img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20T" alt="T"
+title="T" class="math inline" />):</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5Csigma%20%3D%20Sign_%7BEd25519%7D%5CBig%28sk_%7Bnode%7D%2C%5C%3B%20H_%7BBlake3%7D%28C_%7Bid%7D%20%5Cparallel%20W_%7Bid%7D%20%5Cparallel%20A%20%5Cparallel%20T%29%5CBig%29"
+alt="\sigma = Sign_{Ed25519}\Big(sk_{node},\; H_{Blake3}(C_{id} \parallel W_{id} \parallel A \parallel T)\Big)"
+title="\sigma = Sign_{Ed25519}\Big(sk_{node},\; H_{Blake3}(C_{id} \parallel W_{id} \parallel A \parallel T)\Big)"
+class="math display" /></p>
+<p>When a tax authority or corporate auditor verifies the exported CSV,
+the cryptographic script guarantees that every single row is
+mathematically distinct and bound to a specific quantum of time.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustrative: Exporting verifiable MMX cryptographic receipts</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mrb economy export <span class="at">--format</span> csv <span class="at">--signed</span></span></code></pre></div>
+<h2 id="the-10m-tps-wall-sqlite-batching">5.3 The 10M TPS Wall (SQLite
+Batching)</h2>
+<p>While SQLite provides robust local storage, a regional hub settling
+thousands of transactions per second for a 10-million node swarm will
+instantly saturate the host operating system’s thread pool, deadlocking
+the daemon due to file locks.</p>
+<p>Marabunta bypasses physical NVMe IOPS limits by enforcing
+<code>PRAGMA journal_mode=WAL</code> (Write-Ahead Logging) and
+<code>wal_autocheckpoint=1000</code>. Settlement requests are pushed
+into a lock-free MPSC (Multi-Producer, Single-Consumer) background
+channel. A dedicated writer thread opportunistically batches up to 100
+settlements into a single atomic SQLite transaction. This transforms
+10,000 blocking disk I/O operations into 100 streamlined sequential
+writes, achieving massive throughput without async starvation.</p>
+<h1 id="annex-a-the-developer-experience">ANNEX A: THE DEVELOPER
+EXPERIENCE</h1>
+<p>To ensure frictionless adoption by enterprise engineering teams,
+Marabunta provides a comprehensive, cloud-native developer
+experience.</p>
+<ul>
+<li><strong>The Compiler Toolchain:</strong> Natively transpiles C++,
+Rust, and Python payloads into optimized WebAssembly
+(<code>wasm32-wasi</code>) binaries, automatically injecting the
+required Marabunta memory bounds and streaming host-functions.</li>
+<li><strong>IDE Integration:</strong> Dedicated VSCode and IntelliJ
+plugins allow researchers to execute <code>O(1)</code> local sandbox
+testing and push payloads directly to the Kademlia DHT from their
+editor.</li>
+<li><strong>CI/CD Pipelines:</strong> Native GitHub Actions and GitLab
+CI integrations for automated job submission, deterministic execution
+validation, and asynchronous artifact fetching.</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustrative: Compiling and deploying a job via the CLI toolchain</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mrb build ./fwi_solver <span class="at">--target</span> wasm32-wasi</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mrb deploy ./fwi_solver.wasm <span class="at">--priority</span> high</span></code></pre></div>
+<h1 id="annex-b-the-sovereign-analytics-engine">ANNEX B: THE SOVEREIGN
+ANALYTICS ENGINE</h1>
+<p>Operating a swarm of 10 million nodes requires unprecedented
+observability. The Marabunta Management Dashboard (The Panopticon)
+visualizes macroscopic network physics without crashing the observer’s
+hardware.</p>
+<ul>
+<li><strong>Lazy DOM Rendering:</strong> The backend utilizes lazy
+Kademlia iterators, while the frontend employs strict 500-element FIFO
+ring-buffers. The UI guarantees a flat memory footprint, preventing
+browser Out-Of-Memory (OOM) crashes even when processing 5,000 telemetry
+events per second.</li>
+<li><strong>Constellation Telemetry:</strong> WebGL and D3.js
+force-directed graphs render the topology of macro-coalitions and
+shifting economic treaties in real-time, aggressively culling edge
+matrices to preserve GPU rasterizers.</li>
+<li><strong>Ledger Auditing:</strong> Real-time visibility into the MMX
+SQLite database via paginated endpoints, providing instantaneous
+compliance and economic tracking.</li>
+</ul>
+<h1 id="annex-c-planetary-deployment">ANNEX C: PLANETARY DEPLOYMENT</h1>
+<p>Marabunta is designed as a frictionless contagion, capable of
+organically infiltrating diverse infrastructures.</p>
+<ul>
+<li><strong>Bare Metal &amp; Residential:</strong> Lightweight,
+zero-dependency binaries packaged as <code>.msi</code>,
+<code>.deb</code>, and <code>.rpm</code> for seamless installation on
+consumer gaming PCs and library desktops.</li>
+<li><strong>Academic Grids:</strong> Multi-architecture containerization
+(Docker, Podman) for effortless scaling across university HPC
+clusters.</li>
+<li><strong>Enterprise Kubernetes:</strong> Native Helm charts and
+Kubernetes Operators for highly available, auto-updating deployments
+within corporate DMZs.</li>
+</ul>
+<h1 id="annex-d-war-games">ANNEX D: WAR GAMES</h1>
+<p>Marabunta is mathematically hardened against the physical realities
+of the public internet. Our architecture is empirically validated
+through continuous Chaos Engineering.</p>
+<ul>
+<li><strong>The Mantis Flight Data Recorder:</strong> Constant WASI
+snapshotting enables deterministic Instruction-Set Replay. If a node in
+Brazil crashes during a massive simulation, the exact CPU state and
+memory boundaries can be perfectly reconstructed and debugged
+offline.</li>
+<li><strong>Network Partitions:</strong> We routinely inject synthetic
+latency, simulated BGP hijacks, and split-brain geographic partitions
+into the control plane to mathematically prove the Swarm’s ability to
+self-heal and re-route without centralized coordination.</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustrative: Injecting synthetic split-brain chaos into the local node</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mrb chaos inject partition <span class="at">--duration</span> 300s <span class="at">--drop-rate</span> 0.99</span></code></pre></div>
+<h1 id="annex-e-coming-soon">ANNEX E: COMING SOON…</h1>
+<ul>
+<li><strong>Distributed DiLoCo (LLM Training):</strong> Being
+tested.</li>
+<li><strong>Sealed Computing (FHE):</strong> Being developed.</li>
+<li><strong>IBM-CICS (COBOL, Assembly etc. w/ 2-phase commit):</strong>
+Being tested.</li>
+</ul>
+</body>
+</html>

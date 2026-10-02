@@ -1,0 +1,15 @@
+# Marabunta - Licensed under the MIT License.
+[package]
+name = "marabunta-plugin-sdk"
+version = "0.1.0"
+edition = "2021"
+description = "SDK for building Marabunta Radiation plugins"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+marabunta-plugin-macros = { path = "../plugin-macros" }
+chrono = { version = "0.4", features = ["serde"] }
+
+[dev-dependencies]

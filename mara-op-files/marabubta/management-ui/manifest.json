@@ -1,0 +1,25 @@
+{
+    "name": "Marabunta Swarm Management Console",
+    "short_name": "Swarm Console",
+    "description": "Monitor and manage your Marabunta distributed compute swarm",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "orientation": "any",
+    "theme_color": "#0f1117",
+    "background_color": "#0f1117",
+    "categories": ["utilities", "developer"],
+    "icons": [
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230f1117'/%3E%3Cpath d='M256 64L432 166v172L256 440 80 338V166z' fill='%234f6ef7' opacity='0.15' stroke='%234f6ef7' stroke-width='8'/%3E%3Cpath d='M256 128L368 193v130L256 388 144 323V193z' fill='none' stroke='%234f6ef7' stroke-width='6'/%3E%3Ccircle cx='256' cy='258' r='28' fill='%234f6ef7'/%3E%3Ccircle cx='200' cy='224' r='14' fill='%2310b981'/%3E%3Ccircle cx='312' cy='224' r='14' fill='%2310b981'/%3E%3Ccircle cx='200' cy='292' r='14' fill='%2310b981'/%3E%3Ccircle cx='312' cy='292' r='14' fill='%2310b981'/%3E%3C/svg%3E",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230f1117'/%3E%3Cpath d='M96 24L162 62v76L96 176 30 138V62z' fill='%234f6ef7' opacity='0.15' stroke='%234f6ef7' stroke-width='4'/%3E%3Ccircle cx='96' cy='100' r='12' fill='%234f6ef7'/%3E%3Ccircle cx='74' cy='86' r='6' fill='%2310b981'/%3E%3Ccircle cx='118' cy='86' r='6' fill='%2310b981'/%3E%3Ccircle cx='74' cy='114' r='6' fill='%2310b981'/%3E%3Ccircle cx='118' cy='114' r='6' fill='%2310b981'/%3E%3C/svg%3E",
+            "sizes": "192x192",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ]
+}

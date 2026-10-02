@@ -1,0 +1,104 @@
+src
+  |-compression
+  |-tracing
+  |-batching
+  |-backup
+  |-governance
+  |-quotas
+  |-sdk
+  |-tenancy
+  |-bpf
+  |-safety
+  |-swarm
+  |  |-isomorphic
+  |  |-crypto
+  |  |-dmz
+  |  |-planetary
+  |  |-storage
+  |  |-neuromancer
+  |  |  |-darwin
+  |  |-detection
+  |  |-assimilate
+  |  |-observe
+  |  |-ext_events
+  |  |-transport
+  |  |-hyperscale
+  |  |-cde
+  |  |-postgres
+  |  |-workflow
+  |-cli
+  |-pool
+  |-logging
+  |-wan
+  |-storage
+  |-switchboard
+  |  |-handlers
+  |  |-oracles
+  |-metrics
+  |  |-dashboards
+  |-failure
+  |-maintenance
+  |-phantom
+  |  |-crypto
+  |  |-network
+  |-highestsec
+  |  |-mpc
+  |-infrastructure
+  |-web_ui
+  |  |-static
+  |-preemption
+  |-security
+  |-policy
+  |  |-dsl
+  |-health
+  |-cache
+  |-api
+  |  |-openai_wire
+  |  |-redis_wire
+  |  |-s3_wire
+  |  |-pgwire
+  |-placement
+  |-chaos
+  |-config
+  |-ratelimit
+  |-control_plane
+  |  |-web
+  |-marabunta
+  |  |-transport
+  |-alerting
+  |-plugin
+  |-common
+  |-bin
+  |-protocol
+  |-integration_tests
+  |  |-helpers
+  |-workflow
+sdk
+  |-r
+  |  |-marabunta
+  |  |  |-R
+  |-python
+  |  |-marabunta_sdk
+  |  |  |-__pycache__
+  |  |-marabunta_torch
+  |  |-tests
+  |-java
+  |  |-marabunta-agent
+  |  |  |-src
+  |  |  |  |-main
+  |  |  |  |  |-java
+  |  |  |  |  |  |-com
+  |  |  |  |  |  |  |-marabunta
+  |  |  |  |  |  |  |  |-agent
+  |-plugin-macros
+  |  |-src
+  |-fortran
+  |  |-cmake
+  |  |-examples
+  |  |-include
+  |  |-src
+  |-rust
+  |-plugin
+  |  |-examples
+  |  |-src
+  |  |  |-testing

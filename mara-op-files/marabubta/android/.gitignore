@@ -1,0 +1,84 @@
+# Built application files
+*.apk
+*.ap_
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (contains SDK path)
+local.properties
+
+# Android Studio
+*.iml
+.idea/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+.navigation/
+captures/
+.externalNativeBuild/
+
+# NDK
+obj/
+.cxx/
+
+# IntelliJ
+*.iws
+
+# Keystore files
+*.jks
+*.keystore
+
+# Google Services
+google-services.json
+
+# macOS
+.DS_Store
+
+# Native libraries (built from Rust)
+app/src/main/jniLibs/*/libmarabunta_worker.so
+
+# Logs
+*.log
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.tbz2
+*.tar.xz
+*.txz
+*.tar.zst
+*.7z
+*.rar
+*.lz
+*.lzma
+*.zst
+*.gz
+*.bz2
+*.xz
+*.cab
+*.iso
+*.dmg
+*.ar
+*.cpio
+*.whl

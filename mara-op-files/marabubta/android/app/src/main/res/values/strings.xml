@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App -->
+    <string name="app_name">Marabunta Compute</string>
+    <string name="tagline">Contribute your idle computing power</string>
+
+    <!-- Status -->
+    <string name="status_stopped">Status: Stopped</string>
+    <string name="status_running">Status: Running</string>
+    <string name="status_computing">Status: Computing...</string>
+    <string name="status_waiting">Status: Waiting...</string>
+    <string name="status_paused">Status: Paused</string>
+    <string name="status_error">Status: Error</string>
+
+    <!-- Stats -->
+    <string name="stats_default">Tasks: 0 | Tokens: 0</string>
+    <string name="stats_format">Tasks: %1$d | Tokens: %2$d</string>
+
+    <!-- Power -->
+    <string name="power_unknown">Power: Unknown</string>
+    <string name="power_charging">Power: Charging</string>
+    <string name="power_battery">Power: Battery</string>
+
+    <!-- Details -->
+    <string name="details_default">Ready to contribute</string>
+
+    <!-- Buttons -->
+    <string name="button_start">Start Contributing</string>
+    <string name="button_stop">Stop Contributing</string>
+    <string name="button_pause">Pause</string>
+    <string name="button_resume">Resume</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="setting_auto_start">Auto-start on boot</string>
+    <string name="setting_auto_start_desc">Automatically start contributing when phone restarts</string>
+    <string name="setting_battery_mode">Compute on battery</string>
+    <string name="setting_battery_mode_desc">Allow computing when not plugged in (battery > 90%)</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_name">Marabunta Worker Status</string>
+    <string name="notification_channel_desc">Shows current worker status and statistics</string>
+    <string name="notification_title_idle">Marabunta Worker - Idle</string>
+    <string name="notification_title_computing">Marabunta Worker - Computing</string>
+    <string name="notification_title_waiting">Marabunta Worker - Waiting</string>
+
+    <!-- Footer -->
+    <string name="footer_text">Marabunta Compute Worker v1.0\nYour device contributes when idle and charging</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_battery_title">Battery Optimization</string>
+    <string name="dialog_battery_message">For reliable background computing, please disable battery optimization for this app.</string>
+    <string name="dialog_button_allow">Allow</string>
+    <string name="dialog_button_later">Later</string>
+    <string name="dialog_button_ok">OK</string>
+
+    <!-- Errors -->
+    <string name="error_native_library">Native library not found</string>
+    <string name="error_connection">Connection failed</string>
+    <string name="error_task">Task execution failed</string>
+
+</resources>

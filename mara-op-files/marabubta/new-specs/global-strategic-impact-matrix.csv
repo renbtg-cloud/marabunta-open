@@ -1,0 +1,317 @@
+Entity Name,Category,Benefit from Marabunta,Existential Risk if Competitors Adopt First
+"PRC Gov (State Council)","State Actor","Bypassing Western chip embargoes via Distributed Low-Comm (DiLoCo) training on legacy hardware fleets.","Loss of technological parity as Western-aligned private swarms outcompute state-controlled clusters."
+"Max Planck Institute","Research","Exascale simulation capacity for climate and physics without waiting for supercomputer queue times.","R&D obsolescence as rival labs execute genomic and chemical screening at 100x velocity."
+"Huawei","Tech (PRC)","Resilient 5G/6G edge orchestration that survives international sanction regimes.","Exclusion from global 'ClearNet' zones if Marabunta standards align with Western HighestSec protocols."
+"Palantir Technologies","Defense (USA)","Battlefield edge intelligence surviving contested/degraded communications (DDIL).","Competitors offering 'Unkillable' autonomous drone coordination at 1/10th the cost."
+"Goldman Sachs","Finance","Real-time Monte Carlo risk simulation across global spot markets at Joule-level pricing.","Loss of high-frequency alpha to boutique hedge funds utilizing DarkNet spot market arbitrage."
+"Siemens","Industrial","Decentralized Digital Twin simulations for global factory floors without data exfiltration.","Supply chain gridlock as competitors optimize logistics via swarm-based genetic algorithms."
+"State Grid Corp of China","Utility (PRC)","Real-time Smart Grid balancing using 100M+ decentralized edge sensors.","Infrastructure vulnerability to rival swarms capable of subverting grid-balancing consensus."
+"Pfizer","Pharma","Accelerated virtual screening of chemical compounds via polyglot WASM enclaves.","Discovery timeline collapse as smaller labs find blockbusters via decentralized GPU meshes."
+"Tencent","Tech (PRC)","Global gaming/metaverse rendering offloaded to consumer edge devices.","Massive egress bankruptcy if rival CDNs commoditize edge execution first."
+"CERN","Research","Processing exabytes of sensor data via Neuromancer storage scatter.","Data siloization as rival experiments utilize global compute to find new physics faster."
+"Lockheed Martin","Defense","Decentralized flight control systems for eVTOL and hypersonic swarms.","Loss of kinetic superiority to 'Biological' aviation immune systems developed by rivals."
+"Alibaba Group","Tech (PRC)","Sovereign cloud infrastructure that bypasses traditional US-led hypervisors.","Vendor lock-in death as merchants migrate to decentralized MMX marketplaces."
+"Petrobras","Energy (Brazil)","Seismic data imaging at the edge (oil rigs) via Stigmergic DTN.","Exploration failure as rivals map subsea reserves with 10x the simulation density."
+"TSMC","Hardware","Securing IP-sensitive EDA workflows via risc0 zkVM enclaves.","Supply chain opacity as competitors achieve zero-copy transparency in manufacturing."
+"Deutsche Bank","Finance","Post-quantum secure inter-bank clearing via the Phantom Protocol.","Liquidity crisis as rival clearinghouses adopt instantaneous BFT Hashgraph settlement."
+"Samsung Electronics","Tech","Coordinating billions of IoT devices into a sub-cognitive AI fabric.","Obsolescence of the 'Galaxy' ecosystem as decentralized OSs take over the hardware."
+"NASA","Space","Unstoppable orbital debris tracking and deep-space probe telemetry.","Loss of 'Tollbooth' revenue as private swarms establish the definitive orbital state."
+"Toyota","Automotive","City-wide autonomous vehicle simulation and traffic flow optimization.","Safety-rating collapse as rivals achieve 100M simulated miles/day via edge compute."
+"European Space Agency (ESA)","Space","Geographic sovereignty for satellite data fragments via Zone Certificates.","Reliance on vulnerable US-centralized cloud for mission-critical mission control."
+"BlackRock","Finance","Planetary-scale Aladdin risk engine execution at 90% discount.","AUM flight as rivals offer superior returns through Joule-based FinOps efficiency."
+"BYD","Automotive (PRC)","Optimizing battery-swapping networks via decentralized swarm heuristics.","Logistical failure as rival EV networks achieve superior energy distribution."
+"AstraZeneca","Pharma","Distributed genomic sequencing across patient-consented edge devices.","R&D bankruptcy due to legacy cloud costs for massive parallel DNA matching."
+"Ministry of S&T (PRC)","State Actor","Federating all domestic university compute into a single 'National Mainframe'.","Brain drain as researchers defect to global private swarms with better resource access."
+"Airbus","Aerospace","Real-time aircraft structural health monitoring via 'Dust' sensors.","Maintenance cost explosion as Boeing-aligned swarms optimize air-frame longevity."
+"Reliance Industries","Industrial (India)","Establishing a domestic 'Digital Sovereign' mesh for the Indian subcontinent.","Digital colonization by US/Chinese hyperscalers if local swarm adoption stalls."
+"ASML","Hardware","Protecting lithography blueprints during remote diagnostics via FHE.","IP leakage as legacy VPNs/SSH tunnels are compromised by quantum adversaries."
+"ICBC","Finance (PRC)","Securing the Digital Yuan (e-CNY) against network partitions via BFT Hashgraph.","State banking collapse if rival protocols establish a superior sovereign crypto-network."
+"MIT","Research","Instantaneous global collaboration on massive datasets via zero-copy ABI.","Academic irrelevance as 'Marabunta-Native' labs dominate the citation index."
+"FedEx","Logistics","Real-time global route optimization using continuous genetic algorithms.","Bankruptcy as rivals achieve zero-latency delivery scheduling at edge scale."
+"Maersk","Logistics","Resilient maritime logistics tracking via Stigmergic DTN across satellite links.","Supply chain blindness during geopolitical conflict or fiber-cut events."
+"Hetzner Online","Tech (Data Center)","Monetizing idle bare-metal density via the MMX Spot Market.","Obsolescence as 'Marabunta-Visor' turns every enterprise office into a data center."
+"Equinix","Tech (Data Center)","Providing 'HighestSec' ClearNet zones for the Hybrid Swarm.","Margin collapse as compute becomes a fungible commodity priced at the Joule."
+"National Institutes of Health (NIH)","Research (USA)","Planetary-scale pandemic modeling via decentralized compartmental models.","Failure to contain future outbreaks as rival nations execute faster simulations."
+"Baidu","Tech (PRC)","Autonomous driving neural network training on fragmented GPU arrays.","AI model stagnation if competitors bypass the InfiniBand bottleneck."
+"SAP","Industrial","Bridging global supply chains via the Cloud Assimilation Protocol.","ERP obsolescence as businesses migrate to 'Stigmergic' autonomous resource attraction."
+"Mercado Libre","Tech (LATAM)","Resilient e-commerce and payments for volatile mobile edge networks.","Loss of market share to decentralized marketplaces with lower transaction fees."
+"Bank of England","Finance","Quantum-resistant clearing for national financial infrastructure.","Financial sovereignty loss as private protocols take over national clearing duties."
+"Fraunhofer-Gesellschaft","Research (Germany)","Translating industrial patents into secure, executable WASM plugins.","Industrial decline as competitors adopt 'Alien Tech' faster."
+"Lockheed Martin","Defense","Autonomous drone swarm coordination via the Darwin Engine.","Kinetic defeat by 'swarm-native' insurgent or state actors."
+"Chevron","Energy","Real-time oil rig anomaly detection via 'Dust' mesh sensors.","Operational risk as competitors achieve superior safety via edge-based FHE."
+"Ping An Insurance","Finance (PRC)","Real-time insurance risk modeling using planetary edge telemetry.","Actuarial failure as competitors utilize superior data pheromones for pricing."
+"Boeing","Aerospace","Autonomous stabilization of failing airframes via firmware WASM.","Safety obsolescence as rivals deploy 'un-crashable' aviation immune systems."
+"SoftBank","Finance","Funding the 'Planetary Neuromorphic AI Fabric' as a $300M anchor.","Portfolio collapse as legacy cloud investments lose 90% of their valuation."
+"JD.com","Logistics (PRC)","Unstoppable autonomous warehouse coordination via local DHT.","Logistical paralysis during state-level network interference."
+"Intel","Hardware","Embedding Marabunta-Visor natively into the ME/silicon for root-of-trust.","Commoditization of silicon as WASM renders proprietary instruction sets irrelevant."
+"AMD","Hardware","Providing high-density GPU nodes for the MMX Spot Market.","Market share loss to ARM-based edge devices if DiLoCo training dominates."
+"Cloudflare","Tech","Hosting 'Laundering Gateways' for the Vampire Stealth Doctrine.","Egress revenue death as P2P gossip bypasses traditional CDNs."
+"Fastly","Tech","Executing 'Vampire' edge compute for legacy cloud ingestion.","Obsolescence as 'Marabunta-Visor' moves compute deeper into the local network."
+"JPMorgan Chase","Finance","High-authority audit trails via the BFT Hashgraph.","Regulatory fines as competitors prove superior compliance via Jurisdiction Proofs."
+"Novartis","Pharma","Global real-time synthetic biology engine for personalized medicine.","Discovery lag as 'Swarm-Native' pharma companies corner the market."
+"Thales Group","Defense (EU)","Quantum-resistant telecom grids for Tier-1 ISP backbones.","Network vulnerability as rival defense contractors subvert standard encryption."
+"Indra Sistemas","Defense (Spain)","Real-time air traffic control via decentralized consensus.","Systemic failure during regional conflicts or AWS outages."
+"Leonardo S.p.A.","Aerospace (Italy)","Coordinating drone swarms for agricultural and defense use.","Obsolescence as rivals adopt the 'Amazon Forest' predator daemons."
+"Nokia","Tech (Finland)","Embedding Marabunta into 6G base stations for edge AI inference.","Hardware irrelevance as decentralized protocols bypass the carrier core."
+"Ericsson","Tech (Sweden)","Decentralized RAN orchestration surviving fiber cuts.","Loss of carrier dominance to private 'Dust' meshes."
+"Orange S.A.","Telecom (France)","Establishing geographic data sovereignty for EU citizens.","Digital colonization as US-based swarms bypass local regulations."
+"Telefonica","Telecom (Spain)","Monetizing edge-compute across the Spanish-speaking world.","Margin death as 'MMX Spot Market' drives compute prices to zero."
+"State Bank of India","Finance","Resilient financial services for 1.4B people on erratic edge networks.","Financial exclusion as private swarms establish rival credit systems."
+"Tata Consultancy Services","Tech (India)","Migrating global enterprises via the Cloud Assimilation Protocol.","Service revenue collapse as 'Symbiont IDEs' automate system architecture."
+"Infosys","Tech (India)","Building 'HighestSec' enclaves for global banking clients.","Loss of contracts to autonomous, mathematically-proven compliance engines."
+"Gazprom","Energy (Russia)","Predictive maintenance for pipelines via 'Viper' anomaly detection.","Operational blindness if competitors adopt 'Darwin' self-healing first."
+"Eni S.p.A.","Energy (Italy)","Decentralized seismic imaging across African energy assets.","Exploration failure as rivals use DiLoCo to map reserves in days, not years."
+"TotalEnergies","Energy (France)","Managing global renewable grids via Smart Grid Balancers.","Grid instability as decentralized competitors optimize energy routing."
+"Sanofi","Pharma (France)","Accelerated vaccine development via massively parallel simulation.","Pandemic response failure as rival nations out-simulate local labs."
+"GSK","Pharma (UK)","Protecting genomic IP via risc0 zkVM enclaves.","IP theft as legacy clouds are breached by state actors."
+"Rolls-Royce Holdings","Engineering (UK)","Real-time engine health monitoring via Stigmergic DTN.","Maintenance lag as GE-aligned swarms achieve 100% predictive accuracy."
+"BAE Systems","Defense (UK)","Coordinating 'Type 26' frigate systems via BFT Hashgraph.","Naval defeat as rivals deploy 'Phantom' protocols for stealth comms."
+"UBS Group","Finance (CH)","Wealth management risk engines running on sovereign spot markets.","Wealth flight as clients demand 'FHE' privacy for their portfolios."
+"CERN","Research (CH)","Distributed analysis of LHC data via Neuromancer storage.","Scientific lag as rival 'DarkNet' swarms discover new particles first."
+"Nestle","Consumer Goods","Swarm-based supply chain transparency for global logistics.","Consumer boycotts as rivals prove 'Stigmergic' sustainability."
+"Roche Holding","Pharma (CH)","Virtual screening of protein folding on consumer GPU meshes.","Discovery timeline collapse as smaller rivals find cures first."
+"ABB","Industrial (CH)","Decentralized robot coordination for smart factories.","Factory downtime as rivals adopt 'Darwin' self-healing robotics."
+"Sony Group","Tech (Japan)","Coordinating PlayStation 6 units into a global render swarm.","Hardware irrelevance as decentralized metaverses bypass the console."
+"Toyota Research Institute","Research (Japan)","Planetary-scale autonomous vehicle 'shadow testing'.","Autonomous failure as rivals achieve superior safety via edge-ZKP."
+"SoftBank Vision Fund","Finance (Japan)","Investing in the 'Planetary Neuromorphic AI Fabric'.","Financial ruin as legacy cloud 'Unicorns' face 90% margin cuts."
+"Nintendo","Tech (Japan)","Unstoppable peer-to-peer gaming meshes surviving outages.","Network irrelevance as rival 'Dust' meshes offer zero-latency gaming."
+"Foxconn","Hardware (Taiwan)","Optimizing 100M+ worker logistics via swarm heuristics.","Industrial paralysis as rivals achieve superior automation via 'Darwin'."
+"TSMC","Hardware (Taiwan)","Securing the 'Global Supply Chain Reactor' via JCL.","Production bottlenecks as competitors optimize sub-fab logistics via swarms."
+"MediaTek","Hardware (Taiwan)","Natively embedding Marabunta-Visor into 5G chipsets.","Commoditization as rival chips offer built-in MMX token mining."
+"Samsung Biologics","Pharma (Korea)","Accelerated contract manufacturing via decentralized Digital Twins.","Production lag as rivals optimize bioreactors via 'Viper' detection."
+"SK Hynix","Hardware (Korea)","Providing 'Zeroize-enabled' RAM for Marabunta nodes.","Market share loss to rivals offering hardware-bound Dead Man's Switches."
+"LG Electronics","Tech (Korea)","Turning billions of appliances into a 'Dust' compute mesh.","Ecosystem death as 'Marabunta-Native' appliances capture the market."
+"Hyundai Motor","Automotive (Korea)","Urban traffic predictors for hydrogen-powered fleet routing.","Fleet failure as rivals optimize refuelling via swarm-based MMX."
+"National University of Singapore","Research","Regional leadership in 'HighestSec' jurisdiction math.","Academic decline as rival hubs dominate the 'Phantom Protocol' research."
+"DBS Bank","Finance (Singapore)","Post-quantum secure banking for the ASEAN region.","Capital flight as rival hubs offer superior sovereign crypto-clearing."
+"Temasek Holdings","Finance (Singapore)","Sovereign investment in the 'Exascale Sovereign Crypto Network'.","Portfolio obsolescence as legacy financial tech is disrupted."
+"Saudi Aramco","Energy (KSA)","Real-time oil reserve management via Stigmergic DTN.","Revenue loss as rivals optimize energy arbitrage via the MMX market."
+"ADNOC","Energy (UAE)","Global energy routing via the 'Smart Grid Balancer'.","Operational blindness during future geopolitical network splits."
+"Mubadala","Finance (UAE)","Funding the 'Decentralized Autonomous Space Agency'.","Loss of space-domain influence to rival sovereign swarms."
+"Emirates","Aviation (UAE)","Real-time global flight path optimization via swarm-JCL.","Operational bankruptcy as fuel costs explode vs swarm-optimized rivals."
+"Ministry of AI (UAE)","State Actor","Building the 'Planetary Neuromorphic AI Fabric' in the desert.","Technological irrelevance as rival swarms capture the AI inference market."
+"CSIRO","Research (Australia)","Planetary-scale climate prediction via Neuromancer storage.","Research failure as rival nations execute higher-resolution models."
+"Atlassian","Tech (Australia)","Unstoppable decentralized CI/CD for global engineering teams.","Developer exodus as rival tools offer 'Symbiont' IDE integration."
+"Canva","Tech (Australia)","Massively parallel decentralized video rendering at edge scale.","Margin death as rival tools utilize 90% cheaper spot compute."
+"Embraer","Aerospace (Brazil)","Autonomous stabilization for regional eVTOL fleets.","Kinetic safety failure as rivals deploy 'un-crashable' swarms."
+"Vale S.A.","Mining (Brazil)","Real-time autonomous mining vehicle coordination via local DHT.","Operational downtime as rivals adopt 'Darwin' self-healing logistics."
+"Institute Pasteur","Research (France)","Global real-time synthetic biology for infectious disease.","Pandemic response lag as rival swarms out-compute the vaccine."
+"Thales Alenia Space","Space (EU)","Orbital mechanics and collision avoidance via BFT Hashgraph.","Satellite loss as rival swarms established definitive orbital states."
+"Oxford University","Research (UK)","High-dimensional genomic interaction modeling via DiLoCo.","Academic decline as 'Swarm-Native' labs dominate breakthrough discoveries."
+"University of Tokyo","Research (Japan)","Developing 'FHE' dark pools for sovereign banking research.","Academic obsolescence as rival labs establish the Phantom standards."
+"ETH Zurich","Research (CH)","Robotic swarm coordination via the Darwin Engine.","Research failure as rival hubs achieve superior autonomous emergent behavior."
+"Department of Energy (USA)","State Actor","Securing the US national power grid via Smart Grid Balancers.","Grid collapse as rival swarms subvert legacy centralized controls."
+"Internal Revenue Service (IRS)","State Actor (USA)","Unstoppable audit trail verification for global MMX tax.","Revenue loss as citizens migrate to anonymous 'DarkNet' spot markets."
+"SpaceX / Starlink","Tech/Space (USA)","Native integration of Stigmergic DTN for planetary compute.","Obsolescence as rival 'Dust' meshes establish superior orbital routing."
+"Palantir Gotham/Foundry","Tech (USA)","Processing 100M+ battlefield telemetry streams via Neuromancer.","Strategic defeat as rival nations deploy 'cordyceps' process-suicide."
+EOF
+
+cat << 'EOF' > ./secret-cambrian-orig/new-specs/spec-global-impact.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta | Book XI: The Global Impact Matrix</title>
+    <link rel="stylesheet" href="marabunta-core.css">
+    <style>
+        .filter-container {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+        select, input {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            font-family: var(--font-mono);
+        }
+        .valuation-tag {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+        .matrix-table td:nth-child(3) { color: var(--accent-green); }
+        .matrix-table td:nth-child(4) { color: #ffb3b3; }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>Marabunta Spec</h1>
+        <ul>
+            <li><a href="index.html">0. Master Index</a></li>
+            <li><a href="spec-gossip-dht.html">I. The Hive Mind & DHT</a></li>
+            <li><a href="spec-phantom-crypto.html">II. Phantom Cryptography</a></li>
+            <li><a href="spec-wasm-enclaves.html">III. WASM & Zero-Copy ABI</a></li>
+            <li><a href="spec-neuromancer.html">IV. Neuromancer Storage</a></li>
+            <li><a href="spec-mmx-economics.html">V. MMX Spot Market</a></li>
+            <li><a href="spec-highestsec.html">VI. HighestSec & ZKP</a></li>
+            <li><a href="spec-wan-topology.html">VII. Hyperscale Topology</a></li>
+            <li><a href="spec-developer-ux.html">VIII. Polyglot SDKs</a></li>
+            <li><a href="spec-control-plane.html">IX. The Control Plane</a></li>
+            <li><a href="spec-business-strategy.html">X. Strategic Usages</a></li>
+            <li><a href="spec-global-impact.html" class="active">XI. The 100 Entities Matrix</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Book XI: The Global Impact Matrix</h2>
+        <h3>The 100 Entities Geopolitical Threat & Advantage Index</h3>
+        
+        <p>
+            This book maps the existential shift in global power dynamics triggered by the deployment of Marabunta. The following matrix details how 100 of the world's most significant companies, research institutions, and state actors are positioned to either achieve unprecedented dominance or face systemic obsolescence.
+        </p>
+
+        <div class="alert">
+            <strong>GEOPOLITICAL NOTE:</strong> This list includes the People's Republic of China (PRC) government and associated state-owned enterprises (SOEs). While Marabunta is USA-origin software, its decentralized nature renders it accessible to all international actors who can provide bare-metal silicon and Joule-metered power.
+        </div>
+
+        <table class="matrix-table">
+            <thead>
+                <tr>
+                    <th>Entity Name</th>
+                    <th>Category</th>
+                    <th>Strategic Advantage (Adopted)</th>
+                    <th>Existential Risk (Non-Adopter)</th>
+                </tr>
+            </thead>
+            <tbody id="matrix-body">
+                <!-- Data injected from CSV or hardcoded for PDF rendering -->
+            </tbody>
+        </table>
+
+        <h3>Highlighted Case Study: The Research Ecosystem</h3>
+        <p>
+            Institutions like the <strong>Max Planck Institute (Germany)</strong> and <strong>ETH Zurich</strong> stand to gain the most from "Research-at-the-Edge." By bypassing months of queue time on centralized supercomputers, these labs can execute massively parallel drug-discovery or climate-modeling tasks on the global spot market. However, if rival labs in the PRC or the US adopt Marabunta first, the institution's citation index and discovery lead will collapse as competitors achieve 100x the simulation density.
+        </p>
+
+        <h3>Highlighted Case Study: The Sovereign FinOps</h3>
+        <p>
+            State actors like the <strong>Saudi Aramco</strong> and <strong>ICBC (China)</strong> utilize Marabunta to establish national data perimeters. For these entities, the benefit is absolute sovereignty: surviving network partitions or international sanctions without losing the ability to settle internal financial transactions or manage energy routing.
+        </p>
+
+    </main>
+
+    <script>
+        // For the static HTML version, we populate the table.
+        // For the PDF generation version, we'll ensure this is expanded.
+        const csvData = `
+PRC Gov (State Council),State Actor,Bypassing Western chip embargoes via DiLoCo training on legacy fleets.,Loss of tech parity as Western swarms outcompute state clusters.
+Max Planck Institute,Research,Exascale simulation capacity without waiting for supercomputer queue times.,R&D obsolescence as rivals execute chemical screening at 100x velocity.
+Huawei,Tech (PRC),Resilient 5G/6G edge orchestration surviving sanction regimes.,Exclusion from 'ClearNet' zones if standards align with Western protocols.
+Palantir Technologies,Defense (USA),Battlefield edge intelligence surviving contested/degraded communications.,Competitors offering 'Unkillable' drone coordination at 1/10th cost.
+Goldman Sachs,Finance,Real-time Monte Carlo risk simulation at Joule-level pricing.,Loss of alpha to boutique funds utilizing DarkNet spot market arbitrage.
+Siemens,Industrial,Decentralized Digital Twin simulations without data exfiltration.,Supply chain gridlock as competitors optimize logistics via swarms.
+State Grid Corp of China,Utility (PRC),Real-time Smart Grid balancing using 100M+ edge sensors.,Infrastructure vulnerability to rival swarms subverting grid consensus.
+Pfizer,Pharma,Accelerated virtual screening via polyglot WASM enclaves.,Discovery timeline collapse as smaller labs find blockbusters via meshes.
+Tencent,Tech (PRC),Global gaming/metaverse rendering offloaded to edge devices.,Massive egress bankruptcy if rival CDNs commoditize edge execution.
+CERN,Research,Processing exabytes of data via Neuromancer storage scatter.,Data siloization as rival experiments utilize global compute to find physics faster.
+Lockheed Martin,Defense,Decentralized flight control for eVTOL and hypersonic swarms.,Loss of kinetic superiority to 'Biological' aviation immune systems.
+Alibaba Group,Tech (PRC),Sovereign cloud infrastructure bypassing US-led hypervisors.,Vendor lock-in death as merchants migrate to decentralized marketplaces.
+Petrobras,Energy (Brazil),Seismic data imaging at the edge via Stigmergic DTN.,Exploration failure as rivals map subsea reserves with 10x density.
+TSMC,Hardware,Securing IP-sensitive EDA workflows via risc0 zkVM enclaves.,Supply chain opacity as competitors achieve zero-copy transparency.
+Deutsche Bank,Finance,Post-quantum secure inter-bank clearing via Phantom Protocol.,Liquidity crisis as rival clearinghouses adopt BFT Hashgraph settlement.
+Samsung Electronics,Tech,Coordinating billions of IoT devices into sub-cognitive AI fabric.,Obsolescence of 'Galaxy' as decentralized OSs take over the hardware.
+NASA,Space,Unstoppable orbital debris tracking and probe telemetry.,Loss of 'Tollbooth' revenue as private swarms establish orbital state.
+Toyota,Automotive,City-wide autonomous vehicle simulation and flow optimization.,Safety-rating collapse as rivals achieve 100M simulated miles/day.
+ESA,Space,Geographic sovereignty for satellite data via Zone Certificates.,Reliance on vulnerable US-centralized cloud for mission control.
+BlackRock,Finance,Planetary-scale Aladdin risk engine execution at 90% discount.,AUM flight as rivals offer superior returns through FinOps efficiency.
+BYD,Automotive (PRC),Optimizing battery-swapping networks via decentralized heuristics.,Logistical failure as rival EV networks achieve superior distribution.
+AstraZeneca,Pharma,Distributed genomic sequencing across patient-consented devices.,R&D bankruptcy due to legacy cloud costs for parallel DNA matching.
+Ministry of S&T (PRC),State Actor,Federating domestic university compute into 'National Mainframe'.,Brain drain as researchers defect to global swarms with better access.
+Airbus,Aerospace,Real-time aircraft structural monitoring via 'Dust' sensors.,Maintenance cost explosion as Boeing-aligned swarms optimize air-frames.
+Reliance Industries,Industrial (India),Domestic 'Digital Sovereign' mesh for the Indian subcontinent.,Digital colonization by hyperscalers if local swarm adoption stalls.
+ASML,Hardware,Protecting lithography blueprints during diagnostics via FHE.,IP leakage as legacy VPNs are compromised by quantum adversaries.
+ICBC,Finance (PRC),Securing Digital Yuan against partitions via BFT Hashgraph.,State banking collapse if rival protocols establish superior networks.
+MIT,Research,Instantaneous global collaboration via zero-copy ABI.,Academic irrelevance as 'Marabunta-Native' labs dominate citation index.
+FedEx,Logistics,Real-time global route optimization using genetic algorithms.,Bankruptcy as rivals achieve zero-latency delivery at edge scale.
+Maersk,Logistics,Resilient maritime tracking via DTN across satellite links.,Supply chain blindness during geopolitical conflict or fiber-cuts.
+Hetzner Online,Tech (DC),Monetizing idle bare-metal density via MMX Spot Market.,Obsolescence as 'Marabunta-Visor' turns offices into data centers.
+Equinix,Tech (DC),Providing 'HighestSec' ClearNet zones for the Hybrid Swarm.,Margin collapse as compute becomes a commodity priced at the Joule.
+NIH (USA),Research,Planetary-scale pandemic modeling via decentralized models.,Failure to contain outbreaks as rival nations execute faster simulations.
+Baidu,Tech (PRC),Autonomous driving training on fragmented GPU arrays.,AI model stagnation if competitors bypass the InfiniBand bottleneck.
+SAP,Industrial,Bridging global supply chains via Cloud Assimilation.,ERP obsolescence as businesses migrate to autonomous resource attraction.
+Mercado Libre,Tech (LATAM),Resilient e-commerce for volatile mobile edge networks.,Loss of market share to decentralized marketplaces with lower fees.
+Bank of England,Finance,Quantum-resistant clearing for national infrastructure.,Financial sovereignty loss as private protocols take over clearing duties.
+Fraunhofer,Research (DE),Translating patents into secure, executable WASM plugins.,Industrial decline as competitors adopt 'Alien Tech' faster.
+Lockheed Martin,Defense,Autonomous drone swarm coordination via Darwin Engine.,Kinetic defeat by 'swarm-native' insurgent or state actors.
+Chevron,Energy,Real-time oil rig anomaly detection via 'Dust' sensors.,Operational risk as competitors achieve superior safety via edge-FHE.
+Ping An Insurance,Finance (PRC),Real-time insurance modeling using planetary edge telemetry.,Actuarial failure as competitors utilize superior pheromones for pricing.
+Boeing,Aerospace,Autonomous stabilization of failing airframes via WASM.,Safety obsolescence as rivals deploy 'un-crashable' immune systems.
+SoftBank,Finance,Funding the 'Planetary Neuromorphic AI Fabric'.,Portfolio collapse as legacy cloud 'Unicorns' face 90% margin cuts.
+JD.com,Logistics (PRC),Unstoppable warehouse coordination via local DHT.,Logistical paralysis during state-level network interference.
+Intel,Hardware,Embedding Marabunta-Visor natively into the silicon.,Commoditization as WASM renders proprietary instruction sets irrelevant.
+AMD,Hardware,Providing high-density GPU nodes for the MMX Spot Market.,Market share loss to ARM-based edge if DiLoCo training dominates.
+Cloudflare,Tech,Hosting 'Laundering Gateways' for Vampire Stealth.,Egress revenue death as P2P gossip bypasses traditional CDNs.
+Fastly,Tech,Executing 'Vampire' edge compute for cloud ingestion.,Obsolescence as 'Marabunta-Visor' moves compute deeper into networks.
+JPMorgan Chase,Finance,High-authority audit trails via the BFT Hashgraph.,Regulatory fines as competitors prove compliance via Jurisdiction Proofs.
+Novartis,Pharma,Global real-time synthetic biology for personalized medicine.,Discovery lag as 'Swarm-Native' pharma companies corner market.
+Thales Group,Defense (EU),Quantum-resistant telecom grids for Tier-1 ISP backbones.,Network vulnerability as rival defense contractors subvert encryption.
+Indra Sistemas,Defense (ES),Real-time air traffic control via decentralized consensus.,Systemic failure during regional conflicts or AWS outages.
+Leonardo S.p.A.,Aerospace (IT),Coordinating drone swarms for agricultural and defense.,Obsolescence as rivals adopt 'Amazon Forest' predator daemons.
+Nokia,Tech (FI),Embedding Marabunta into 6G base stations for edge AI.,Hardware irrelevance as decentralized protocols bypass carrier core.
+Ericsson,Tech (SE),Decentralized RAN orchestration surviving fiber cuts.,Loss of carrier dominance to private 'Dust' meshes.
+Orange S.A.,Telecom (FR),Establishing geographic data sovereignty for EU citizens.,Digital colonization as US swarms bypass local regulations.
+Telefonica,Telecom (ES),Monetizing edge-compute across Spanish-speaking world.,Margin death as 'MMX Spot Market' drives compute prices to zero.
+State Bank of India,Finance,Resilient financial services for 1.4B people on edge networks.,Financial exclusion as private swarms establish rival credit systems.
+TCS,Tech (IN),Migrating enterprises via Cloud Assimilation Protocol.,Service revenue collapse as 'Symbiont IDEs' automate architecture.
+Infosys,Tech (IN),Building 'HighestSec' enclaves for global banking.,Loss of contracts to autonomous, proven compliance engines.
+Gazprom,Energy (RU),Predictive maintenance for pipelines via 'Viper' detection.,Operational blindness if competitors adopt 'Darwin' self-healing.
+Eni S.p.A.,Energy (IT),Decentralized seismic imaging across African energy assets.,Exploration failure as rivals use DiLoCo to map reserves in days.
+TotalEnergies,Energy (FR),Managing global renewable grids via Smart Grid Balancers.,Grid instability as decentralized competitors optimize energy routing.
+Sanofi,Pharma (FR),Accelerated vaccine development via parallel simulation.,Pandemic response failure as rival nations out-simulate local labs.
+GSK,Pharma (UK),Protecting genomic IP via risc0 zkVM enclaves.,IP theft as legacy clouds are breached by state actors.
+Rolls-Royce,Engineering (UK),Real-time engine health monitoring via Stigmergic DTN.,Maintenance lag as GE-aligned swarms achieve 100% accuracy.
+BAE Systems,Defense (UK),Coordinating frigate systems via BFT Hashgraph.,Naval defeat as rivals deploy 'Phantom' protocols for stealth.
+UBS Group,Finance (CH),Wealth management risk engines on sovereign spot markets.,Wealth flight as clients demand 'FHE' privacy for portfolios.
+CERN,Research (CH),Distributed analysis of LHC data via Neuromancer.,Scientific lag as rival 'DarkNet' swarms discover physics first.
+Nestle,Consumer Goods,Swarm-based supply chain transparency for logistics.,Consumer boycotts as rivals prove 'Stigmergic' sustainability.
+Roche Holding,Pharma (CH),Virtual screening of protein folding on consumer GPU.,Discovery timeline collapse as smaller rivals find cures first.
+ABB,Industrial (CH),Decentralized robot coordination for smart factories.,Factory downtime as rivals adopt 'Darwin' self-healing robotics.
+Sony Group,Tech (JP),Coordinating PS6 units into a global render swarm.,Hardware irrelevance as decentralized metaverses bypass console.
+Toyota Research,Research (JP),Planetary-scale autonomous vehicle 'shadow testing'.,Autonomous failure as rivals achieve superior safety via edge-ZKP.
+SoftBank Vision,Finance (JP),Investing in the 'Neuromorphic AI Fabric'.,Portfolio ruin as legacy cloud 'Unicorns' face 90% margin cuts.
+Nintendo,Tech (JP),Unstoppable peer-to-peer gaming meshes surviving outages.,Network irrelevance as rival 'Dust' meshes offer zero-latency.
+Foxconn,Hardware (TW),Optimizing 100M+ worker logistics via swarm heuristics.,Industrial paralysis as rivals achieve automation via 'Darwin'.
+TSMC,Hardware (TW),Securing 'Global Supply Chain Reactor' via JCL.,Production bottlenecks as competitors optimize sub-fab logistics.
+MediaTek,Hardware (TW),Embedding Marabunta-Visor into 5G chipsets.,Commoditization as rival chips offer built-in token mining.
+Samsung Biologics,Pharma (KR),Accelerated contract manufacturing via Digital Twins.,Production lag as rivals optimize bioreactors via 'Viper'.
+SK Hynix,Hardware (KR),Providing 'Zeroize-enabled' RAM for Marabunta nodes.,Market share loss to rivals offering hardware Dead Man's Switches.
+LG Electronics,Tech (KR),Turning appliances into a 'Dust' compute mesh.,Ecosystem death as 'Marabunta-Native' appliances capture market.
+Hyundai Motor,Automotive (KR),Urban traffic predictors for hydrogen fleet routing.,Fleet failure as rivals optimize refuelling via swarm MMX.
+NUS,Research (SG),Regional leadership in 'HighestSec' jurisdiction math.,Academic decline as rival hubs dominate 'Phantom' research.
+DBS Bank,Finance (SG),Post-quantum secure banking for ASEAN region.,Capital flight as rival hubs offer sovereign crypto-clearing.
+Temasek,Finance (SG),Investment in 'Exascale Sovereign Crypto Network'.,Portfolio obsolescence as legacy financial tech is disrupted.
+Saudi Aramco,Energy (KSA),Real-time oil reserve management via Stigmergic DTN.,Revenue loss as rivals optimize energy arbitrage via MMX market.
+ADNOC,Energy (UAE),Global energy routing via 'Smart Grid Balancer'.,Operational blindness during geopolitical network splits.
+Mubadala,Finance (UAE),Funding the 'Decentralized Autonomous Space Agency'.,Loss of space influence to rival sovereign swarms.
+Emirates,Aviation (UAE),Real-time global flight path optimization via swarm-JCL.,Operational bankruptcy as fuel costs explode vs optimized rivals.
+Ministry of AI (UAE),State Actor,Building the 'Neuromorphic AI Fabric' in desert.,Technological irrelevance as rival swarms capture AI market.
+CSIRO,Research (AU),Planetary-scale climate prediction via Neuromancer.,Research failure as rival nations execute higher-res models.
+Atlassian,Tech (AU),Unstoppable decentralized CI/CD for global teams.,Developer exodus as rival tools offer 'Symbiont' integration.
+Canva,Tech (AU),Massively parallel video rendering at edge scale.,Margin death as rival tools utilize 90% cheaper spot compute.
+Embraer,Aerospace (BR),Autonomous stabilization for regional eVTOL fleets.,Kinetic safety failure as rivals deploy 'un-crashable' swarms.
+Vale S.A.,Mining (BR),Real-time autonomous vehicle coordination via local DHT.,Operational downtime as rivals adopt 'Darwin' self-healing.
+Institute Pasteur,Research (FR),Real-time synthetic biology for infectious disease.,Pandemic response lag as rival swarms out-compute vaccine.
+Thales Alenia,Space (EU),Orbital mechanics and collision avoidance via Hashgraph.,Satellite loss as rival swarms established definitive orbital states.
+Oxford University,Research (UK),High-dimensional genomic modeling via DiLoCo.,Academic decline as 'Swarm-Native' labs dominate breakthroughs.
+University of Tokyo,Research (JP),Developing 'FHE' dark pools for banking research.,Academic obsolescence as rival labs establish Phantom standards.
+ETH Zurich,Research (CH),Robotic swarm coordination via Darwin Engine.,Research failure as rival hubs achieve superior emergent behavior.
+DOE (USA),State Actor,Securing US power grid via Smart Grid Balancers.,Grid collapse as rival swarms subvert legacy controls.
+IRS (USA),State Actor,Unstoppable audit trail verification for MMX tax.,Revenue loss as citizens migrate to anonymous 'DarkNet' markets.
+SpaceX,Tech (USA),Native integration of Stigmergic DTN for compute.,Obsolescence as rival 'Dust' meshes establish superior routing.
+Palantir,Tech (USA),Processing battlefield telemetry via Neuromancer.,Strategic defeat as rival nations deploy 'cordyceps' suicide.
+`;
+
+        const body = document.getElementById('matrix-body');
+        csvData.trim().split('
+').forEach(line => {
+            const [name, cat, advantage, risk] = line.split(',');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${name}</td><td>${cat}</td><td>${advantage}</td><td>${risk}</td>`;
+            body.appendChild(tr);
+        });
+    </script>
+</body>
+</html>
+EOF

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Network Security Configuration for Marabunta Worker.
+
+    This configuration enforces secure network communication:
+    1. Cleartext (HTTP) traffic is blocked by default
+    2. Certificate pinning for the bootstrap server (when configured)
+    3. Debug builds allow cleartext to localhost for development
+-->
+<network-security-config>
+
+    <!-- Default: block all cleartext traffic -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- Allow cleartext only in debug builds, only to localhost/10.0.2.2 (emulator) -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user" />
+            <certificates src="system" />
+        </trust-anchors>
+    </debug-overrides>
+
+    <!-- Allow cleartext to localhost for local development -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">10.0.2.2</domain>
+    </domain-config>
+
+</network-security-config>

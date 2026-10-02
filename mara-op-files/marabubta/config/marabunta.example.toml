@@ -1,0 +1,133 @@
+# Marabunta - Licensed under the MIT License.
+# Marabunta Compute Configuration
+# This is an example configuration file with all available options.
+# Copy this to marabunta.toml and modify as needed.
+
+# ============================================================================
+# Node Identity
+# ============================================================================
+[node]
+# Unique node identifier. Leave empty to auto-generate.
+# id = "node-001"
+
+# Human-readable name for this node
+name = "marabunta-node-01"
+
+# Geographic or logical region
+region = "us-east-1"
+
+# Tags for node classification (used for placement decisions)
+tags = ["production", "gpu", "high-memory"]
+
+# ============================================================================
+# Network Configuration
+# ============================================================================
+[network]
+# Address to bind for incoming connections
+bind_address = "0.0.0.0:7000"
+
+# Public address if behind NAT (optional)
+# public_address = "203.0.113.50:7000"
+
+# Bootstrap servers for cluster discovery
+bootstrap_servers = [
+    "coordinator-1.example.com:7000",
+    "coordinator-2.example.com:7000",
+]
+
+# Connection timeout
+connect_timeout = "10s"
+
+# Request timeout
+request_timeout = "30s"
+
+# ============================================================================
+# Storage Configuration
+# ============================================================================
+[storage]
+# Base directory for all data
+data_dir = "/var/lib/marabunta"
+
+# Database file path (default: data_dir/marabunta.db)
+# database_path = "/var/lib/marabunta/marabunta.db"
+
+# Checkpoint directory (default: data_dir/checkpoints)
+# checkpoint_dir = "/var/lib/marabunta/checkpoints"
+
+# Maximum checkpoint file size in MB
+max_checkpoint_size_mb = 1024
+
+# ============================================================================
+# Coordinator Configuration (for coordinator nodes)
+# ============================================================================
+# Uncomment this section to run as a coordinator
+# [coordinator]
+# listen_port = 7000
+# raft_port = 7001
+# peers = [
+#     "coordinator-2.example.com:7001",
+#     "coordinator-3.example.com:7001",
+# ]
+# election_timeout = "1s"
+# heartbeat_interval = "200ms"
+
+# ============================================================================
+# Master Configuration (for master nodes)
+# ============================================================================
+# Uncomment this section to run as a master
+# [master]
+# listen_port = 7100
+# coordinator_addresses = [
+#     "http://coordinator-1.example.com:7000",
+#     "http://coordinator-2.example.com:7000",
+# ]
+# max_workers = 1000
+# worker_timeout = "30s"
+# scheduling_interval = "100ms"
+
+# ============================================================================
+# Worker Configuration (for worker nodes)
+# ============================================================================
+# Uncomment this section to run as a worker
+# [worker]
+# master_addresses = [
+#     "http://master-1.example.com:7100",
+#     "http://master-2.example.com:7100",
+# ]
+# max_concurrent_tasks = 8
+# cpu_limit = 0.8          # Use up to 80% of CPU
+# memory_limit_mb = 4096   # Limit to 4GB RAM
+# heartbeat_interval = "5s"
+# checkpoint_interval = "30s"
+
+# ============================================================================
+# Logging Configuration
+# ============================================================================
+[logging]
+# Log level: trace, debug, info, warn, error
+level = "info"
+
+# Output format: pretty, json, compact
+format = "pretty"
+
+# Log file path (optional, logs to stderr if not set)
+# file = "/var/log/marabunta/marabunta.log"
+
+# ============================================================================
+# Security Configuration
+# ============================================================================
+[security]
+# Enable TLS for all connections
+tls_enabled = false
+
+# TLS certificate file (required if tls_enabled = true)
+# cert_path = "/etc/marabunta/certs/server.crt"
+
+# TLS private key file (required if tls_enabled = true)
+# key_path = "/etc/marabunta/certs/server.key"
+
+# CA certificate for verifying peer certificates
+# ca_path = "/etc/marabunta/certs/ca.crt"
+
+# Authentication token (simple auth for now)
+# auth_token = "your-secret-token-here"

@@ -1,0 +1,347 @@
+# Priority Queue Policy
+# Priority-based scheduling with preemption and quota management
+#
+# This policy demonstrates:
+# - Priority tiers and classes
+# - Preemption rules
+# - Quota charging
+# - Fair scheduling
+
+# Critical priority tier - highest priority, guaranteed resources
+policy "priority-critical" {
+    version = 1
+    description = "Critical priority tier for production-critical workloads"
+    author = "platform-team"
+    authority_domain = "scheduling.priority"
+
+    enabled = true
+
+    condition {
+        any {
+            job_matches {
+                priority_range = [90, 100]
+            }
+            job_matches {
+                tags = ["critical", "production", "sla:platinum"]
+            }
+            submitter_matches {
+                in_domain = "oncall"
+            }
+        }
+    }
+
+    effects {
+        # Set to highest priority class
+        set_priority {
+            priority = 100
+            mode = set
+        }
+
+        # Can preempt anything below priority 80
+        allow_preemption {
+            by_min_priority = 80
+        }
+
+        # Disallow being preempted
+        disallow_preemption
+
+        # Prefer dedicated high-performance nodes
+        prefer {
+            selector = tag("tier:dedicated")
+            weight = 0.95
+        }
+
+        # Require SLA-compliant nodes
+        require {
+            selector = tag("sla:compliant")
+        }
+
+        # Charge against premium quota
+        charge_quota {
+            quota_id = "critical-compute"
+            multiplier = 2.0  # Double charging for premium resources
+        }
+    }
+
+    governance {
+        override_policy = mandatory
+        conflict_priority = 100
+    }
+}
+
+# High priority tier - production workloads
+policy "priority-high" {
+    version = 1
+    description = "High priority tier for production workloads"
+    author = "platform-team"
+    authority_domain = "scheduling.priority"
+
+    enabled = true
+
+    condition {
+        all {
+            job_matches {
+                priority_range = [70, 89]
+            }
+            not {
+                job_matches {
+                    tags = ["batch", "background"]
+                }
+            }
+        }
+    }
+
+    effects {
+        set_priority {
+            priority = 80
+            mode = max  # Don't lower if already higher
+        }
+
+        # Can preempt normal and low priority
+        allow_preemption {
+            by_min_priority = 50
+        }
+
+        # Prefer reliable nodes
+        prefer {
+            selector = tag("reliability:high")
+            weight = 0.8
+        }
+
+        charge_quota {
+            quota_id = "production-compute"
+            multiplier = 1.5
+        }
+    }
+
+    governance {
+        override_policy = blueprint {
+            min_priority = 70
+        }
+        conflict_priority = 80
+    }
+}
+
+# Normal priority tier - standard workloads
+policy "priority-normal" {
+    version = 1
+    description = "Normal priority tier for standard workloads"
+    author = "platform-team"
+    authority_domain = "scheduling.priority"
+
+    enabled = true
+
+    condition {
+        all {
+            job_matches {
+                priority_range = [30, 69]
+            }
+        }
+    }
+
+    effects {
+        set_priority {
+            priority = 50
+            mode = set
+        }
+
+        # Can only preempt low priority
+        allow_preemption {
+            by_min_priority = 20
+        }
+
+        # No node preference - use whatever's available
+        prefer {
+            selector = all
+            weight = 0.5
+        }
+
+        charge_quota {
+            quota_id = "standard-compute"
+            multiplier = 1.0
+        }
+    }
+
+    governance {
+        override_policy = advisory
+        conflict_priority = 50
+    }
+}
+
+# Low priority tier - batch and background jobs
+policy "priority-low" {
+    version = 1
+    description = "Low priority tier for batch and background jobs"
+    author = "platform-team"
+    authority_domain = "scheduling.priority"
+
+    enabled = true
+
+    condition {
+        any {
+            job_matches {
+                priority_range = [0, 29]
+            }
+            job_matches {
+                tags = ["batch", "background", "best-effort"]
+            }
+        }
+    }
+
+    effects {
+        set_priority {
+            priority = 20
+            mode = min  # Don't raise priority
+        }
+
+        # Cannot preempt others
+        allow_preemption {
+            by_min_priority = 0  # No preemption rights
+        }
+
+        # Prefer economy/spot nodes
+        prefer {
+            selector = tag_any("tier:economy", "capacity:spot")
+            weight = 0.9
+        }
+
+        # Avoid premium resources
+        exclude {
+            selector = tag("tier:dedicated")
+        }
+
+        charge_quota {
+            quota_id = "batch-compute"
+            multiplier = 0.5  # Discounted for low priority
+        }
+    }
+
+    governance {
+        override_policy = advisory
+        conflict_priority = 20
+    }
+}
+
+# Fair scheduling policy - prevent starvation
+policy "fair-scheduling" {
+    version = 1
+    description = "Ensure fair scheduling across teams"
+    author = "platform-team"
+    authority_domain = "scheduling.fairness"
+
+    enabled = true
+
+    condition {
+        # Apply to all jobs
+        always
+    }
+
+    effects {
+        # Custom scoring for fairness
+        custom_score {
+            function_id = "fair_share_score"
+            params = {
+                lookback_window = "1h"
+                fairness_factor = 0.3
+            }
+        }
+
+        # Anti-affinity to spread load across teams
+        anti_affinity {
+            with = job_pattern(".*")
+            scope = node
+            weight = 0.2
+        }
+    }
+
+    governance {
+        override_policy = advisory
+        conflict_priority = 40
+    }
+}
+
+# Preemption cascade prevention
+policy "preemption-limits" {
+    version = 1
+    description = "Prevent preemption cascades and thrashing"
+    author = "sre-team"
+    authority_domain = "scheduling.stability"
+
+    enabled = true
+
+    condition {
+        # Jobs that have already been preempted
+        job_matches {
+            tags = ["previously_preempted"]
+        }
+    }
+
+    effects {
+        # Boost priority slightly to prevent repeated preemption
+        set_priority {
+            priority = 5
+            mode = add
+        }
+
+        # Prefer nodes with lower preemption activity
+        prefer {
+            selector = tag("preemption_rate:low")
+            weight = 0.7
+        }
+
+        # Disallow preemption if already preempted twice
+        custom_score {
+            function_id = "preemption_protection"
+            params = {
+                max_preemptions = 2
+                protection_duration = "30m"
+            }
+        }
+    }
+
+    governance {
+        override_policy = mandatory
+        conflict_priority = 75
+    }
+}
+
+# Queue aging - boost priority over time
+policy "queue-aging" {
+    version = 1
+    description = "Gradually increase priority of waiting jobs to prevent starvation"
+    author = "platform-team"
+    authority_domain = "scheduling.fairness"
+
+    enabled = true
+
+    condition {
+        all {
+            # Jobs that have been waiting
+            job_matches {
+                tags = ["queued"]
+            }
+            # For more than 10 minutes
+            time_window {
+                # This would be dynamic in practice
+                cron = "* * * * *"
+            }
+        }
+    }
+
+    effects {
+        # Boost priority based on wait time
+        custom_score {
+            function_id = "queue_age_boost"
+            params = {
+                base_boost = 1
+                boost_per_minute = 0.5
+                max_boost = 20
+            }
+        }
+    }
+
+    governance {
+        override_policy = advisory
+        conflict_priority = 35
+    }
+}

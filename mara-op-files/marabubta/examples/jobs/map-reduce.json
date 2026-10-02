@@ -1,0 +1,50 @@
+{
+  "name": "word-count-mapreduce",
+  "description": "Multi-task parallel job demonstrating map-reduce pattern",
+  "priority": "normal",
+  "tasks": [
+    {
+      "name": "map-chunk-1",
+      "payload": {
+        "type": "python",
+        "script": "import sys; text = 'hello world hello marabunta'; words = text.split(); counts = {}; [counts.update({w: counts.get(w, 0) + 1}) for w in words]; print(counts)",
+        "args": []
+      }
+    },
+    {
+      "name": "map-chunk-2",
+      "payload": {
+        "type": "python",
+        "script": "import sys; text = 'marabunta compute distributed world'; words = text.split(); counts = {}; [counts.update({w: counts.get(w, 0) + 1}) for w in words]; print(counts)",
+        "args": []
+      }
+    },
+    {
+      "name": "map-chunk-3",
+      "payload": {
+        "type": "python",
+        "script": "import sys; text = 'parallel processing marabunta'; words = text.split(); counts = {}; [counts.update({w: counts.get(w, 0) + 1}) for w in words]; print(counts)",
+        "args": []
+      }
+    },
+    {
+      "name": "map-chunk-4",
+      "payload": {
+        "type": "python",
+        "script": "import sys; text = 'compute cluster hello'; words = text.split(); counts = {}; [counts.update({w: counts.get(w, 0) + 1}) for w in words]; print(counts)",
+        "args": []
+      }
+    }
+  ],
+  "constraints": {
+    "memory_min": 134217728
+  },
+  "preferences": {
+    "prefer_local": true
+  },
+  "placement": {
+    "strategy": "throughput",
+    "node_quality": "more_smaller"
+  },
+  "timeout_secs": 300
+}

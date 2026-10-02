@@ -1,0 +1,119 @@
+{
+  "name": "pi-estimation-monte-carlo",
+  "description": "Monte Carlo simulation to estimate Pi using random point sampling",
+  "priority": "normal",
+  "tasks": [
+    {
+      "name": "sample-batch-1",
+      "payload": {
+        "type": "monte_carlo",
+        "seed": 1001,
+        "iterations": 1000000,
+        "params": {
+          "method": "pi_estimation",
+          "description": "Count points inside unit circle quarter"
+        }
+      }
+    },
+    {
+      "name": "sample-batch-2",
+      "payload": {
+        "type": "monte_carlo",
+        "seed": 2002,
+        "iterations": 1000000,
+        "params": {
+          "method": "pi_estimation",
+          "description": "Count points inside unit circle quarter"
+        }
+      }
+    },
+    {
+      "name": "sample-batch-3",
+      "payload": {
+        "type": "monte_carlo",
+        "seed": 3003,
+        "iterations": 1000000,
+        "params": {
+          "method": "pi_estimation",
+          "description": "Count points inside unit circle quarter"
+        }
+      }
+    },
+    {
+      "name": "sample-batch-4",
+      "payload": {
+        "type": "monte_carlo",
+        "seed": 4004,
+        "iterations": 1000000,
+        "params": {
+          "method": "pi_estimation",
+          "description": "Count points inside unit circle quarter"
+        }
+      }
+    },
+    {
+      "name": "sample-batch-5",
+      "payload": {
+        "type": "monte_carlo",
+        "seed": 5005,
+        "iterations": 1000000,
+        "params": {
+          "method": "pi_estimation",
+          "description": "Count points inside unit circle quarter"
+        }
+      }
+    },
+    {
+      "name": "sample-batch-6",
+      "payload": {
+        "type": "monte_carlo",
+        "seed": 6006,
+        "iterations": 1000000,
+        "params": {
+          "method": "pi_estimation",
+          "description": "Count points inside unit circle quarter"
+        }
+      }
+    },
+    {
+      "name": "sample-batch-7",
+      "payload": {
+        "type": "monte_carlo",
+        "seed": 7007,
+        "iterations": 1000000,
+        "params": {
+          "method": "pi_estimation",
+          "description": "Count points inside unit circle quarter"
+        }
+      }
+    },
+    {
+      "name": "sample-batch-8",
+      "payload": {
+        "type": "monte_carlo",
+        "seed": 8008,
+        "iterations": 1000000,
+        "params": {
+          "method": "pi_estimation",
+          "description": "Count points inside unit circle quarter"
+        }
+      }
+    }
+  ],
+  "monte_carlo_config": {
+    "total_samples": 8000000,
+    "samples_per_task": 1000000,
+    "convergence_threshold": 0.0001,
+    "aggregation": "mean",
+    "confidence_level": 0.95
+  },
+  "constraints": {},
+  "preferences": {
+    "cores_prefer": 2
+  },
+  "placement": {
+    "strategy": "throughput",
+    "node_quality": "more_smaller"
+  },
+  "timeout_secs": 600
+}

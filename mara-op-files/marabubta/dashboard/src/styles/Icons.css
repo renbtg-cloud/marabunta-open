@@ -1,0 +1,21 @@
+/* Marabunta - Licensed under the MIT License.
+/* marabunta-compute/dashboard/src/styles/Icons.css */
+.status-icon {
+  display: inline-block;
+}
+
+.status-icon-ok {
+  color: var(--color-ok);
+}
+
+.status-icon-warning {
+  color: var(--color-warning);
+}
+
+.status-icon-critical {
+  color: var(--color-critical);
+}
+
+.status-icon-info {
+  color: var(--color-info);
+}

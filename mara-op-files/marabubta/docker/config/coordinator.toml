@@ -1,0 +1,60 @@
+# Marabunta - Licensed under the MIT License.
+# Marabunta Compute Coordinator Configuration
+# This file configures the coordinator node for cluster topology management
+
+[server]
+# Address to bind the HTTP server
+bind = "0.0.0.0:8080"
+
+# Maximum number of concurrent connections
+max_connections = 10000
+
+# Request timeout
+request_timeout = "30s"
+
+[cluster]
+# Cluster name for identification
+name = "marabunta-cluster"
+
+# Node heartbeat interval
+heartbeat_interval = "10s"
+
+# Node timeout before marking as unhealthy
+node_timeout = "60s"
+
+# Maximum nodes in cluster (0 = unlimited)
+max_nodes = 0
+
+[storage]
+# Data directory for persistent state
+data_dir = "/var/lib/marabunta"
+
+# State persistence interval
+persistence_interval = "30s"
+
+[logging]
+# Log level: trace, debug, info, warn, error
+level = "info"
+
+# Log format: json, pretty
+format = "json"
+
+# Log file path (empty = stdout only)
+file = "/var/log/marabunta/coordinator.log"
+
+[metrics]
+# Enable Prometheus metrics endpoint
+enabled = true
+
+# Metrics endpoint path
+endpoint = "/metrics"
+
+[security]
+# Enable TLS (requires cert and key files)
+tls_enabled = false
+# tls_cert = "/etc/marabunta/tls/cert.pem"
+# tls_key = "/etc/marabunta/tls/key.pem"
+
+# Enable authentication
+auth_enabled = false
+# auth_token = "your-secret-token"

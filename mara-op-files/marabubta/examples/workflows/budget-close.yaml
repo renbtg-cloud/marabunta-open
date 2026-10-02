@@ -1,0 +1,332 @@
+# Marabunta - Licensed under the MIT License.
+# examples/workflows/budget-close.yaml
+# Financial Budget Close Workflow
+# Replaces: SAP Financial Close Cockpit ($50K-$200K/year)
+# License: Apache 2.0
+
+name: budget-close
+version: "1.0.0"
+description: >
+  Financial period-end budget close with document locking,
+  version snapshots, and emergency reopen requiring dual
+  controller + CFO authorization.
+
+# -- Context Schema ------------------------------------------
+context:
+  period:
+    type: string
+    required: true
+    description: "Fiscal period identifier (e.g., 2026-Q1)"
+  department:
+    type: string
+    required: true
+    description: "Department code"
+  spreadsheet_id:
+    type: string
+    required: true
+    description: "Reference to the budget spreadsheet document"
+  preparer_id:
+    type: string
+    required: true
+    description: "User ID of the budget preparer"
+  reviewer_id:
+    type: string
+    required: true
+    description: "User ID of the assigned reviewer"
+  controller_id:
+    type: string
+    required: true
+    description: "User ID of the financial controller"
+  close_deadline:
+    type: datetime
+    required: true
+    description: "Deadline for auto-submission (ISO 8601)"
+  doc_lock:
+    type: string
+    default: "unlocked"
+    description: "Document lock state: unlocked|read_only|frozen|permanent"
+  version_snapshot:
+    type: integer
+    default: 0
+    description: "Current version snapshot counter"
+  reopen_approvals:
+    type: array
+    default: []
+    description: "Collected approvals for emergency reopen"
+
+# -- Roles ---------------------------------------------------
+roles:
+  - name: preparer
+    description: "Prepares the budget spreadsheet"
+  - name: reviewer
+    description: "Reviews budget figures for accuracy"
+  - name: controller
+    description: "Financial controller with approval authority"
+  - name: cfo
+    description: "Chief Financial Officer, emergency authority"
+
+# -- States --------------------------------------------------
+states:
+  - name: open
+    type: initial
+    description: "Period is open, budget not yet started"
+
+  - name: preparation
+    type: active
+    description: "Budget is being prepared by the assigned preparer"
+    on_enter:
+      - action: set_context
+        params:
+          key: doc_lock
+          value: "unlocked"
+      - action: notify
+        params:
+          to: "{{ context.preparer_id }}"
+          template: "budget_preparation_started"
+
+  - name: submitted_for_review
+    type: active
+    description: "Budget submitted, awaiting reviewer pickup"
+    on_enter:
+      - action: set_context
+        params:
+          key: doc_lock
+          value: "read_only"
+      - action: snapshot_version
+        params:
+          counter_key: version_snapshot
+      - action: notify
+        params:
+          to: "{{ context.reviewer_id }}"
+          template: "budget_awaiting_review"
+
+  - name: under_review
+    type: active
+    description: "Reviewer is actively examining the budget"
+    on_enter:
+      - action: audit_log
+        params:
+          message: "Review started by {{ actor.id }}"
+          criticality: NORMAL
+
+  - name: revision_needed
+    type: active
+    description: "Reviewer has requested changes"
+    on_enter:
+      - action: set_context
+        params:
+          key: doc_lock
+          value: "unlocked"
+      - action: notify
+        params:
+          to: "{{ context.preparer_id }}"
+          template: "budget_revision_requested"
+
+  - name: pending_controller_approval
+    type: active
+    description: "Review passed, awaiting controller sign-off"
+    on_enter:
+      - action: set_context
+        params:
+          key: doc_lock
+          value: "frozen"
+      - action: snapshot_version
+        params:
+          counter_key: version_snapshot
+      - action: notify
+        params:
+          to: "{{ context.controller_id }}"
+          template: "budget_pending_approval"
+
+  - name: closed
+    type: terminal
+    description: "Budget period is officially closed"
+    on_enter:
+      - action: set_context
+        params:
+          key: doc_lock
+          value: "permanent"
+      - action: snapshot_version
+        params:
+          counter_key: version_snapshot
+      - action: audit_log
+        params:
+          message: "Budget period {{ context.period }} closed for {{ context.department }}"
+          criticality: HIGH
+
+  - name: reopened
+    type: active
+    description: "Budget reopened under emergency protocol"
+    on_enter:
+      - action: set_context
+        params:
+          key: doc_lock
+          value: "unlocked"
+      - action: set_context
+        params:
+          key: reopen_approvals
+          value: []
+      - action: audit_log
+        params:
+          message: "EMERGENCY REOPEN: {{ context.period }} / {{ context.department }}"
+          criticality: CRITICAL
+
+# -- Transitions ---------------------------------------------
+transitions:
+  - name: begin_preparation
+    from: open
+    to: preparation
+    guards:
+      - condition: role_is
+        params:
+          role: preparer
+    actions:
+      - action: audit_log
+        params:
+          message: "Preparation begun by {{ actor.id }}"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: submit_for_review
+    from: preparation
+    to: submitted_for_review
+    guards:
+      - condition: role_is
+        params:
+          role: preparer
+    actions:
+      - action: audit_log
+        params:
+          message: "Budget submitted for review"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: auto_submit_at_deadline
+    from: preparation
+    to: submitted_for_review
+    trigger:
+      type: timer
+      params:
+        deadline_field: close_deadline
+    actions:
+      - action: audit_log
+        params:
+          message: "Auto-submitted at deadline {{ context.close_deadline }}"
+          criticality: HIGH
+    audit:
+      criticality: HIGH
+
+  - name: begin_review
+    from: submitted_for_review
+    to: under_review
+    guards:
+      - condition: role_is
+        params:
+          role: reviewer
+    actions:
+      - action: audit_log
+        params:
+          message: "Review begun by {{ actor.id }}"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: request_revision
+    from: under_review
+    to: revision_needed
+    guards:
+      - condition: role_is
+        params:
+          role: reviewer
+    actions:
+      - action: audit_log
+        params:
+          message: "Revision requested: {{ params.reason }}"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: resubmit
+    from: revision_needed
+    to: submitted_for_review
+    guards:
+      - condition: role_is
+        params:
+          role: preparer
+    actions:
+      - action: audit_log
+        params:
+          message: "Budget resubmitted after revision"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: approve_review
+    from: under_review
+    to: pending_controller_approval
+    guards:
+      - condition: role_is
+        params:
+          role: reviewer
+    actions:
+      - action: audit_log
+        params:
+          message: "Review approved, escalating to controller"
+          criticality: HIGH
+    audit:
+      criticality: HIGH
+
+  - name: controller_approve
+    from: pending_controller_approval
+    to: closed
+    guards:
+      - condition: role_is
+        params:
+          role: controller
+    actions:
+      - action: audit_log
+        params:
+          message: "Controller {{ actor.id }} approved close for {{ context.period }}"
+          criticality: HIGH
+    audit:
+      criticality: HIGH
+
+  - name: emergency_reopen
+    from: closed
+    to: reopened
+    guards:
+      - condition: all_of
+        params:
+          conditions:
+            - condition: role_is
+              params:
+                role: controller
+            - condition: requires_approval
+              params:
+                from_role: cfo
+                approval_key: reopen_approvals
+                required_count: 1
+    actions:
+      - action: audit_log
+        params:
+          message: "Emergency reopen authorized by controller + CFO"
+          criticality: CRITICAL
+    audit:
+      criticality: CRITICAL
+
+  - name: reclose
+    from: reopened
+    to: closed
+    guards:
+      - condition: role_is
+        params:
+          role: controller
+    actions:
+      - action: audit_log
+        params:
+          message: "Reopened period reclosed by {{ actor.id }}"
+          criticality: HIGH
+    audit:
+      criticality: HIGH

@@ -1,0 +1,305 @@
+// Marabunta Swarm — Plugin API v1.0
+//
+// This file defines the gRPC interface between the Swarm core and plugins.
+// Plugins know NOTHING about swarm internals. They call this API. That's it.
+//
+// Design Principle: If you can't implement a plugin in a different language
+// without reading swarm source code, the API is wrong.
+
+syntax = "proto3";
+package marabunta.plugin;
+
+// ============================================================================
+// PluginHost — Plugin → Swarm
+// ============================================================================
+
+service PluginHost {
+    // Register plugin on startup
+    rpc Register(RegisterRequest) returns (RegisterResponse);
+
+    // Key-value storage
+    rpc Store(StoreRequest) returns (StoreResponse);
+    rpc Fetch(FetchRequest) returns (FetchResponse);
+    rpc Delete(DeleteRequest) returns (DeleteResponse);
+
+    // Distributed compute
+    rpc Scatter(ScatterRequest) returns (ScatterResponse);
+
+    // Node discovery
+    rpc FindNodes(FindNodesRequest) returns (FindNodesResponse);
+    rpc IsNodeAlive(IsNodeAliveRequest) returns (IsNodeAliveResponse);
+    rpc GetNodeInfo(GetNodeInfoRequest) returns (GetNodeInfoResponse);
+
+    // Pub/Sub
+    rpc Publish(PublishRequest) returns (PublishResponse);
+    rpc Subscribe(SubscribeRequest) returns (stream SubscribeEvent);
+
+    // Data migration
+    rpc RequestMigration(MigrationRequest) returns (MigrationResponse);
+}
+
+// ============================================================================
+// Plugin — Swarm → Plugin
+// ============================================================================
+
+service Plugin {
+    // Lifecycle
+    rpc Start(StartRequest) returns (StartResponse);
+    rpc Stop(StopRequest) returns (StopResponse);
+
+    // Incoming work
+    rpc Handle(HandleRequest) returns (HandleResponse);
+
+    // Health check
+    rpc Health(HealthRequest) returns (HealthResponse);
+}
+
+// ============================================================================
+// Enums
+// ============================================================================
+
+enum Consistency {
+    EVENTUAL = 0;
+    STRONG = 1;
+}
+
+enum Locality {
+    ANY = 0;
+    PREFER_LOCAL = 1;
+    REQUIRE_LOCAL = 2;
+}
+
+enum Priority {
+    LOW = 0;
+    NORMAL = 1;
+    HIGH = 2;
+    CRITICAL = 3;
+}
+
+// ============================================================================
+// Registration
+// ============================================================================
+
+message RegisterRequest {
+    string name = 1;
+    string version = 2;
+    repeated string traits = 3;
+    repeated Endpoint endpoints = 4;
+}
+
+message Endpoint {
+    string name = 1;
+    string protocol = 2;
+    uint32 default_port = 3;
+}
+
+message RegisterResponse {
+    string plugin_id = 1;
+    string node_id = 2;
+    bytes swarm_config = 3;
+}
+
+// ============================================================================
+// Storage API
+// ============================================================================
+
+message StoreRequest {
+    bytes key = 1;
+    bytes value = 2;
+    StoreOptions options = 3;
+}
+
+message StoreOptions {
+    Consistency consistency = 1;
+    uint32 replicas = 2;
+    uint32 ttl_seconds = 3;
+}
+
+message StoreResponse {
+    bool success = 1;
+    string error = 2;
+    uint64 version = 3;
+}
+
+message FetchRequest {
+    bytes key = 1;
+    FetchOptions options = 2;
+}
+
+message FetchOptions {
+    Consistency consistency = 1;
+    uint64 min_version = 2;
+}
+
+message FetchResponse {
+    bool found = 1;
+    bytes value = 2;
+    uint64 version = 3;
+    string error = 4;
+}
+
+message DeleteRequest {
+    bytes key = 1;
+}
+
+message DeleteResponse {
+    bool success = 1;
+    string error = 2;
+}
+
+// ============================================================================
+// Scatter API (Distributed Compute)
+// ============================================================================
+
+message ScatterRequest {
+    repeated ScatterUnit units = 1;
+    ScatterHints hints = 2;
+}
+
+message ScatterUnit {
+    string target_node = 1;
+    bytes payload = 2;
+    repeated string required_traits = 3;
+}
+
+message ScatterHints {
+    Locality locality = 1;
+    Consistency consistency = 2;
+    Priority priority = 3;
+    uint32 timeout_ms = 4;
+}
+
+message ScatterResponse {
+    repeated ScatterResult results = 1;
+}
+
+message ScatterResult {
+    string node_id = 1;
+    bool success = 2;
+    bytes response = 3;
+    string error = 4;
+    uint32 latency_ms = 5;
+}
+
+// ============================================================================
+// Node Discovery
+// ============================================================================
+
+message FindNodesRequest {
+    repeated string required_traits = 1;
+    uint32 limit = 2;
+    string prefer_region = 3;
+}
+
+message FindNodesResponse {
+    repeated PluginNodeInfo nodes = 1;
+}
+
+message PluginNodeInfo {
+    string node_id = 1;
+    repeated string traits = 2;
+    string region = 3;
+    float health_score = 4;
+    float load = 5;
+}
+
+message IsNodeAliveRequest {
+    string node_id = 1;
+}
+
+message IsNodeAliveResponse {
+    bool alive = 1;
+    uint64 last_seen_ms = 2;
+}
+
+message GetNodeInfoRequest {}
+
+message GetNodeInfoResponse {
+    string node_id = 1;
+    string region = 2;
+    repeated string traits = 3;
+}
+
+// ============================================================================
+// Pub/Sub
+// ============================================================================
+
+message PublishRequest {
+    string topic = 1;
+    bytes payload = 2;
+}
+
+message PublishResponse {
+    bool success = 1;
+    uint32 recipients = 2;
+}
+
+message SubscribeRequest {
+    string topic = 1;
+}
+
+message SubscribeEvent {
+    string topic = 1;
+    bytes payload = 2;
+    string from_node = 3;
+    uint64 timestamp = 4;
+}
+
+// ============================================================================
+// Migration
+// ============================================================================
+
+message MigrationRequest {
+    bytes data_key = 1;
+    string from_node = 2;
+    repeated string preferred_traits = 3;
+    Priority priority = 4;
+    string reason = 5;
+}
+
+message MigrationResponse {
+    bool accepted = 1;
+    string migration_id = 2;
+    string error = 3;
+}
+
+// ============================================================================
+// Plugin Handler (Swarm → Plugin)
+// ============================================================================
+
+message HandleRequest {
+    string request_id = 1;
+    bytes payload = 2;
+    string from_node = 3;
+    map<string, string> metadata = 4;
+}
+
+message HandleResponse {
+    bytes payload = 1;
+    string error = 2;
+}
+
+message StartRequest {
+    bytes config = 1;
+}
+
+message StartResponse {
+    bool success = 1;
+    string error = 2;
+}
+
+message StopRequest {
+    uint32 timeout_seconds = 1;
+}
+
+message StopResponse {
+    bool clean = 1;
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+    bool healthy = 1;
+    string status = 2;
+    map<string, string> details = 3;
+}

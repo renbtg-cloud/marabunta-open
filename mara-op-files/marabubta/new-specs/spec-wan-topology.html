@@ -1,0 +1,115 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta | Book VII: WAN Traversal & Hyperscale Topology</title>
+    <link rel="stylesheet" href="marabunta-core.css">
+</head>
+<body>
+    <nav>
+        <h1>Marabunta Spec</h1>
+        <ul>
+            <li><a href="index.html">0. Master Index</a></li>
+            <li><a href="spec-gossip-dht.html">I. The Hive Mind & DHT</a></li>
+            <li><a href="spec-phantom-crypto.html">II. Phantom Cryptography</a></li>
+            <li><a href="spec-wasm-enclaves.html">III. WASM & Zero-Copy ABI</a></li>
+            <li><a href="spec-neuromancer.html">IV. Neuromancer Storage</a></li>
+            <li><a href="spec-mmx-economics.html">V. MMX Spot Market</a></li>
+            <li><a href="spec-highestsec.html">VI. HighestSec & ZKP</a></li>
+            <li><a href="spec-wan-topology.html" class="active">VII. Hyperscale Topology</a></li>
+            <li><a href="spec-developer-ux.html">VIII. Polyglot SDKs</a></li>
+            <li><a href="spec-control-plane.html">IX. The Control Plane</a></li>
+            <li><a href="spec-business-strategy.html">X. Strategic Usages</a></li>
+            <li><a href="spec-global-impact.html">XI. The 100 Entities Matrix</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Book VII: WAN Traversal & Hyperscale Topology</h2>
+        <h3>The Architecture of Global Connectivity</h3>
+        
+        <p>
+            Operating a 100-million node superorganism across the open internet requires overcoming two massive physical hurdles: <strong>Carrier-Grade NATs (CGNAT)</strong> that block inbound connections, and <strong>Extreme Latency</strong> in disconnected or orbital environments (Satellites, Submarines, Battlefield Edge).
+        </p>
+
+        <p>
+            Marabunta solves these via a combination of a high-performance WAN Switchboard and a proprietary Stigmergic Delay-Tolerant Network (DTN).
+        </p>
+
+        <h3>7.1 The WAN Switchboard & NAT Piercing</h3>
+        <p>
+            Most edge nodes (home PCs, IoT sensors) sit behind restrictive firewalls. Marabunta's <code>WAN Bootstrap Server</code> (located in <code>src/wan/</code>) enables planetary-scale discovery without requiring manual port forwarding.
+        </p>
+
+        <div class="alert">
+            <strong>DUAL-PORT STUN:</strong> The Bootstrap Server operates on TCP (9000) for reliable PKI registration and UDP (9001) for high-speed STUN-style discovery. This allows nodes to autonomously pierce their local NATs and establish direct, peer-to-peer (P2P) Phantom Protocol tunnels for the gossip network.
+        </div>
+
+        <pre><code>// src/wan/bootstrap_server.rs - STUN Discovery Logic
+pub async fn handle_discovery(socket: &UdpSocket) {
+    let mut buf = [0u8; 1024];
+    let (len, addr) = socket.recv_from(&mut buf).await?;
+    
+    // Extract Public IP and Port (Pillar 9.2)
+    let peer_info = PeerDiscovery {
+        public_addr: addr,
+        node_id: extract_id(&buf[..len]),
+    };
+    
+    // Broadcast peer to the topological neighborhood
+    gossip_peer_presence(peer_info).await;
+}</code></pre>
+
+        <h3>7.2 Stigmergic (Async) DTN: The Dead-Drop Pattern</h3>
+        <p>
+            Traditional distributed computing (like Kubernetes) assumes a persistent socket. You cannot run a cluster on a satellite that only has a 4-minute line-of-sight window every 90 minutes. 
+        </p>
+        <p>
+            Marabunta's <strong>Stigmergic DTN</strong> (<code>src/swarm/transport/stigmergic_dtn.rs</code>) bypasses live sockets. When a target node is unreachable, the sender "dead-drops" the cryptographically wrapped WASM payload into the localized Kademlia <code>BlobStore</code>. 
+        </p>
+
+        <div class="alert alert-critical">
+            <strong>ORBITAL RESILIENCE:</strong> When the satellite or mobile edge node reconnects to any part of the DHT, it autonomously "pulls" the pending dead-drops, executes the WASM enclave locally, and drops the signed ZKP result back into the DHT for the original requester to retrieve later. This enables absolute, zero-packet-loss execution in extreme, disconnected environments.
+        </div>
+
+        <h3>7.3 Planetary-Scale Hierarchical Topology</h3>
+        <p>
+            Scaling to 100 million nodes requires a hierarchical approach. Marabunta partitions the global swarm into regional <strong>Sectors</strong> and <strong>Troops</strong>. 
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Topology Layer</th>
+                    <th>Node Count (Est.)</th>
+                    <th>Communication Protocol</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>The Local Troop</strong></td>
+                    <td>10 - 500</td>
+                    <td>Raw UDP Gossip / Unix Domain Sockets (Zero-latency).</td>
+                </tr>
+                <tr>
+                    <td><strong>The Regional Sector</strong></td>
+                    <td>10K - 100K</td>
+                    <td>Hierarchical Kademlia DHT / Regional Bootstrap.</td>
+                </tr>
+                <tr>
+                    <td><strong>The Planetary Mesh</strong></td>
+                    <td>100M+</td>
+                    <td>Stigmergic Dead-Drops / Asynchronous BFT Hashgraph Sync.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>
+            This multi-layer architecture ensures that a local fiber-cut in North America does not stall computation in Asia. The Swarm simply reroutes state transitions asynchronously via the surviving planetary links, reaching global eventual consistency in milliseconds once the partition heals.
+        </p>
+
+    </main>
+</body>
+</html>

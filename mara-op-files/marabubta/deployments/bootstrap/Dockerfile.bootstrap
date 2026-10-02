@@ -1,0 +1,31 @@
+# Stage 1: Build the Rust binaries
+FROM rust:1.75-bookworm AS builder
+
+# We install dependencies required by your cryptography layers
+RUN apt-get update && apt-get install -y cmake g++ libssl-dev pkg-config
+
+WORKDIR /usr/src/marabunta
+COPY . .
+
+# Build the swarm node specifically targeting the release profile
+RUN cargo build --release --bin marabunta-swarm
+
+# Stage 2: Create the minimal runtime container
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y libssl3 ca-certificates tzdata 
+    && rm -rf /var/lib/apt/lists/*
+
+# Create execution directory
+WORKDIR /app
+RUN mkdir -p /var/lib/marabunta
+
+# Copy the binary from the builder
+COPY --from=builder /usr/src/marabunta/target/release/marabunta-swarm /usr/local/bin/
+
+# Explicitly expose the Swarm communication ports
+EXPOSE 4200/tcp
+EXPOSE 4200/udp
+
+# The command entrypoint, expecting environment variables from docker-compose
+CMD ["marabunta-swarm", "--start", "--bootstrap-mode"]

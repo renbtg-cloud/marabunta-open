@@ -1,0 +1,63 @@
+PAGE 22
+  SPAN: 'While Sphinx UDP routing provides optimal throughput, totalitarian nation-states (e.g., China,'
+PAGE 22
+  SPAN: 'Iran) deploy Deep Packet Inspection (DPI) firewalls capable of executing "default-deny"'
+PAGE 25
+  SPAN: 'laws (e.g., GDPR in the European Union, ITAR in the United States, or the Chinese'
+PAGE 63
+  SPAN: 'MI300X GPUs (Under USCYBERCOM overwatch) * '
+  SPAN: 'Chinese Academy of Sciences (CAS)'
+PAGE 63
+  SPAN: '(Beijing, China) - 400Gbps, 15,000x Ascend 910B GPUs (Under PLA Strategic Support Force'
+PAGE 64
+  SPAN: 'instantiate a mathematically sealed Kademlia Sub-Swarm (a '
+  SPAN: 'WolfPack'
+  SPAN: ').'
+PAGE 65
+  SPAN: 'test during the 350-Petabyte DiLoCo training epoch. The objective was not to observe '
+  SPAN: 'if'
+  SPAN: ' an'
+PAGE 65
+  SPAN: 'Event 1: The Chinese Data Poisoning Attempt (04:15:22 UTC)'
+PAGE 65
+  SPAN: 'The Motive:'
+  SPAN: ' Intelligence analysts at the Chinese Academy of Sciences (CAS) realize that the'
+PAGE 66
+  SPAN: 'The Deep Forensic Analysis:'
+  SPAN: ' The Chinese attack failed because Marabunta does not rely on'
+PAGE 67
+  SPAN: 'proof of China's invalid trace to the rest of the Swarm. The Chinese node was instantly'
+PAGE 67
+  SPAN: 'black hole, dropping all outbound Plumtree gossip and preventing China from receiving'
+PAGE 68
+  SPAN: 'space (the American Sybil nodes surrounding China). Recognizing the topological'
+PAGE 68
+  SPAN: 'The Grafting ('
+  SPAN: ' '
+  SPAN: 'Plumtree'
+  SPAN: ' ):'
+  SPAN: ' Inside China, the CAS node observes that its primary'
+PAGE 68
+  SPAN: 'The Motive:'
+  SPAN: ' Watching the chaos unfold between the US and China, the French Directorate-'
+PAGE 71
+  SPAN: 'Evaluating 350-Petabyte quantum decoherence models requires tensor geometries and'
+PAGE 71
+  SPAN: 'of China, and UBS) wish to collaboratively train a 500-billion parameter transformer model to'
+PAGE 72
+  SPAN: 'Bank Secrecy Acts, GDPR, and the Chinese Cyber Security Law make it a federal crime for'
+PAGE 72
+  SPAN: '       (JPMorgan)            (BNP Paribas)         (Bank of China)'
+PAGE 73
+  SPAN: 'GPUs. * '
+  SPAN: 'BNP Paribas (Paris):'
+  SPAN: ' 4,000x older V100 GPUs. * '
+  SPAN: 'Bank of China (Shanghai):'
+PAGE 76
+  SPAN: 'IP addresses (e.g., Comcast, Vodafone, China Telecom) across 190 countries.'
+PAGE 78
+  SPAN: 'hosted in China and blocks all IP addresses originating from the United States, an American'
+PAGE 78
+  SPAN: 'The Chinese target domain receives HTTP requests originating from organic, residential'
+PAGE 78
+  SPAN: 'Chinese IP addresses (e.g., a laptop in Shenzhen). The domain serves the data. The Shenzhen'

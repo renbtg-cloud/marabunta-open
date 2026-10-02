@@ -1,0 +1,44 @@
+{
+  "name": "marabunta-symbiont",
+  "displayName": "Marabunta Symbiont (IDE Plugin)",
+  "description": "Zero-Touch P2P Parallelization & Proactive Async Discovery. Scans your workspace and auto-refactors synchronous bottlenecks into distributed Swarm WASM payloads.",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other",
+    "Programming Languages",
+    "Machine Learning"
+  ],
+  "activationEvents": [
+    "onCommand:marabunta.analyzeWorkspace",
+    "onCommand:marabunta.openSymbiontGUI"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "marabunta.analyzeWorkspace",
+        "title": "Marabunta: Find Opportunities for Async & Parallelization"
+      },
+      {
+        "command": "marabunta.openSymbiontGUI",
+        "title": "Marabunta: Open Symbiont Dashboard"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "marabunta.analyzeWorkspace",
+          "group": "1_modification"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  }
+}

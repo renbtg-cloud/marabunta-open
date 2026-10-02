@@ -1,0 +1,8 @@
+# Redis-compatible Marabunta Swarm Plugin
+#
+# No external dependencies required. The plugin uses only the Python
+# standard library plus the shared swarm_client library.
+#
+# Optional dependencies for development/testing:
+# pytest>=7.0       # Alternative test runner
+# redis>=5.0        # Redis client for integration testing

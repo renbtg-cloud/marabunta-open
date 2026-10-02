@@ -1,0 +1,179 @@
+# Marabunta - Licensed under the MIT License.
+# Marabunta Compute - Full Cluster Setup
+#
+# This compose file sets up a complete Marabunta Compute cluster with:
+# - 1 Coordinator (manages cluster topology)
+# - 1 Master (schedules tasks)
+# - 3 Workers (execute tasks)
+#
+# Usage:
+#   docker-compose up -d                    # Start cluster
+#   docker-compose up -d --scale worker=10  # Start with 10 workers
+#   docker-compose logs -f                  # View logs
+#   docker-compose down                     # Stop cluster
+
+services:
+  # ============================================================================
+  # Coordinator - Cluster topology and node discovery
+  # ============================================================================
+  coordinator:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: coordinator
+    image: marabunta-compute/coordinator:${MARABUNTA_VERSION:-latest}
+    container_name: marabunta-coordinator
+    restart: unless-stopped
+    ports:
+      - "${COORDIGLOBAL_ALLIANCE_T1R_PORT:-8080}:8080"
+    environment:
+      - RUST_LOG=${RUST_LOG:-info}
+      - MARABUNTA_COORDIGLOBAL_ALLIANCE_T1R_BIND=0.0.0.0:8080
+      - MARABUNTA_DATA_DIR=/var/lib/marabunta
+    volumes:
+      - coordinator-data:/var/lib/marabunta
+      - coordinator-logs:/var/log/marabunta
+      - ./config/coordinator.toml:/etc/marabunta/config.toml:ro
+    networks:
+      - marabunta-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ============================================================================
+  # Master - Task scheduling and distribution
+  # ============================================================================
+  master:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: master
+    image: marabunta-compute/master:${MARABUNTA_VERSION:-latest}
+    container_name: marabunta-master
+    restart: unless-stopped
+    ports:
+      - "${MASTER_PORT:-9000}:9000"
+    environment:
+      - RUST_LOG=${RUST_LOG:-info}
+      - MARABUNTA_MASTER_BIND=0.0.0.0:9000
+      - MARABUNTA_COORDIGLOBAL_ALLIANCE_T1R_URL=http://coordinator:8080
+      - MARABUNTA_DATA_DIR=/var/lib/marabunta
+    volumes:
+      - master-data:/var/lib/marabunta
+      - master-logs:/var/log/marabunta
+      - ./config/master.toml:/etc/marabunta/config.toml:ro
+    networks:
+      - marabunta-network
+    depends_on:
+      coordinator:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ============================================================================
+  # Workers - Task execution (scalable)
+  # ============================================================================
+  worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: worker
+    image: marabunta-compute/worker:${MARABUNTA_VERSION:-latest}
+    restart: unless-stopped
+    deploy:
+      mode: replicated
+      replicas: 3
+      resources:
+        limits:
+          cpus: "${WORKER_CPU_LIMIT:-2}"
+          memory: "${WORKER_MEMORY_LIMIT:-2G}"
+        reservations:
+          cpus: "${WORKER_CPU_RESERVATION:-0.5}"
+          memory: "${WORKER_MEMORY_RESERVATION:-256M}"
+    environment:
+      - RUST_LOG=${RUST_LOG:-info}
+      - MARABUNTA_MASTER_URL=http://master:9000
+      - MARABUNTA_COORDIGLOBAL_ALLIANCE_T1R_URL=http://coordinator:8080
+      - MARABUNTA_WORKER_CORES=${WORKER_CORES:-0}
+      - MARABUNTA_DATA_DIR=/var/lib/marabunta
+    volumes:
+      - worker-data:/var/lib/marabunta
+      - ./config/worker.toml:/etc/marabunta/config.toml:ro
+    networks:
+      - marabunta-network
+    depends_on:
+      master:
+        condition: service_healthy
+
+  # ============================================================================
+  # Prometheus - Metrics collection (optional)
+  # ============================================================================
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: marabunta-prometheus
+    restart: unless-stopped
+    profiles:
+      - monitoring
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=15d'
+    networks:
+      - marabunta-network
+
+  # ============================================================================
+  # Grafana - Metrics visualization (optional)
+  # ============================================================================
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: marabunta-grafana
+    restart: unless-stopped
+    profiles:
+      - monitoring
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - marabunta-network
+    depends_on:
+      - prometheus
+
+# ==============================================================================
+# Networks
+# ==============================================================================
+networks:
+  marabunta-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+# ==============================================================================
+# Volumes
+# ==============================================================================
+volumes:
+  coordinator-data:
+  coordinator-logs:
+  master-data:
+  master-logs:
+  worker-data:
+  prometheus-data:
+  grafana-data:

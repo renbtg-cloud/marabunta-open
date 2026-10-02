@@ -1,0 +1,203 @@
+ANNEX A: The Sovereign Science Fabric & The Economic Syndicate
+A.1 The Geopolitical Context: The Abyssal Treaty
+A.2 Phase 1: The Zero-Trust Genesis
+A.3 Phase 2: Data Gravity & The 1.5TB WASM Bypass
+A.4 Phase 3: The “PARANOID” Micro-Audit
+A.5 Phase 4: The Thermal Guillotine
+A.6 Phase 5: The Script Kiddie & The MMX Settlement
+
+THE MARABUNTA BIBLE
+
+1
+
+ANNEX B: Planetary Asymmetric Data Acquisition
+
+THE MARABUNTA BIBLE
+
+2
+
+PREFACE
+General Purpose Hyper-Resilient Edge Supercomputing.
+
+"In the abundance of water, the fool is thirsty." — Robert
+Nesta Marley, circa 1976
+
+Marabunta started as a charitable High-Performance Computing (HPC) engine meant to give
+Médecins Sans Frontières (Doctors Without Borders) and other non-governmental organizations the
+supercomputing power required to predict Ebola outbreaks and manage responses to natural or
+man-made catastrophes, utilizing donor-provided computational FLOPs and algorithms.
+Distributing massive AI and scientific workloads into hostile, infrastructure-poor environments
+required solving the hardest fundamental problems in distributed systems: bandwidth saturation,
+state synchronization, and execution trust.
+Cambrian Radiation subsequently realized Marabunta’s broader applications. Having solved those
+primitives to ensure the survivability of the network, a generic architecture naturally resulted from
+those emerging traits.
+The system evolved into a substrate for executing any deterministic code, anywhere on Earth, with
+cryptographic proof of accuracy and physical location. Thus, it seems to have become commercially
+viable.
+
+THE MARABUNTA BIBLE
+
+3
+
+VOLUME 01: THE THERMODYNAMIC
+ANTI-PATTERN & SWARM PHYSICS
+1.1 The Thermodynamic Anti-Pattern
+For the past two decades, enterprise architecture has defaulted to the Hyperscaler Paradigm. This
+model demands that all data must be extracted from its point of origin and transmitted to a massive,
+centralized compute cluster (e.g., AWS us-east-1) before processing can occur.
+This centralized ingestion creates three compounding inefficiencies: 1. Data Gravity & Egress
+Extortion: Moving 50 Petabytes of raw genomic or financial data across trans-oceanic fiber cables
+requires weeks of sustained 100Gbps saturation, and incurs millions of dollars in egress fees.
+Iteration velocity is mathematically capped by the physical bandwidth limits of the glass fiber. 2.
+The Cooling Monolith: Concentrating 100,000 GPUs in a single facility generates immense,
+localized thermal waste. Hyperscalers must construct dedicated water evaporation cooling towers
+simply to prevent the silicon from melting. 3. Topological Fragility: Centralized data centers
+represent massive single points of failure, vulnerable to localized power grid anomalies, severed
+fiber trunks, and geopolitical interference (e.g., the US CLOUD Act).
+Marabunta dismantles this paradigm.
+Instead of concentrating compute into fragile monoliths, Marabunta treats computation as a fluid,
+biological mesh. It parasitically inhabits unused consumer silicon, idle university clusters, and
+geographically dispersed edge hardware.
+The architecture inverts the physical law of cloud computing: We do not move the data to the
+compute. We move the math to the data.
+1.2 Identity in a Zero-Trust Vacuum (The Chrysalis Grinder)
+To orchestrate millions of untrusted edge devices without a central Identity and Access
+Management (IAM) database, Marabunta must fundamentally solve the Sybil problem. A hostile
+
+THE MARABUNTA BIBLE
+
+4
+
+state intelligence agency cannot be allowed to spin up 10 million fake node identities in seconds to
+poison the routing tables.
+
+Nodes do not request an identity from a master server; they must bleed computational
+energy to
+
+derive one.
+During the initial boot phase, the marabunta-visor daemon saturates all physical CPU cores,
+executing a memory-hard SHA-256 Proof-of-Work (PoW) algorithm to derive a Sybil- resistant
+Kademlia Node ID.
+The Implementation: src/swarm/pow_worker.rs
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering}; use std::sync::Arc; use std::thread; use
+sha2::{Sha256, Digest}; use rand::RngCore;
+pub struct ChrysalisGrinder { target_difficulty: u32, is_grinding: Arc, hashes_computed: Arc, }
+impl ChrysalisGrinder { pub fn derive_sybil_resistant_identity(&self, hardware_seed: &[u8]) ->
+[u8; 32] { self.is_grinding.store(true, Ordering::SeqCst); let num_cores = num_cpus::get(); let mut
+handles = vec[]; let (tx, rx) = std::sync::mpsc::channel();
+
+tracing::info!("MARABUNTA: Saturating {} physical cores for
+
+Chrysalis Identity Generation…“, num_cores);
+
+for core_id in 0..num_cores {
+let tx_clone = tx.clone();
+let is_grinding = self.is_grinding.clone();
+let hashes_counter = self.hashes_computed.clone();
+let seed = hardware_seed.to_vec();
+let target = self.target_difficulty;
+
+handles.push(thread::spawn(move || {
+--
+ANNEX A: The Sovereign Science
+Fabric & The Economic Syndicate
+A.1 The Geopolitical Context: The Abyssal Treaty
+In the era of localized sovereign computing, the monolithic public cloud is an economic bottleneck
+for fundamental science. The egress fees alone render petabyte-scale physics simulations financially
+impossible for independent academic and research institutions.
+To break this cartel, three nations with deeply aligned petrochemical interests—Brazil, Norway, and
+the United Kingdom—established the Abyssal Treaty. Their shared objective: processing
+thousands of terabytes of raw acoustic .segy data to perform Full Waveform Inversion (FWI) on
+deep-sea seismic reflection models (e.g., the Brazilian Pre-Salt, the Norwegian Barents Sea, and the
+UK North Sea).
+Rather than renting supercomputers, they pooled their sovereign citizen networks into a single,
+time-zone-arbitraged Marabunta Swarm.
+
+The Three Pillars of the Fabric:
+1. Brazil (The Gamer Grid): Bundled as an opt-in background daemon within a massively
+popular indie video game developed by IME/USP alumni. Millions of Brazilian teenagers with
+high-end, L3-heavy Ryzen CPUs and DDR5 RAM donate compute cycles while they sleep in
+exchange for MMX micro-credits, which unlock exclusive cosmetic skins.
+2. Norway (The Civic Tax Swarm): A progressive Scandinavian digital initiative where citizens
+run the Marabunta daemon on idle MacBooks and home servers. At the end of the fiscal year,
+cryptographically verified MMX execution receipts are burned in exchange for microdeductions on their income tax.
+3. The UK (The Night-Shift Academic Net): Imperial College and allied universities link
+hundreds of thousands of library desktops and Raspberry Pi lab clusters that sit idle from 8:00
+PM to 8:00 AM.
+
+THE MARABUNTA BIBLE
+
+70
+
+Because the sun never sets on this fabric, thermodynamic efficiency is absolute. When it is 3:00 AM
+in São Paulo, the cold, sleeping Brazilian grid crunches Norwegian seismic data. When it is 3:00
+AM in Oslo, the frozen Scandinavian desktops process Brazilian Pre-Salt models.
+However, this environment is inherently hostile. You cannot trust a sleeping teenager’s overclocked
+PC, you cannot trust a library desktop, and you must account for opportunistic script kiddies
+attempting to defraud the Norwegian tax authority. The Marabunta core architecture was explicitly
+designed to survive this chaos.
+
+A.2 Phase 1: The Zero-Trust Genesis
+To initiate the joint compute session, the lead researchers at USP, NTNU, and Imperial College
+must establish a cryptographic perimeter.
+The USP orchestrator opens the terminal:
+
+mrb
+
+swarm
+
+init-wolfpack
+
+--purpose
+
+"Abyssal_FWI_Treaty" --threshold 2-of-3
+
+Behind the scenes, this is not a mere database entry. The Marabunta CLI triggers the physical
+ChrysalisGrinder. It allocates a 32MB scratchpad and saturates the local L3 cache, executing a
+memory-hard Proof-of-Work loop until it derives a NodeId with 26 leading zero-bits. This
+mathematically enforces a ~4-second physical cost per identity, neutralizing Sybil botnet attacks.
+The CLI then builds the JSON payload and executes an HTTP POST to the local Daemon’s /api/
+v1/federation/wolfpack
+
+endpoint.
+
+SwarmMessage::WolfPackProposal
+
+The
+
+Daemon
+
+broadcasts
+
+the
+
+across the Kademlia DHT. A secure, ephemeral BFT
+
+(Byzantine Fault Tolerant) computing coalition is born across three continents.
+
+A.3 Phase 2: Data Gravity & The 1.5TB WASM
+Bypass
+The raw seismic survey block is 1.5 Terabytes. It sits on a secure academic Storage Area Network
+(SAN) in São Paulo.
+
+THE MARABUNTA BIBLE
+
+71
+
+A Norwegian citizen’s MacBook Air claims a chunk of the wave-equation simulation. Standard
+WebAssembly (wasm32) imposes a hard 4GB linear memory limit. Naively passing the dataset via
+the DHT ( SwarmMessage::PushBlob ) would instantly trigger a host-level Out-Of-Memory
+(OOM) panic, crashing the Swarm.
+Instead, the USP JCL manifest specifies a dataset_shard_uri .
+The Marabunta WorkEngine intercepts this URI. Inside the HighestsecSandbox , the FWI
+algorithm calls a custom host-function: mrb_dataset_stream_read . The Rust host securely
+maps the remote SAN file descriptor and streams the 1.5TB dataset across the Atlantic in paginated
+1MB windows. The dense wave-equation math executes flawlessly inside the Norwegian
+MacBook’s WASM sandbox using less than 50MB of RAM, bypassing the architectural limitations
+of WebAssembly via secure, air-gapped host-calls.
+
+A.4 Phase 3: The “PARANOID” Micro-Audit
+FWI math is brutally dense. If a UK library desktop with a spinning HDD attempts to run the
+simulation, swapping memory pages to disk, it will stall the global pipeline.
+To filter the weak hardware, the researchers deploy a custom verify_mode labeled PARANOID .

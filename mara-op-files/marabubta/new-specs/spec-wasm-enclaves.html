@@ -1,0 +1,118 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta | Book III: Blind Computation & Enclaves</title>
+    <link rel="stylesheet" href="marabunta-core.css">
+</head>
+<body>
+    <nav>
+        <h1>Marabunta Spec</h1>
+        <ul>
+            <li><a href="index.html">0. Master Index</a></li>
+            <li><a href="spec-gossip-dht.html">I. The Hive Mind & DHT</a></li>
+            <li><a href="spec-phantom-crypto.html">II. Phantom Cryptography</a></li>
+            <li><a href="spec-wasm-enclaves.html" class="active">III. WASM & Zero-Copy ABI</a></li>
+            <li><a href="spec-neuromancer.html">IV. Neuromancer Storage</a></li>
+            <li><a href="spec-mmx-economics.html">V. MMX Spot Market</a></li>
+            <li><a href="spec-developer-ux.html">VI. SDKs & Orchestration</a></li>
+            <li><a href="spec-business-strategy.html">VII. Business & Strategic Usages</a></li>
+            <li><a href="spec-global-impact.html">VIII. The 100 Entities Matrix</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Book III: Blind Computation & The Enclaves</h2>
+        <h3>The Architecture of Secure, Untrusted Execution</h3>
+        
+        <p>
+            Executing mission-critical code on a global spot market comprised of untrusted, heterogeneous edge hardware requires absolute paranoia. Marabunta achieves this through <strong>Blind Computation</strong>—a system where the host node executes logic it can neither inspect, modify, nor exfiltrate.
+        </p>
+
+        <p>
+            The fundamental unit of execution in Marabunta is the <strong>Hardened WebAssembly (WASM) Enclave</strong>. These enclaves act as mathematical prisons, ensuring that untrusted code remains strictly confined within its predefined resource boundaries.
+        </p>
+
+        <h3>3.1 WASM Enclave Hardening & seccomp-BPF</h3>
+        <p>
+            When a node claims a task, the Marabunta runtime (built on <code>Wasmtime</code>) instantiates an isolated enclave. Unlike standard containers or virtual machines, Marabunta enclaves are stripped of almost all interaction with the host operating system.
+        </p>
+
+        <div class="alert">
+            <strong>SYSCALL FILTERING:</strong> Marabunta utilizes <code>seccomp-BPF</code> filters to physically block the WASM runtime from making unauthorized syscalls. The enclave has zero access to the host filesystem, cannot open raw network sockets, and cannot see other processes on the node.
+        </div>
+
+        <pre><code>// src/swarm/sandbox.rs - Enclave Boundary Enforcement
+pub struct SandboxConfig {
+    pub max_memory_mb: u64,
+    pub instruction_limit: u64,
+    pub allowed_syscalls: Vec<i32>,
+}
+
+impl Enclave {
+    pub fn spawn(payload: &WasmPayload, config: SandboxConfig) -> Result<ExecutionResult, SandboxError> {
+        // Initialize the seccomp-BPF trap
+        apply_seccomp_filters(&config.allowed_syscalls)?;
+        
+        // Execute the payload within the Wasmtime fuel-limited runtime
+        let result = run_with_fuel(payload, config.instruction_limit)?;
+        
+        Ok(result)
+    }
+}</code></pre>
+
+        <h3>3.2 The Zero-Copy Polyglot ABI</h3>
+        <p>
+            A major performance bottleneck in distributed systems is the serialization overhead (JSON/Protobuf) required to pass data between different languages (e.g., Python orchestrating a Fortran math kernel). Marabunta obliterates this via its proprietary <strong>Zero-Copy ABI</strong>.
+        </p>
+
+        <p>Data is mapped directly into a shared linear memory arena within the WASM enclave. The host language writes its multi-dimensional arrays or tensors directly into this arena, and the kernel language reads from the exact same memory offsets, resulting in near-zero microsecond latency for language boundary crossings.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Memory Offset (Hex)</th>
+                    <th>Region</th>
+                    <th>Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>0x0000 - 0x0FFF</code></td>
+                    <td>Control Block</td>
+                    <td>Execution metadata, opcode flags, and fuel counters.</td>
+                </tr>
+                <tr>
+                    <td><code>0x1000 - 0x7FFF</code></td>
+                    <td>Input Buffer</td>
+                    <td>Read-only zero-copy arena for incoming tensors/data.</td>
+                </tr>
+                <tr>
+                    <td><code>0x8000 - 0xEFFF</code></td>
+                    <td>Output Buffer</td>
+                    <td>Write-only arena for the deterministic result hash.</td>
+                </tr>
+                <tr>
+                    <td><code>0xF000 - ...</code></td>
+                    <td>Heap/Stack</td>
+                    <td>Dynamically allocated linear memory for task execution.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>3.3 The Darwin Engine: Autonomous Self-Healing</h3>
+        <p>
+            In a 100-million node swarm, manual intervention for process crashes is impossible. Marabunta utilizes the <strong>Darwin Engine</strong> (located in <code>src/swarm/neuromancer/darwin/engine.rs</code>) to monitor and auto-remediate failing execution.
+        </p>
+
+        <p>The Darwin Engine captures the memory state of a crashing enclave via <code>ptrace</code>, analyzes the instruction pointer against the WASI hypercall log, and autonomously determines if the failure was due to hardware corruption, a network partition, or a deterministic logic bug. If the failure is non-deterministic, the engine re-injects the task into the DHT for execution on a different node class.</p>
+
+        <div class="alert alert-critical">
+            <strong>BYZANTINE REJECTION:</strong> If the Darwin Engine detects that a node is returning invalid results (detected via mismatching hashes in <code>Deterministic Shadow Execution</code>), the engine permanently quarantines the node and slashes its cryptographic reputation across the global DHT.
+        </div>
+
+    </main>
+</body>
+</html>

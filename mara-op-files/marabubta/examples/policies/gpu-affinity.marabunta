@@ -1,0 +1,181 @@
+# GPU Affinity Policy
+# Prefer GPU-enabled nodes for ML and compute-intensive workloads
+#
+# This policy demonstrates:
+# - Tag-based node selection
+# - Weighted preferences
+# - Job type matching
+# - Resource requirements
+
+policy "gpu-affinity" {
+    version = 1
+    description = "Route GPU-intensive jobs to nodes with GPU capabilities"
+    author = "platform-team"
+    authority_domain = "compute.gpu"
+
+    # Enable this policy
+    enabled = true
+
+    # When this policy applies
+    condition {
+        # Match jobs that need GPUs
+        any {
+            job_matches {
+                tags = ["gpu", "ml", "cuda", "deep-learning"]
+            }
+            job_matches {
+                job_type = ["monte_carlo"]
+                name_pattern = ".*ml.*|.*training.*|.*neural.*"
+            }
+            resource_matches {
+                requires_gpu = true
+            }
+        }
+    }
+
+    # What to do when matched
+    effects {
+        # Strongly prefer GPU nodes
+        prefer {
+            selector = tag("gpu:enabled")
+            weight = 0.9
+        }
+
+        # Also prefer nodes with CUDA support
+        prefer {
+            selector = tag("cuda:true")
+            weight = 0.8
+        }
+
+        # Prefer nodes with more GPU memory
+        prefer {
+            selector = tag("gpu_memory:high")  # > 16GB
+            weight = 0.7
+        }
+
+        # Require certain node capabilities
+        require {
+            selector = tag_any("arch:x86_64", "arch:aarch64")
+        }
+
+        # Exclude nodes that are known to have GPU issues
+        exclude {
+            selector = tag("gpu_status:degraded")
+        }
+
+        # Set resource limits for GPU jobs
+        set_resource_limit {
+            resource = gpu
+            limit = 4  # Max 4 GPUs per task
+        }
+
+        set_resource_limit {
+            resource = memory
+            limit = 32  # Max 32GB memory per task
+        }
+    }
+
+    # Governance settings
+    governance {
+        override_policy = blueprint {
+            min_priority = 100  # Can be overridden by high-priority policies
+        }
+        conflict_priority = 50
+    }
+}
+
+# Companion policy for non-GPU jobs
+policy "non-gpu-routing" {
+    version = 1
+    description = "Route non-GPU jobs away from expensive GPU nodes"
+    author = "platform-team"
+    authority_domain = "compute.general"
+
+    enabled = true
+
+    condition {
+        all {
+            # Jobs that DON'T need GPUs
+            not {
+                any {
+                    job_matches {
+                        tags = ["gpu", "ml", "cuda"]
+                    }
+                    resource_matches {
+                        requires_gpu = true
+                    }
+                }
+            }
+            # And are low priority
+            job_matches {
+                priority_range = [0, 50]
+            }
+        }
+    }
+
+    effects {
+        # Avoid GPU nodes for regular workloads
+        prefer {
+            selector = not(tag("gpu:enabled"))
+            weight = 0.8
+        }
+
+        # Anti-affinity with GPU workloads
+        anti_affinity {
+            with = tag("gpu:enabled")
+            scope = node
+            weight = 0.7
+        }
+    }
+
+    governance {
+        override_policy = advisory
+        conflict_priority = 30
+    }
+}
+
+# Policy for GPU node maintenance windows
+policy "gpu-maintenance-window" {
+    version = 1
+    description = "Drain GPU nodes during maintenance windows"
+    author = "ops-team"
+    authority_domain = "compute.gpu"
+
+    enabled = true
+
+    condition {
+        all {
+            # During maintenance window (Sundays 2-6 AM)
+            time_window {
+                cron = "0 2-6 * * SUN"
+            }
+            # Only affect GPU jobs
+            resource_matches {
+                requires_gpu = true
+            }
+        }
+    }
+
+    effects {
+        # Exclude nodes in maintenance group
+        exclude {
+            selector = group("gpu-maintenance")
+        }
+
+        # Allow preemption for running jobs
+        allow_preemption {
+            by_min_priority = 0  # Any job can preempt during maintenance
+        }
+
+        # Lower priority during maintenance
+        set_priority {
+            priority = -10
+            mode = add
+        }
+    }
+
+    governance {
+        override_policy = mandatory  # Cannot be overridden
+        conflict_priority = 100
+    }
+}

@@ -1,0 +1,218 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marabunta Compute - Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">&#x2b21;</div>
+                <h1>Marabunta <span>Compute</span></h1>
+            </div>
+            <nav>
+                <a href="/" class="active">Dashboard</a>
+                <a href="/jobs.html">Jobs</a>
+                <a href="/nodes.html">Nodes</a>
+                <a href="/instances.html">Instances</a>
+                <a href="/compute.html">Compute</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="page-header">
+                <h2>Cluster Overview</h2>
+                <p>Real-time status of your Marabunta Compute cluster</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="label">Total Jobs</div>
+                    <div class="value" id="total-jobs">-</div>
+                    <div class="trend up">&#9650; 12% from yesterday</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Running Jobs</div>
+                    <div class="value" id="running-jobs">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Total Nodes</div>
+                    <div class="value" id="total-nodes">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Healthy Nodes</div>
+                    <div class="value" id="healthy-nodes">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Tasks/Second</div>
+                    <div class="value" id="tasks-per-second">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Cluster Utilization</div>
+                    <div class="value" id="cluster-utilization">-</div>
+                </div>
+            </div>
+
+            <!-- Two Column Layout -->
+            <div class="grid-2">
+                <!-- Cluster Health -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Cluster Health</h3>
+                        <span class="badge badge-success">Healthy</span>
+                    </div>
+                    <div class="card-body">
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>CPU Utilization</span>
+                                <span id="utilization-percent">73%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="fill" id="utilization-bar" style="width: 73%"></div>
+                            </div>
+                        </div>
+
+                        <div class="inline-grid-2x2">
+                            <div>
+                                <div style="color: var(--text-secondary); font-size: 0.875rem;">Uptime</div>
+                                <div style="font-size: 1.25rem; font-weight: 600;" id="uptime">-</div>
+                            </div>
+                            <div>
+                                <div style="color: var(--text-secondary); font-size: 0.875rem;">Coordinators</div>
+                                <div style="font-size: 1.25rem; font-weight: 600;">3/3 <span style="color: var(--success);">&#10003;</span></div>
+                            </div>
+                            <div>
+                                <div style="color: var(--text-secondary); font-size: 0.875rem;">Masters</div>
+                                <div style="font-size: 1.25rem; font-weight: 600;">2/2 <span style="color: var(--success);">&#10003;</span></div>
+                            </div>
+                            <div>
+                                <div style="color: var(--text-secondary); font-size: 0.875rem;">Region</div>
+                                <div style="font-size: 1.25rem; font-weight: 600;">us-east-1</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Recent Activity</h3>
+                        <a href="/jobs.html" class="btn btn-sm btn-secondary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <ul class="activity-list" id="activity-list">
+                            <!-- Activity items populated by JS -->
+                            <li class="activity-item">
+                                <div class="activity-icon success">&#10003;</div>
+                                <div class="activity-content">
+                                    <div class="title">Loading...</div>
+                                    <div class="time">-</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h3>Quick Actions</h3>
+                </div>
+                <div class="card-body">
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a href="/jobs.html" class="btn btn-primary">
+                            &#43; Submit Job
+                        </a>
+                        <a href="/nodes.html" class="btn btn-secondary">
+                            View Nodes
+                        </a>
+                        <button class="btn btn-secondary" onclick="dashboard.refresh()">
+                            &#8635; Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resource Distribution -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h3>Resource Distribution</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Region</th>
+                                    <th>Nodes</th>
+                                    <th>Total Cores</th>
+                                    <th>Total Memory</th>
+                                    <th>Running Jobs</th>
+                                    <th>Utilization</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>us-east-1</td>
+                                    <td>85</td>
+                                    <td>1,024</td>
+                                    <td>4.0 TB</td>
+                                    <td>32</td>
+                                    <td>
+                                        <div class="utilization-meter">
+                                            <div class="bar">
+                                                <div class="fill medium" style="width: 78%"></div>
+                                            </div>
+                                            <span class="percent">78%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>us-west-1</td>
+                                    <td>28</td>
+                                    <td>384</td>
+                                    <td>1.5 TB</td>
+                                    <td>8</td>
+                                    <td>
+                                        <div class="utilization-meter">
+                                            <div class="bar">
+                                                <div class="fill low" style="width: 45%"></div>
+                                            </div>
+                                            <span class="percent">45%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>eu-west-1</td>
+                                    <td>15</td>
+                                    <td>192</td>
+                                    <td>768 GB</td>
+                                    <td>2</td>
+                                    <td>
+                                        <div class="utilization-meter">
+                                            <div class="bar">
+                                                <div class="fill high" style="width: 92%"></div>
+                                            </div>
+                                            <span class="percent">92%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# Marabunta - Licensed under the MIT License.
+[package]
+name = "marabunta-plugin-macros"
+version = "0.1.0"
+edition = "2021"
+description = "Proc macros for Marabunta Radiation plugin SDK"
+license = "MIT OR Apache-2.0"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1"
+syn = { version = "2", features = ["full", "fold", "visit-mut"] }
+proc-macro2 = "1"

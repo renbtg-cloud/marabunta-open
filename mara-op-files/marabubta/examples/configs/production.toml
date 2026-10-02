@@ -1,0 +1,219 @@
+# Marabunta - Licensed under the MIT License.
+# Marabunta Compute - Production Configuration
+#
+# Production-grade configuration with:
+# - High availability coordinator cluster (3+ nodes)
+# - Multiple masters per region
+# - Secure communication (TLS + auth)
+# - Comprehensive monitoring
+#
+# IMPORTANT: Before deploying, customize:
+# - All IP addresses and hostnames
+# - TLS certificate paths
+# - Authentication tokens/secrets
+# - Resource limits based on hardware
+#
+# This template is for a coordinator node. Worker configs would
+# have [coordinator] and [master] sections commented out.
+
+# ============================================================================
+# Node Identity
+# ============================================================================
+[node]
+# Use stable, unique identifiers in production
+id = "${MARABUNTA_NODE_ID}"
+
+# Descriptive name including region and role
+name = "marabunta-coord-us-east-1a-01"
+
+# AWS-style region naming
+region = "us-east-1"
+
+# Production tags for monitoring and placement
+tags = [
+    "env:production",
+    "tier:coordinator",
+    "az:us-east-1a",
+    "team:platform"
+]
+
+# ============================================================================
+# Network Configuration
+# ============================================================================
+[network]
+# Bind to all interfaces
+bind_address = "0.0.0.0:7000"
+
+# Public address for other nodes
+# Use DNS name for easier management
+public_address = "coord-01.us-east-1.marabunta.internal:7000"
+
+# All bootstrap servers (coordinators + WAN bootstrap)
+bootstrap_servers = [
+    "coord-01.us-east-1.marabunta.internal:7000",
+    "coord-02.us-east-1.marabunta.internal:7000",
+    "coord-03.us-east-1.marabunta.internal:7000",
+    "wan-bootstrap.marabunta.internal:7000"
+]
+
+# Production timeouts
+connect_timeout = "10s"
+request_timeout = "60s"
+
+# ============================================================================
+# Storage Configuration
+# ============================================================================
+[storage]
+# Use dedicated storage volume
+data_dir = "/data/marabunta"
+
+# Database on fast SSD
+database_path = "/data/marabunta/db/marabunta.db"
+
+# Checkpoints on separate volume for performance
+checkpoint_dir = "/data/marabunta/checkpoints"
+
+# Large checkpoint limit for production workloads
+max_checkpoint_size_mb = 4096
+
+# ============================================================================
+# Coordinator Configuration (HA Cluster)
+# ============================================================================
+[coordinator]
+# API port
+listen_port = 7000
+
+# Raft port (separate for better network isolation)
+raft_port = 7001
+
+# Other coordinators in the Raft cluster
+# Minimum 3 for HA, recommend 5 for larger deployments
+peers = [
+    "coord-02.us-east-1.marabunta.internal:7001",
+    "coord-03.us-east-1.marabunta.internal:7001"
+]
+
+# Raft timing - tuned for production
+election_timeout = "1500ms"
+heartbeat_interval = "300ms"
+
+# ============================================================================
+# Master Configuration
+# ============================================================================
+[master]
+listen_port = 7100
+
+# All coordinators for HA
+coordinator_addresses = [
+    "https://coord-01.us-east-1.marabunta.internal:7000",
+    "https://coord-02.us-east-1.marabunta.internal:7000",
+    "https://coord-03.us-east-1.marabunta.internal:7000"
+]
+
+# Large worker capacity
+max_workers = 10000
+
+# Aggressive worker health checking
+worker_timeout = "15s"
+
+# Fast scheduling
+scheduling_interval = "50ms"
+
+# ============================================================================
+# Worker Configuration (for worker nodes)
+# ============================================================================
+[worker]
+# All masters for failover
+master_addresses = [
+    "https://master-01.us-east-1.marabunta.internal:7100",
+    "https://master-02.us-east-1.marabunta.internal:7100"
+]
+
+# Concurrent tasks based on hardware
+# Auto-detect: leave unset or use num_cpus
+max_concurrent_tasks = 32
+
+# Conservative resource limits
+cpu_limit = 0.85           # Reserve 15% for system
+memory_limit_mb = 60000    # 60GB on 64GB machine
+
+# Frequent heartbeats for quick failure detection
+heartbeat_interval = "3s"
+
+# Frequent checkpoints for fault tolerance
+checkpoint_interval = "15s"
+
+# ============================================================================
+# Logging Configuration
+# ============================================================================
+[logging]
+# Info level in production (debug for troubleshooting)
+level = "info"
+
+# JSON for log aggregation (ELK, Splunk, etc.)
+format = "json"
+
+# Log to stdout for container environments
+# Or file for traditional deployments
+# file = "/var/log/marabunta/marabunta.log"
+
+# ============================================================================
+# Security Configuration
+# ============================================================================
+[security]
+# ALWAYS enable TLS in production
+tls_enabled = true
+
+# mTLS certificates
+cert_path = "/etc/marabunta/pki/node.crt"
+key_path = "/etc/marabunta/pki/node.key"
+ca_path = "/etc/marabunta/pki/ca-bundle.crt"
+
+# Authentication token (use secrets management in practice)
+# Consider: HashiCorp Vault, AWS Secrets Manager, etc.
+auth_token = "${MARABUNTA_AUTH_TOKEN}"
+
+# ============================================================================
+# Additional Production Settings (custom section)
+# ============================================================================
+
+# Metrics and monitoring
+[metrics]
+enabled = true
+port = 9090
+path = "/metrics"
+
+# Prometheus labels
+labels = [
+    "cluster=production",
+    "region=us-east-1"
+]
+
+# Health check endpoints
+[health]
+enabled = true
+port = 8080
+liveness_path = "/healthz"
+readiness_path = "/readyz"
+
+# Graceful shutdown
+[shutdown]
+grace_period = "30s"
+drain_timeout = "5m"
+
+# Rate limiting
+[rate_limits]
+# Max API requests per second per client
+api_rps = 1000
+# Max job submissions per minute
+jobs_per_minute = 100
+# Max concurrent connections
+max_connections = 10000
+
+# Resource quotas
+[quotas]
+# Default quota for new users
+default_cpu_hours = 1000
+default_memory_gb_hours = 10000
+# Burst allowance
+burst_multiplier = 1.5

@@ -1,0 +1,219 @@
+# Marabunta - Licensed under the MIT License.
+# Data Pipeline Workflow
+# ETL workflow for processing data from multiple sources
+#
+# This workflow demonstrates:
+# - Multiple data sources
+# - Parallel extraction
+# - Sequential transformation and loading
+# - Error handling and retries
+
+name: daily-data-pipeline
+description: Daily ETL workflow for data warehouse
+schedule: "0 2 * * *"  # Run at 2 AM daily
+version: 1
+
+# Global workflow settings
+settings:
+  timeout: 2h
+  max_retries: 3
+  retry_delay: 5m
+  notification_email: data-team@example.com
+
+# Input parameters
+params:
+  date:
+    type: string
+    default: "{{ today }}"
+    description: Date to process (YYYY-MM-DD)
+  environment:
+    type: string
+    enum: [dev, staging, production]
+    default: production
+
+# Workflow stages
+stages:
+  # Stage 1: Extract data from multiple sources in parallel
+  extract:
+    parallel: true
+    tasks:
+      - name: extract-sales
+        type: python
+        script: |
+          import json
+          from datetime import datetime
+          # Simulated sales data extraction
+          date = "{{ params.date }}"
+          sales = [
+              {"id": i, "amount": 100 + i * 10, "date": date}
+              for i in range(1000)
+          ]
+          with open("/data/raw/sales.json", "w") as f:
+              json.dump(sales, f)
+          print(f"Extracted {len(sales)} sales records")
+        resources:
+          memory: 512MB
+          cpu: 1
+        timeout: 30m
+
+      - name: extract-inventory
+        type: python
+        script: |
+          import json
+          # Simulated inventory extraction
+          inventory = [
+              {"sku": f"SKU-{i}", "quantity": 50 + i, "warehouse": "WH-1"}
+              for i in range(500)
+          ]
+          with open("/data/raw/inventory.json", "w") as f:
+              json.dump(inventory, f)
+          print(f"Extracted {len(inventory)} inventory records")
+        resources:
+          memory: 256MB
+          cpu: 1
+        timeout: 20m
+
+      - name: extract-customers
+        type: shell
+        command: |
+          curl -s "https://api.example.com/customers?date={{ params.date }}" \
+            -o /data/raw/customers.json
+          echo "Customer data extracted"
+        resources:
+          memory: 128MB
+          cpu: 1
+        timeout: 10m
+
+  # Stage 2: Transform data
+  transform:
+    depends_on: [extract]
+    parallel: true
+    tasks:
+      - name: transform-sales
+        type: python
+        script: |
+          import json
+          with open("/data/raw/sales.json") as f:
+              sales = json.load(f)
+          # Add computed fields
+          for sale in sales:
+              sale["tax"] = sale["amount"] * 0.08
+              sale["total"] = sale["amount"] + sale["tax"]
+          with open("/data/transformed/sales.json", "w") as f:
+              json.dump(sales, f)
+          print(f"Transformed {len(sales)} sales records")
+        depends_on: [extract-sales]
+        resources:
+          memory: 1GB
+          cpu: 2
+
+      - name: transform-inventory
+        type: python
+        script: |
+          import json
+          with open("/data/raw/inventory.json") as f:
+              inventory = json.load(f)
+          # Aggregate by warehouse
+          by_warehouse = {}
+          for item in inventory:
+              wh = item["warehouse"]
+              if wh not in by_warehouse:
+                  by_warehouse[wh] = {"total_items": 0, "total_quantity": 0}
+              by_warehouse[wh]["total_items"] += 1
+              by_warehouse[wh]["total_quantity"] += item["quantity"]
+          with open("/data/transformed/inventory_summary.json", "w") as f:
+              json.dump(by_warehouse, f)
+          print(f"Aggregated inventory for {len(by_warehouse)} warehouses")
+        depends_on: [extract-inventory]
+        resources:
+          memory: 512MB
+          cpu: 1
+
+  # Stage 3: Validate transformed data
+  validate:
+    depends_on: [transform]
+    tasks:
+      - name: validate-data
+        type: python
+        script: |
+          import json
+          errors = []
+
+          # Validate sales
+          with open("/data/transformed/sales.json") as f:
+              sales = json.load(f)
+          if len(sales) < 100:
+              errors.append("Too few sales records")
+
+          # Validate inventory
+          with open("/data/transformed/inventory_summary.json") as f:
+              inventory = json.load(f)
+          if not inventory:
+              errors.append("No inventory data")
+
+          if errors:
+              raise ValueError(f"Validation failed: {errors}")
+          print("All validations passed")
+        resources:
+          memory: 256MB
+          cpu: 1
+        on_failure: abort_workflow
+
+  # Stage 4: Load to data warehouse
+  load:
+    depends_on: [validate]
+    tasks:
+      - name: load-to-warehouse
+        type: python
+        script: |
+          import json
+          # Simulated load to data warehouse
+          with open("/data/transformed/sales.json") as f:
+              sales = json.load(f)
+          with open("/data/transformed/inventory_summary.json") as f:
+              inventory = json.load(f)
+
+          # In production, this would insert into database
+          result = {
+              "sales_loaded": len(sales),
+              "inventory_warehouses": len(inventory),
+              "status": "success"
+          }
+          with open("/data/load_result.json", "w") as f:
+              json.dump(result, f)
+          print(f"Loaded data: {result}")
+        resources:
+          memory: 2GB
+          cpu: 2
+        timeout: 1h
+        retry:
+          max_attempts: 5
+          delay: 1m
+          backoff: exponential
+
+  # Stage 5: Cleanup and notification
+  finalize:
+    depends_on: [load]
+    tasks:
+      - name: cleanup-temp-files
+        type: shell
+        command: |
+          rm -rf /data/raw/*
+          echo "Temporary files cleaned up"
+        on_failure: continue
+
+      - name: send-notification
+        type: shell
+        command: |
+          echo "Pipeline completed for {{ params.date }}" | \
+            mail -s "ETL Complete" {{ settings.notification_email }}
+        on_failure: continue
+
+# Artifacts to preserve
+artifacts:
+  - path: /data/transformed/sales.json
+    retention: 30d
+  - path: /data/transformed/inventory_summary.json
+    retention: 30d
+  - path: /data/load_result.json
+    retention: 7d

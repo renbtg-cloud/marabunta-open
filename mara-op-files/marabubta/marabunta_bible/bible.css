@@ -1,0 +1,61 @@
+@page {
+  size: A4;
+  margin: 1in;
+  @bottom-left {
+    content: "MARABUNTA ARCHITECTURE";
+    font-family: sans-serif;
+    color: #718096;
+    font-size: 8pt;
+  }
+}
+
+body {
+  font-family: "Liberation Serif", "Times New Roman", serif;
+  color: #1a1a1a;
+  font-size: 11pt;
+  line-height: 1.6;
+}
+
+h1 {
+  font-family: "Nimbus Sans", "Arial", sans-serif;
+  font-weight: bold;
+  color: #07020d;
+  font-size: 24pt;
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  page-break-before: always;
+}
+
+h2, h3, h4 {
+  font-family: "Nimbus Sans", "Arial", sans-serif;
+  font-weight: bold;
+  color: #1a3a5a;
+  font-size: 16pt;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+blockquote {
+  font-family: "Liberation Mono", "Courier New", monospace;
+  font-weight: bold;
+  font-style: italic;
+  color: #d32f2f;
+  margin: 1.5rem 3rem;
+  border-left: none;
+}
+
+pre {
+  font-family: "Liberation Mono", "DejaVu Sans Mono", monospace;
+  font-size: 10pt;
+  background-color: #f8f9fa;
+  border: 1px solid #e2e8f0;
+  padding: 1rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+code {
+  font-family: "Liberation Mono", "DejaVu Sans Mono", monospace;
+  color: #1a1a1a;
+  font-size: 10pt;
+}

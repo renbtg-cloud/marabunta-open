@@ -1,0 +1,94 @@
+# Marabunta - Licensed under the MIT License.
+---
+# Deploy playbook: copy binary, config, plugins, webapp; start services.
+
+- name: Deploy swarm binary and config to all nodes
+  hosts: all
+  become: true
+  tasks:
+    - name: Copy swarm binary
+      copy:
+        src: "{{ playbook_dir }}/../../target/release/swarm"
+        dest: /opt/marabunta/bin/swarm
+        owner: ubuntu
+        group: ubuntu
+        mode: "0755"
+
+    - name: Generate swarm config
+      template:
+        src: templates/config.toml.j2
+        dest: /opt/marabunta/config.toml
+        owner: ubuntu
+        group: ubuntu
+        mode: "0644"
+
+    - name: Start swarm service
+      systemd:
+        name: marabunta-swarm
+        state: restarted
+        enabled: true
+
+    - name: Wait for swarm to be ready
+      wait_for:
+        port: "{{ swarm_port }}"
+        delay: 2
+        timeout: 30
+
+- name: Deploy financial plugin on core-0
+  hosts: core-0
+  become: true
+  tasks:
+    - name: Copy financial plugin
+      synchronize:
+        src: "{{ playbook_dir }}/../../financial-demo-plugin/"
+        dest: /opt/marabunta/plugins/financial-demo/
+        delete: true
+
+    - name: Start financial plugin
+      systemd:
+        name: marabunta-financial-plugin
+        state: restarted
+        enabled: true
+
+- name: Deploy webapp on core-0
+  hosts: core-0
+  become: true
+  tasks:
+    - name: Copy webapp build
+      synchronize:
+        src: "{{ playbook_dir }}/../../financial-demo-webapp/dist/"
+        dest: /opt/marabunta/webapp/
+        delete: true
+
+    - name: Install serve if needed
+      npm:
+        name: serve
+        global: true
+        state: present
+
+    - name: Create webapp systemd service
+      copy:
+        dest: /etc/systemd/system/marabunta-webapp.service
+        content: |
+          [Unit]
+          Description=Marabunta Financial Demo Webapp
+          After=marabunta-swarm.service
+
+          [Service]
+          Type=simple
+          User=ubuntu
+          WorkingDirectory=/opt/marabunta/webapp
+          ExecStart=/usr/bin/npx serve -s . -l 3000
+          Restart=on-failure
+          StandardOutput=append:/opt/marabunta/logs/webapp.log
+          StandardError=append:/opt/marabunta/logs/webapp.log
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Start webapp
+      systemd:
+        name: marabunta-webapp
+        state: restarted
+        enabled: true
+        daemon_reload: true

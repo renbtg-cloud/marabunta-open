@@ -1,0 +1,18 @@
+{
+  "name": "hello-world",
+  "description": "Simplest possible Marabunta Compute job - runs a shell command",
+  "priority": "normal",
+  "tasks": [
+    {
+      "name": "greeting",
+      "payload": {
+        "type": "shell",
+        "command": "echo",
+        "args": ["Hello from Marabunta Compute!"]
+      }
+    }
+  ],
+  "constraints": {},
+  "preferences": {},
+  "timeout_secs": 60
+}

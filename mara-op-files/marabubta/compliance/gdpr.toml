@@ -1,0 +1,43 @@
+# Marabunta - Licensed under the MIT License.
+# GDPR Compliance Profile
+# EU data protection regulation controls.
+
+[profile]
+name = "gdpr"
+version = "1.0"
+description = "GDPR — EU General Data Protection Regulation"
+
+[[overrides]]
+key = "security.api_auth_required"
+value = true
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "GDPR Art. 32: Appropriate access controls for personal data"
+
+[[overrides]]
+key = "management.audit_max_entries"
+value = 1000000
+ui_visibility = "visible_readonly"
+constraint_type = "min"
+justification = "GDPR Art. 30: Records of processing activities"
+
+[[overrides]]
+key = "postgres.enable_time_travel"
+value = true
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "GDPR Art. 17: Right to erasure requires audit trail"
+
+[[overrides]]
+key = "postgres.history_retention_days"
+value = 30
+ui_visibility = "visible_readonly"
+constraint_type = "max"
+justification = "GDPR Art. 5(1)(e): Data minimization — 30 day retention limit"
+
+[[overrides]]
+key = "neuromancer.enabled"
+value = true
+ui_visibility = "visible_readonly"
+constraint_type = "exact"
+justification = "GDPR Art. 32: Anomaly detection for data breach prevention"

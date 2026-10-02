@@ -1,0 +1,802 @@
+<!-- Marabunta - Licensed under the MIT License.
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <title>Marabunta Radiation — Submit Job</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Submit and monitor distributed compute jobs on the Marabunta Radiation swarm network.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="/" class="logo" aria-label="Marabunta Radiation home">
+        <svg class="logo-mark" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+          <circle cx="14" cy="14" r="12" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="14" cy="14" r="5" fill="currentColor"/>
+          <line x1="14" y1="2" x2="14" y2="8" stroke="currentColor" stroke-width="2"/>
+          <line x1="14" y1="20" x2="14" y2="26" stroke="currentColor" stroke-width="2"/>
+          <line x1="2" y1="14" x2="8" y2="14" stroke="currentColor" stroke-width="2"/>
+          <line x1="20" y1="14" x2="26" y2="14" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <span class="logo-text">Marabunta Radiation</span>
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" type="button" style="display:none">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+          </svg>
+        </button>
+
+      <nav class="main-nav" aria-label="Primary navigation">
+        <ul class="nav-list" role="list">
+          <li><a href="#module-browser" class="nav-link active" data-view="module-browser" aria-current="page">Modules</a></li>
+          <li><a href="#submit-form" class="nav-link" data-view="submit-form">Submit</a></li>
+          <li><a href="#job-history" class="nav-link" data-view="job-history">History</a></li>
+          <li><a href="#job-status" class="nav-link" data-view="job-status">Status</a></li>
+          <li><a href="#settings" class="nav-link" data-view="settings">Settings</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn btn-icon" id="theme-toggle" aria-label="Toggle light/dark theme" type="button">
+          <svg class="icon icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg class="icon icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+          </svg>
+        </button>
+        <div class="user-badge" aria-label="Account">
+          <span class="avatar" aria-hidden="true">CR</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main id="app">
+
+    <!-- ===== MODULE BROWSER ===== -->
+    <section id="module-browser" class="view" aria-labelledby="modules-heading">
+      <div class="section-header">
+        <h1 id="modules-heading">Compute Modules</h1>
+        <p class="section-subtitle">Choose a module to begin a new job submission.</p>
+      </div>
+
+      <div class="category-tabs" role="tablist" aria-label="Module categories">
+        <button class="tab active" role="tab" aria-selected="true" data-category="all">All</button>
+        <button class="tab" role="tab" aria-selected="false" data-category="ml">Machine Learning</button>
+        <button class="tab" role="tab" aria-selected="false" data-category="data">Data Processing</button>
+        <button class="tab" role="tab" aria-selected="false" data-category="render">Rendering</button>
+        <button class="tab" role="tab" aria-selected="false" data-category="science">Scientific</button>
+        <button class="tab" role="tab" aria-selected="false" data-category="crypto">Cryptography</button>
+      </div>
+
+      <div class="search-bar">
+        <label for="module-search" class="sr-only">Search modules</label>
+        <input id="module-search" type="search" placeholder="Search modules..." autocomplete="off" aria-describedby="search-hint">
+        <span id="search-hint" class="sr-only">Type to filter modules by name or description</span>
+      </div>
+
+      <div class="module-grid" role="list" aria-label="Available modules">
+        <!-- Module cards are rendered by app.js; representative static examples below -->
+        <article class="module-card" role="listitem" data-category="ml" tabindex="0" aria-label="LLM Fine-Tune module">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <h3 class="card-title">LLM Fine-Tune</h3>
+          <p class="card-description">Distributed LoRA fine-tuning across GPU nodes with checkpoint merging.</p>
+          <div class="card-meta">
+            <span class="badge badge-category">ML</span>
+            <span class="badge badge-gpu">GPU Required</span>
+          </div>
+          <div class="card-footer">
+            <span class="card-stat">~1,240 runs</span>
+            <span class="card-stat">avg 14 min</span>
+          </div>
+        </article>
+
+        <article class="module-card" role="listitem" data-category="data" tabindex="0" aria-label="MapReduce ETL module">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </div>
+          <h3 class="card-title">MapReduce ETL</h3>
+          <p class="card-description">Chunk, transform, and aggregate large datasets with fault-tolerant scatter-gather.</p>
+          <div class="card-meta">
+            <span class="badge badge-category">Data</span>
+          </div>
+          <div class="card-footer">
+            <span class="card-stat">~3,780 runs</span>
+            <span class="card-stat">avg 8 min</span>
+          </div>
+        </article>
+
+        <article class="module-card" role="listitem" data-category="render" tabindex="0" aria-label="Blender Render module">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/><line x1="12" y1="22" x2="12" y2="15.5"/><line x1="22" y1="8.5" x2="12" y2="15.5"/><line x1="2" y1="8.5" x2="12" y2="15.5"/></svg>
+          </div>
+          <h3 class="card-title">Blender Render</h3>
+          <p class="card-description">Distributed frame rendering with tile-based work splitting and compositing.</p>
+          <div class="card-meta">
+            <span class="badge badge-category">Render</span>
+            <span class="badge badge-gpu">GPU Required</span>
+          </div>
+          <div class="card-footer">
+            <span class="card-stat">~920 runs</span>
+            <span class="card-stat">avg 23 min</span>
+          </div>
+        </article>
+
+        <article class="module-card" role="listitem" data-category="science" tabindex="0" aria-label="Genome Alignment module">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3c0 4 6 7 6 12s-6 8-6 12M18 3c0 4-6 7-6 12s6 8 6 12M9 7h6M9 12h6M9 17h6"/></svg>
+          </div>
+          <h3 class="card-title">Genome Alignment</h3>
+          <p class="card-description">Parallel BLAST/minimap2 alignment across sharded reference genomes.</p>
+          <div class="card-meta">
+            <span class="badge badge-category">Science</span>
+          </div>
+          <div class="card-footer">
+            <span class="card-stat">~490 runs</span>
+            <span class="card-stat">avg 41 min</span>
+          </div>
+        </article>
+
+        <article class="module-card" role="listitem" data-category="crypto" tabindex="0" aria-label="ZK Proof Generation module">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="card-title">ZK Proof Generation</h3>
+          <p class="card-description">Distributed zero-knowledge proof computation with recursive verification.</p>
+          <div class="card-meta">
+            <span class="badge badge-category">Crypto</span>
+            <span class="badge badge-gpu">GPU Accelerated</span>
+          </div>
+          <div class="card-footer">
+            <span class="card-stat">~310 runs</span>
+            <span class="card-stat">avg 19 min</span>
+          </div>
+        </article>
+
+        <article class="module-card" role="listitem" data-category="data" tabindex="0" aria-label="Video Transcode module">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><polygon points="10 8 16 12 10 16"/></svg>
+          </div>
+          <h3 class="card-title">Video Transcode</h3>
+          <p class="card-description">Split, transcode, and reassemble video with scene-aware chunking.</p>
+          <div class="card-meta">
+            <span class="badge badge-category">Data</span>
+          </div>
+          <div class="card-footer">
+            <span class="card-stat">~2,150 runs</span>
+            <span class="card-stat">avg 11 min</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== JOB SUBMISSION FORM ===== -->
+    <section id="submit-form" class="view hidden" aria-labelledby="submit-heading">
+      <div class="section-header">
+        <button class="btn btn-ghost back-btn" aria-label="Back to modules" data-view="module-browser">&larr; Back to Modules</button>
+        <h1 id="submit-heading">Submit Job</h1>
+      </div>
+
+      <form id="job-form" class="multi-step-form" novalidate>
+        <!-- Step indicator -->
+        <div class="step-indicator" role="group" aria-label="Form progress">
+          <div class="step active" data-step="1" aria-current="step"><span class="step-num">1</span><span class="step-label">Module</span></div>
+          <div class="step-line"></div>
+          <div class="step" data-step="2"><span class="step-num">2</span><span class="step-label">Data</span></div>
+          <div class="step-line"></div>
+          <div class="step" data-step="3"><span class="step-num">3</span><span class="step-label">Parameters</span></div>
+          <div class="step-line"></div>
+          <div class="step" data-step="4"><span class="step-num">4</span><span class="step-label">Priority</span></div>
+          <div class="step-line"></div>
+          <div class="step" data-step="5"><span class="step-num">5</span><span class="step-label">Review</span></div>
+        </div>
+
+        <!-- Step 1: Module confirmation -->
+        <fieldset class="form-step" data-step="1">
+          <legend class="sr-only">Step 1: Selected module</legend>
+          <div class="selected-module-card">
+            <div class="selected-module-icon" aria-hidden="true"></div>
+            <div class="selected-module-info">
+              <h2 id="selected-module-name">LLM Fine-Tune</h2>
+              <p id="selected-module-desc">Distributed LoRA fine-tuning across GPU nodes with checkpoint merging.</p>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" data-view="module-browser">Change Module</button>
+          </div>
+        </fieldset>
+
+        <!-- Step 2: Upload data -->
+        <fieldset class="form-step hidden" data-step="2">
+          <legend>Upload Input Data</legend>
+          <div class="upload-zone" id="drop-zone" role="region" aria-label="File upload drop zone" tabindex="0">
+            <div class="upload-zone-content">
+              <svg class="upload-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+              </svg>
+              <p class="upload-text"><strong>Drag and drop files here</strong></p>
+              <p class="upload-hint">or click to browse &middot; max 2 GB per file</p>
+            </div>
+            <input type="file" id="file-input" class="sr-only" multiple aria-describedby="upload-constraints">
+          </div>
+          <p id="upload-constraints" class="form-hint">Supported formats: .csv, .json, .parquet, .tar.gz, .zip, .safetensors, .bin</p>
+          <ul class="file-list" id="file-list" role="list" aria-label="Uploaded files"></ul>
+        </fieldset>
+
+        <!-- Step 3: Parameters -->
+        <fieldset class="form-step hidden" data-step="3">
+          <legend>Job Parameters</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="param-name">Job Name</label>
+              <input type="text" id="param-name" name="job_name" placeholder="e.g., finetune-llama3-customer-qa" required aria-required="true" maxlength="128">
+            </div>
+            <div class="form-group">
+              <label for="param-chunk-size">Chunk Size</label>
+              <select id="param-chunk-size" name="chunk_size">
+                <option value="auto">Auto (recommended)</option>
+                <option value="64mb">64 MB</option>
+                <option value="256mb">256 MB</option>
+                <option value="1gb">1 GB</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="param-retries">Max Retries per Chunk</label>
+              <input type="number" id="param-retries" name="max_retries" value="3" min="0" max="10" aria-describedby="retries-hint">
+              <span id="retries-hint" class="form-hint">0 = fail fast, 10 = maximum resilience</span>
+            </div>
+            <div class="form-group">
+              <label for="param-timeout">Chunk Timeout (seconds)</label>
+              <input type="number" id="param-timeout" name="chunk_timeout" value="300" min="30" max="3600">
+            </div>
+            <div class="form-group">
+              <label for="param-min-nodes">Minimum Node Count</label>
+              <input type="number" id="param-min-nodes" name="min_nodes" value="1" min="1" max="500">
+            </div>
+            <div class="form-group">
+              <label for="param-region">Preferred Region</label>
+              <select id="param-region" name="preferred_region">
+                <option value="any">Any Region</option>
+                <option value="us-east">US East</option>
+                <option value="us-west">US West</option>
+                <option value="eu-west">EU West</option>
+                <option value="eu-central">EU Central</option>
+                <option value="ap-southeast">AP Southeast</option>
+              </select>
+            </div>
+            <div class="form-group form-group-full">
+              <label for="param-env">Environment Variables <span class="optional">(optional)</span></label>
+              <textarea id="param-env" name="env_vars" rows="3" placeholder="KEY=value (one per line)" aria-describedby="env-hint"></textarea>
+              <span id="env-hint" class="form-hint">Injected into the execution environment of each chunk.</span>
+            </div>
+            <div class="form-group form-group-full">
+              <label for="param-node-reqs">Node Requirements <span class="optional">(optional)</span></label>
+              <div class="checkbox-row">
+                <label class="checkbox-label"><input type="checkbox" name="req_gpu"> GPU Required</label>
+                <label class="checkbox-label"><input type="checkbox" name="req_high_mem"> High Memory (&ge;32 GB)</label>
+                <label class="checkbox-label"><input type="checkbox" name="req_ssd"> SSD Storage</label>
+                <label class="checkbox-label"><input type="checkbox" name="req_high_bw"> High Bandwidth (&ge;1 Gbps)</label>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Step 4: Priority -->
+        <fieldset class="form-step hidden" data-step="4">
+          <legend>Select Priority</legend>
+          <div class="priority-selector" role="radiogroup" aria-label="Job priority level">
+            <label class="priority-option" tabindex="0">
+              <input type="radio" name="priority" value="rush" class="sr-only">
+              <div class="priority-card">
+                <span class="priority-icon priority-rush" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/></svg>
+                </span>
+                <span class="priority-name">Rush</span>
+                <span class="priority-desc">Highest priority scheduling. Pre-empts economy jobs.</span>
+                <span class="priority-cost">3.0x multiplier</span>
+              </div>
+            </label>
+            <label class="priority-option" tabindex="0">
+              <input type="radio" name="priority" value="standard" class="sr-only" checked>
+              <div class="priority-card selected">
+                <span class="priority-icon priority-standard" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </span>
+                <span class="priority-name">Standard</span>
+                <span class="priority-desc">Fair-share scheduling. Best balance of speed and cost.</span>
+                <span class="priority-cost">1.0x base rate</span>
+              </div>
+            </label>
+            <label class="priority-option" tabindex="0">
+              <input type="radio" name="priority" value="economy" class="sr-only">
+              <div class="priority-card">
+                <span class="priority-icon priority-economy" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                </span>
+                <span class="priority-name">Economy</span>
+                <span class="priority-desc">Fills spare capacity. May queue behind higher-priority work.</span>
+                <span class="priority-cost">0.4x discount</span>
+              </div>
+            </label>
+          </div>
+          <div class="priority-compare">
+            <p class="priority-compare-note">Economy jobs typically complete within 2&ndash;4x the standard time window.</p>
+          </div>
+        </fieldset>
+
+        <!-- Step 5: Review & Cost Estimate -->
+        <fieldset class="form-step hidden" data-step="5">
+          <legend>Review &amp; Submit</legend>
+          <div class="cost-estimate-panel" aria-label="Estimated cost breakdown">
+            <h3 class="cost-heading">Cost Estimate</h3>
+            <dl class="cost-breakdown">
+              <div class="cost-row">
+                <dt>Compute</dt>
+                <dd id="cost-compute">$0.00</dd>
+              </div>
+              <div class="cost-row">
+                <dt>Data Transfer</dt>
+                <dd id="cost-transfer">$0.00</dd>
+              </div>
+              <div class="cost-row">
+                <dt>Priority Multiplier</dt>
+                <dd id="cost-multiplier">1.0x</dd>
+              </div>
+              <div class="cost-row cost-total">
+                <dt>Estimated Total</dt>
+                <dd id="cost-total">$0.00</dd>
+              </div>
+            </dl>
+            <p class="cost-note">Final cost may vary based on actual node time and retries.</p>
+          </div>
+
+          <div class="review-summary">
+            <h3>Job Summary</h3>
+            <dl class="review-grid">
+              <div class="review-item"><dt>Module</dt><dd id="review-module">--</dd></div>
+              <div class="review-item"><dt>Job Name</dt><dd id="review-name">--</dd></div>
+              <div class="review-item"><dt>Files</dt><dd id="review-files">--</dd></div>
+              <div class="review-item"><dt>Chunk Size</dt><dd id="review-chunk">--</dd></div>
+              <div class="review-item"><dt>Priority</dt><dd id="review-priority">--</dd></div>
+              <div class="review-item"><dt>Region</dt><dd id="review-region">--</dd></div>
+              <div class="review-item"><dt>Max Retries</dt><dd id="review-retries">--</dd></div>
+              <div class="review-item"><dt>Timeout</dt><dd id="review-timeout">--</dd></div>
+            </dl>
+          </div>
+
+          <div class="submit-actions">
+            <button type="submit" class="btn btn-primary btn-lg" id="submit-btn">
+              <span class="btn-text">Submit Job</span>
+              <span class="btn-spinner hidden" aria-hidden="true"></span>
+            </button>
+            <p class="submit-hint">You will receive a job ID for tracking upon submission.</p>
+          </div>
+        </fieldset>
+
+        <!-- Step navigation -->
+        <div class="form-nav">
+          <button type="button" class="btn btn-outline" id="prev-step" disabled>Previous</button>
+          <button type="button" class="btn btn-primary" id="next-step">Next</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ===== JOB STATUS ===== -->
+    <section id="job-status" class="view hidden" aria-labelledby="status-heading">
+      <div class="section-header">
+        <h1 id="status-heading">Job Status</h1>
+        <div class="status-job-id">
+          <label for="status-job-input" class="sr-only">Job ID</label>
+          <input id="status-job-input" type="text" placeholder="Enter Job ID..." class="input-mono" aria-describedby="job-id-hint">
+          <span id="job-id-hint" class="sr-only">Paste a job ID to track its progress</span>
+          <button class="btn btn-primary btn-sm" type="button">Track</button>
+        </div>
+      </div>
+
+      <!-- Progress bars -->
+      <div class="progress-stack" aria-label="Chunk progress breakdown">
+        <div class="progress-row">
+          <span class="progress-label">Done</span>
+          <div class="progress-bar"><div class="progress-fill progress-done" style="width: 62%" role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100"></div></div>
+          <span class="progress-value">186 / 300</span>
+        </div>
+        <div class="progress-row">
+          <span class="progress-label">Running</span>
+          <div class="progress-bar"><div class="progress-fill progress-running" style="width: 18%" role="progressbar" aria-valuenow="18" aria-valuemin="0" aria-valuemax="100"></div></div>
+          <span class="progress-value">54</span>
+        </div>
+        <div class="progress-row">
+          <span class="progress-label">Queued</span>
+          <div class="progress-bar"><div class="progress-fill progress-queued" style="width: 15%" role="progressbar" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div></div>
+          <span class="progress-value">45</span>
+        </div>
+        <div class="progress-row">
+          <span class="progress-label">Retrying</span>
+          <div class="progress-bar"><div class="progress-fill progress-retrying" style="width: 5%" role="progressbar" aria-valuenow="5" aria-valuemin="0" aria-valuemax="100"></div></div>
+          <span class="progress-value">15</span>
+        </div>
+      </div>
+
+      <!-- Stats grid -->
+      <div class="stats-grid" aria-label="Job statistics">
+        <div class="stat-card">
+          <span class="stat-value" id="stat-completion">62%</span>
+          <span class="stat-label">Completion</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="stat-nodes">47</span>
+          <span class="stat-label">Active Nodes</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="stat-eta">~8 min</span>
+          <span class="stat-label">ETA</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="stat-cost">$1.24</span>
+          <span class="stat-label">Cost So Far</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="stat-retry-rate">5.0%</span>
+          <span class="stat-label">Retry Rate</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="stat-throughput">3.2 GB/s</span>
+          <span class="stat-label">Throughput</span>
+        </div>
+      </div>
+
+      <!-- Node class breakdown -->
+      <div class="node-breakdown" aria-label="Node class distribution">
+        <h2 class="subsection-heading">Node Breakdown</h2>
+        <div class="breakdown-bars">
+          <div class="breakdown-row">
+            <span class="breakdown-label">Dust</span>
+            <div class="breakdown-bar"><div class="breakdown-fill breakdown-dust" style="width: 35%"></div></div>
+            <span class="breakdown-value">16 nodes</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Pebble</span>
+            <div class="breakdown-bar"><div class="breakdown-fill breakdown-pebble" style="width: 40%"></div></div>
+            <span class="breakdown-value">19 nodes</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Rock</span>
+            <div class="breakdown-bar"><div class="breakdown-fill breakdown-rock" style="width: 20%"></div></div>
+            <span class="breakdown-value">9 nodes</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Boulder</span>
+            <div class="breakdown-bar"><div class="breakdown-fill breakdown-boulder" style="width: 5%"></div></div>
+            <span class="breakdown-value">3 nodes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live event log -->
+      <div class="event-log" aria-label="Live event log">
+        <h2 class="subsection-heading">Live Events</h2>
+        <div class="log-container" id="event-log" role="log" aria-live="polite" aria-atomic="false" tabindex="0">
+          <div class="log-entry log-info"><time>12:04:31</time><span>Job accepted. Splitting 4.2 GB into 300 chunks.</span></div>
+          <div class="log-entry log-info"><time>12:04:33</time><span>Bidding round opened. 63 nodes responding.</span></div>
+          <div class="log-entry log-success"><time>12:04:35</time><span>47 nodes awarded. Distributing chunks.</span></div>
+          <div class="log-entry log-info"><time>12:04:38</time><span>Chunk 001 started on node dusty-falcon-7a2e.</span></div>
+          <div class="log-entry log-warn"><time>12:05:12</time><span>Node pebble-orca-3f19 heartbeat delayed (2.1s). Watching.</span></div>
+          <div class="log-entry log-success"><time>12:05:44</time><span>Chunk 001 completed in 66s (12.8 MB result).</span></div>
+          <div class="log-entry log-error"><time>12:06:01</time><span>Chunk 014 failed on rock-bear-9c47: OOM. Rescheduling to boulder.</span></div>
+        </div>
+      </div>
+
+      <!-- Partial results preview -->
+      <div class="partial-results" aria-label="Partial results preview">
+        <h2 class="subsection-heading">Partial Results</h2>
+        <p class="partial-hint">Available results will appear here as chunks complete.</p>
+        <ul class="results-list" id="partial-results-list" role="list"></ul>
+      </div>
+    </section>
+
+    <!-- ===== JOB HISTORY ===== -->
+    <section id="job-history" class="view hidden" aria-labelledby="history-heading">
+      <div class="section-header">
+        <h1 id="history-heading">Job History</h1>
+        <div class="history-filters">
+          <label for="history-status-filter" class="sr-only">Filter by status</label>
+          <select id="history-status-filter">
+            <option value="all">All statuses</option>
+            <option value="completed">Completed</option>
+            <option value="running">Running</option>
+            <option value="failed">Failed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <label for="history-search" class="sr-only">Search jobs</label>
+          <input id="history-search" type="search" placeholder="Search by name or ID...">
+        </div>
+      </div>
+
+      <div class="table-wrap" role="region" aria-label="Job history table" tabindex="0">
+        <table class="data-table" aria-describedby="history-heading">
+          <thead>
+            <tr>
+              <th scope="col" aria-sort="none"><button type="button">Job ID <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button">Name <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button">Module <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="descending"><button type="button">Submitted <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button">Duration <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button">Cost <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button">Status <span class="sort-indicator" aria-hidden="true"></span></button></th>
+              <th scope="col"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">j-7a2e3f</td>
+              <td>finetune-llama3-qa</td>
+              <td>LLM Fine-Tune</td>
+              <td><time datetime="2026-02-08T10:14:00Z">Today, 10:14</time></td>
+              <td>14m 22s</td>
+              <td>$2.18</td>
+              <td><span class="status-badge status-completed">Completed</span></td>
+              <td><button class="btn btn-ghost btn-sm" data-action="view-results">Results</button></td>
+            </tr>
+            <tr>
+              <td class="mono">j-9c47b1</td>
+              <td>etl-clickstream-jan</td>
+              <td>MapReduce ETL</td>
+              <td><time datetime="2026-02-08T08:31:00Z">Today, 08:31</time></td>
+              <td>8m 54s</td>
+              <td>$0.87</td>
+              <td><span class="status-badge status-completed">Completed</span></td>
+              <td><button class="btn btn-ghost btn-sm" data-action="view-results">Results</button></td>
+            </tr>
+            <tr>
+              <td class="mono">j-3f19d8</td>
+              <td>render-product-shots</td>
+              <td>Blender Render</td>
+              <td><time datetime="2026-02-07T22:05:00Z">Yesterday, 22:05</time></td>
+              <td>23m 11s</td>
+              <td>$3.42</td>
+              <td><span class="status-badge status-completed">Completed</span></td>
+              <td><button class="btn btn-ghost btn-sm" data-action="view-results">Results</button></td>
+            </tr>
+            <tr>
+              <td class="mono">j-b8e2a4</td>
+              <td>genome-ref-align-v2</td>
+              <td>Genome Alignment</td>
+              <td><time datetime="2026-02-07T16:42:00Z">Yesterday, 16:42</time></td>
+              <td>--</td>
+              <td>$1.60</td>
+              <td><span class="status-badge status-failed">Failed</span></td>
+              <td><button class="btn btn-ghost btn-sm" data-action="view-details">Details</button></td>
+            </tr>
+            <tr>
+              <td class="mono">j-d4c6f0</td>
+              <td>zk-batch-proofs-feb</td>
+              <td>ZK Proof Generation</td>
+              <td><time datetime="2026-02-07T11:20:00Z">Yesterday, 11:20</time></td>
+              <td>19m 03s</td>
+              <td>$2.91</td>
+              <td><span class="status-badge status-completed">Completed</span></td>
+              <td><button class="btn btn-ghost btn-sm" data-action="view-results">Results</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <nav class="pagination" aria-label="Job history pagination">
+        <button class="btn btn-ghost btn-sm" disabled aria-label="Previous page">&larr; Prev</button>
+        <span class="pagination-info">Page 1 of 4</span>
+        <button class="btn btn-ghost btn-sm" aria-label="Next page">Next &rarr;</button>
+      </nav>
+    </section>
+
+    <!-- ===== RESULTS VIEW ===== -->
+    <section id="results-view" class="view hidden" aria-labelledby="results-heading">
+      <div class="section-header">
+        <button class="btn btn-ghost back-btn" aria-label="Back to history" data-view="job-history">&larr; Back to History</button>
+        <h1 id="results-heading">Job Results</h1>
+      </div>
+
+      <!-- File list -->
+      <div class="results-files" aria-label="Result files">
+        <h2 class="subsection-heading">Output Files</h2>
+        <ul class="results-file-list" role="list">
+          <li class="result-file">
+            <div class="file-info">
+              <span class="file-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </span>
+              <span class="file-name">merged_output.safetensors</span>
+              <span class="file-size">1.8 GB</span>
+            </div>
+            <button class="btn btn-primary btn-sm">Download</button>
+          </li>
+          <li class="result-file">
+            <div class="file-info">
+              <span class="file-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </span>
+              <span class="file-name">training_log.json</span>
+              <span class="file-size">42 KB</span>
+            </div>
+            <button class="btn btn-primary btn-sm">Download</button>
+          </li>
+          <li class="result-file">
+            <div class="file-info">
+              <span class="file-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </span>
+              <span class="file-name">eval_metrics.csv</span>
+              <span class="file-size">8 KB</span>
+            </div>
+            <button class="btn btn-primary btn-sm">Download</button>
+          </li>
+        </ul>
+        <button class="btn btn-outline" id="download-all-btn">Download All (.tar.gz)</button>
+      </div>
+
+      <!-- Receipt -->
+      <div class="receipt" aria-label="Job receipt">
+        <h2 class="receipt-title">Receipt</h2>
+        <div class="receipt-header">
+          <span class="receipt-logo">Marabunta Radiation</span>
+          <span class="receipt-id">INV-2026-02-08-7a2e3f</span>
+        </div>
+        <dl class="receipt-body">
+          <div class="receipt-row"><dt>Job ID</dt><dd>j-7a2e3f</dd></div>
+          <div class="receipt-row"><dt>Module</dt><dd>LLM Fine-Tune</dd></div>
+          <div class="receipt-row"><dt>Priority</dt><dd>Standard (1.0x)</dd></div>
+          <div class="receipt-row"><dt>Duration</dt><dd>14m 22s</dd></div>
+          <div class="receipt-row"><dt>Total Chunks</dt><dd>300</dd></div>
+          <div class="receipt-row"><dt>Retries</dt><dd>12</dd></div>
+          <div class="receipt-row"><dt>Nodes Used</dt><dd>47</dd></div>
+          <div class="receipt-row receipt-sep"><dt>Compute Cost</dt><dd>$1.86</dd></div>
+          <div class="receipt-row"><dt>Transfer Cost</dt><dd>$0.32</dd></div>
+          <div class="receipt-row receipt-total"><dt>Total</dt><dd>$2.18</dd></div>
+        </dl>
+      </div>
+
+      <!-- Cloud comparison -->
+      <div class="cloud-comparison" aria-label="Cloud cost comparison">
+        <h2 class="subsection-heading">vs. Traditional Cloud</h2>
+        <div class="comparison-grid">
+          <div class="comparison-col comparison-them">
+            <span class="comparison-provider">AWS / GCP / Azure</span>
+            <span class="comparison-price">$14.40</span>
+            <span class="comparison-detail">p3.2xlarge &times; 14 min</span>
+          </div>
+          <div class="comparison-vs" aria-hidden="true">vs</div>
+          <div class="comparison-col comparison-us">
+            <span class="comparison-provider">Marabunta Radiation</span>
+            <span class="comparison-price">$2.18</span>
+            <span class="comparison-detail">47 swarm nodes &times; 14 min</span>
+          </div>
+        </div>
+        <div class="savings-callout">
+          <span class="savings-amount">$12.22 saved</span>
+          <span class="savings-percent">85% cheaper</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS ===== -->
+    <section id="settings" class="view hidden" aria-labelledby="settings-heading">
+      <div class="section-header">
+        <h1 id="settings-heading">Settings</h1>
+        <p class="section-subtitle">Configure default values for job submissions and display preferences.</p>
+      </div>
+
+      <div class="settings-panels">
+        <!-- Job Defaults -->
+        <div class="settings-panel">
+          <h2 class="subsection-heading">Job Defaults</h2>
+          <p class="form-hint">These defaults will pre-fill the submission form.</p>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="setting-chunk-size">Default Chunk Size</label>
+              <select id="setting-chunk-size" name="default_chunk_size">
+                <option value="auto">Auto (recommended)</option>
+                <option value="64mb">64 MB</option>
+                <option value="256mb">256 MB</option>
+                <option value="1gb">1 GB</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="setting-retries">Default Max Retries</label>
+              <input type="number" id="setting-retries" name="default_retries" value="3" min="0" max="10">
+            </div>
+            <div class="form-group">
+              <label for="setting-timeout">Default Timeout (seconds)</label>
+              <input type="number" id="setting-timeout" name="default_timeout" value="300" min="30" max="3600">
+            </div>
+            <div class="form-group">
+              <label for="setting-region">Preferred Region</label>
+              <select id="setting-region" name="default_region">
+                <option value="any">Any Region</option>
+                <option value="us-east">US East</option>
+                <option value="us-west">US West</option>
+                <option value="eu-west">EU West</option>
+                <option value="eu-central">EU Central</option>
+                <option value="ap-southeast">AP Southeast</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="setting-priority">Default Priority</label>
+              <select id="setting-priority" name="default_priority">
+                <option value="standard">Standard (1.0x)</option>
+                <option value="rush">Rush (3.0x)</option>
+                <option value="economy">Economy (0.4x)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="setting-currency">Cost Display Currency</label>
+              <select id="setting-currency" name="cost_currency">
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (&euro;)</option>
+                <option value="GBP">GBP (&pound;)</option>
+                <option value="JPY">JPY (&yen;)</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-actions">
+            <button type="button" class="btn btn-primary btn-sm" id="save-settings">Save Defaults</button>
+            <button type="button" class="btn btn-outline btn-sm" id="reset-settings">Reset to Defaults</button>
+          </div>
+        </div>
+
+        <!-- Favorite Modules -->
+        <div class="settings-panel">
+          <h2 class="subsection-heading">Favorite Modules</h2>
+          <p class="form-hint">Pin frequently used modules for quick access.</p>
+          <ul class="settings-module-list" id="favorite-modules-list" role="list" aria-label="Favorite modules">
+            <li class="settings-empty">No favorites yet. Browse modules and click the star icon to pin.</li>
+          </ul>
+        </div>
+
+        <!-- Recent Modules -->
+        <div class="settings-panel">
+          <h2 class="subsection-heading">Recent Modules</h2>
+          <p class="form-hint">Your most recently used modules.</p>
+          <ul class="settings-module-list" id="recent-modules-list" role="list" aria-label="Recent modules">
+            <li class="settings-empty">No recent modules.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== TOAST NOTIFICATIONS ========== -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-relevant="additions"></div>
+
+  <!-- ========== UPLOAD DIALOG ========== -->
+  <dialog id="upload-dialog" class="upload-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2 id="dialog-title">Upload Files</h2>
+        <button class="btn btn-icon dialog-close" aria-label="Close dialog" type="button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="dialog-drop-zone" id="dialog-drop-zone" role="region" aria-label="Drag and drop file zone">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        <p>Drop files here or <button type="button" class="link-btn">browse</button></p>
+        <input type="file" class="sr-only" multiple id="dialog-file-input">
+      </div>
+      <ul class="dialog-file-list" id="dialog-file-list" role="list" aria-label="Files to upload"></ul>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-outline" id="dialog-cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="dialog-upload">Upload</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

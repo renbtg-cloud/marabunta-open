@@ -1,0 +1,292 @@
+14.3 Cryptographic Kill-Switches (Epidemic
+
+Revocation)
+If an administrator accidentally deploys a critical financial payload containing an infinite loop or a
+catastrophic logic error, they cannot SSH into 100 million or more (e.g., 15 billion) edge nodes to
+kill the processes.
+Instead, they execute an Epidemic Revocation.
+
+1. The Poison Pill: The Gateway Administrator cryptographically signs a 256-byte
+Revocation Certificate with their Root Key, targeting the specific JobId .
+2. The Gossip: The certificate is injected into the Kademlia DHT. Utilizing the Plumtree
+protocol, the kill-order propagates to 100 million or more (e.g., 15 billion) nodes in
+$O(\log N)$ time (typically
+under 5 seconds for 15 billion devices).
+3. The Guillotine: Every marabunta-visor receives the gossip, cryptographically
+verifies the Root Key signature against the Genesis Block, and instantly drops the
+target
+workload. The daemon flushes the linear memory of the WASM sandbox and
+permanently erases the .mrb-dump journals from the local BlobStore.
+
+The Swarm is autonomous, but the Administrator’s cryptographic signature holds absolute,
+instantaneous veto power over the physics of the network.
+
+THE MARABUNTA BIBLE
+
+69
+
+ANNEX A: The Sovereign Science
+Fabric & The Economic Syndicate
+A.1 The Geopolitical Context: The Abyssal Treaty
+In the era of localized sovereign computing, the monolithic public cloud is an economic bottleneck
+for fundamental science. The egress fees alone render petabyte-scale physics simulations financially
+impossible for independent academic and research institutions.
+To break this cartel, three nations with deeply aligned petrochemical interests—Brazil, Norway, and
+the United Kingdom—established the Abyssal Treaty. Their shared objective: processing
+thousands of terabytes of raw acoustic .segy data to perform Full Waveform Inversion (FWI) on
+deep-sea seismic reflection models (e.g., the Brazilian Pre-Salt, the Norwegian Barents Sea, and the
+UK North Sea).
+Rather than renting supercomputers, they pooled their sovereign citizen networks into a single,
+time-zone-arbitraged Marabunta Swarm.
+
+The Three Pillars of the Fabric:
+1. Brazil (The Gamer Grid): Bundled as an opt-in background daemon within a massively
+popular indie video game developed by IME/USP alumni. Millions of Brazilian teenagers with
+high-end, L3-heavy Ryzen CPUs and DDR5 RAM donate compute cycles while they sleep in
+exchange for MMX micro-credits, which unlock exclusive cosmetic skins.
+2. Norway (The Civic Tax Swarm): A progressive Scandinavian digital initiative where citizens
+run the Marabunta daemon on idle MacBooks and home servers. At the end of the fiscal year,
+cryptographically verified MMX execution receipts are burned in exchange for microdeductions on their income tax.
+3. The UK (The Night-Shift Academic Net): Imperial College and allied universities link
+hundreds of thousands of library desktops and Raspberry Pi lab clusters that sit idle from 8:00
+PM to 8:00 AM.
+
+THE MARABUNTA BIBLE
+
+70
+
+Because the sun never sets on this fabric, thermodynamic efficiency is absolute. When it is 3:00 AM
+in São Paulo, the cold, sleeping Brazilian grid crunches Norwegian seismic data. When it is 3:00
+AM in Oslo, the frozen Scandinavian desktops process Brazilian Pre-Salt models.
+However, this environment is inherently hostile. You cannot trust a sleeping teenager’s overclocked
+PC, you cannot trust a library desktop, and you must account for opportunistic script kiddies
+attempting to defraud the Norwegian tax authority. The Marabunta core architecture was explicitly
+designed to survive this chaos.
+
+A.2 Phase 1: The Zero-Trust Genesis
+To initiate the joint compute session, the lead researchers at USP, NTNU, and Imperial College
+must establish a cryptographic perimeter.
+The USP orchestrator opens the terminal:
+
+mrb
+
+swarm
+
+init-wolfpack
+
+--purpose
+
+"Abyssal_FWI_Treaty" --threshold 2-of-3
+
+Behind the scenes, this is not a mere database entry. The Marabunta CLI triggers the physical
+ChrysalisGrinder. It allocates a 32MB scratchpad and saturates the local L3 cache, executing a
+memory-hard Proof-of-Work loop until it derives a NodeId with 26 leading zero-bits. This
+mathematically enforces a ~4-second physical cost per identity, neutralizing Sybil botnet attacks.
+The CLI then builds the JSON payload and executes an HTTP POST to the local Daemon’s /api/
+v1/federation/wolfpack
+
+endpoint.
+
+SwarmMessage::WolfPackProposal
+
+The
+
+Daemon
+
+broadcasts
+
+the
+
+across the Kademlia DHT. A secure, ephemeral BFT
+
+(Byzantine Fault Tolerant) computing coalition is born across three continents.
+
+A.3 Phase 2: Data Gravity & The 1.5TB WASM
+Bypass
+The raw seismic survey block is 1.5 Terabytes. It sits on a secure academic Storage Area Network
+(SAN) in São Paulo.
+
+THE MARABUNTA BIBLE
+
+71
+
+A Norwegian citizen’s MacBook Air claims a chunk of the wave-equation simulation. Standard
+WebAssembly (wasm32) imposes a hard 4GB linear memory limit. Naively passing the dataset via
+the DHT ( SwarmMessage::PushBlob ) would instantly trigger a host-level Out-Of-Memory
+(OOM) panic, crashing the Swarm.
+Instead, the USP JCL manifest specifies a dataset_shard_uri .
+The Marabunta WorkEngine intercepts this URI. Inside the HighestsecSandbox , the FWI
+algorithm calls a custom host-function: mrb_dataset_stream_read . The Rust host securely
+maps the remote SAN file descriptor and streams the 1.5TB dataset across the Atlantic in paginated
+1MB windows. The dense wave-equation math executes flawlessly inside the Norwegian
+MacBook’s WASM sandbox using less than 50MB of RAM, bypassing the architectural limitations
+of WebAssembly via secure, air-gapped host-calls.
+
+A.4 Phase 3: The “PARANOID” Micro-Audit
+FWI math is brutally dense. If a UK library desktop with a spinning HDD attempts to run the
+simulation, swapping memory pages to disk, it will stall the global pipeline.
+To filter the weak hardware, the researchers deploy a custom verify_mode labeled PARANOID .
+Before the Orchestrator assigns a heavy wave-equation chunk, the WorkEngine forces a pre-flight
+micro-audit. It demands the bidding node allocate a 256MB matrix, execute a rapid deterministic
+transformation, and return the cryptographic hash within 2500ms.
+A cloud-hosted VM with over-provisioned virtual RAM attempts to swap to a cheap SSD. It fails
+the 2500ms timer. The Orchestrator instantly rejects the node’s bid. Only physical, bare-metal
+hardware with high-speed DDR5 RAM wins the heavy FWI chunks.
+
+A.5 Phase 4: The Thermal Guillotine
+A teenager in London leaves their smartphone charging on the bedside table with the academic
+daemon running. The acoustic wave math is so intense it pushes the mobile ARM processor to
+91°C, risking a catastrophic battery fire.
+
+THE MARABUNTA BIBLE
+
+72
+
+The Marabunta HardwareMonitor daemon continuously polls the device sensors. It detects the
+critical spike and transitions to ThermalState::Panic .
+The WorkEngine iterates over the active sandboxes and fires sandbox.kill_engine() . This
+forcefully
+
+increments
+
+the
+
+Wasmtime
+
+epoch,
+
+triggering
+
+an
+
+uncatchable
+
+WasmtimeTrap::Interrupt from deep outside the synchronous C-level FFI boundary.
+
+The WASM thread is violently physically assassinated. The silicon cools down, preventing physical
+damage to the citizen’s device. The unfinished chunk is gracefully yielded back to the DHT
+( SwarmMessage::YieldChunk ) to be computed by a colder node in Brazil.
+
+A.6 Phase 5: The Script Kiddie & The MMX
+Settlement
+A script kiddie in Oslo realizes that the Norwegian government is issuing tax breaks based on
+Marabunta execution receipts. They write a Python script to spoof the API, instantly returning fake,
+randomized FWI stability indices without spending a single CPU cycle on the math.
+The USP Orchestrator utilizes MajorityConsensus . It routes the exact same FWI chunk to the
+Norwegian script kiddie and an honest Brazilian gaming PC.
+The script kiddie returns 0xBAD... . The gamer returns 0x4F2... . The hashes mismatch.
+The
+
+VerificationEngine
+
+slash_node()
+
+flags the Norwegian node as an outlier. It executes the
+
+protocol: 1. The node’s Kademlia trust score is dropped to 0.0 . 2. It is
+
+permanently branded with
+
+Badge::Malicious
+
+in the global
+
+ReputationStore . 3. Its
+
+NodeId is blacklisted, isolating it from the DHT.
+
+Finally, the FederationManager settles the economy. It executes settle_verified_work()
+based on the agreed_price inside the Assignment struct. The honest Brazilian gamer is
+credited with MMX tokens in the SQLite ledger, unlocking their in-game cosmetics. The
+Norwegian script kiddie earns 0 credits, receiving no tax break, and is permanently exiled from the
+Sovereign Science Fabric.
+
+THE MARABUNTA BIBLE
+
+73
+
+ANNEX B: Planetary Asymmetric Data
+Acquisition
+B.0 The Sovereign Scraping Imperative
+Modern scientific and economic models are governed by the volume and quality of their data. To
+perform massive-scale simulations or market analysis, institutions require continuous, unbounded
+access to public and specialized data sources across the global internet.
+However, the internet is not open. It is actively defended.
+If a sovereign research institute attempts to scrape 50 terabytes of data from a protected domain
+using a centralized IP block (e.g., an AWS datacenter in us-east-1 or an Azure cluster in Europe),
+they will be immediately neutralized.
+Modern Web Application Firewalls (WAFs) and centralized reverse-proxies operate on autonomous,
+behavioral rate-limiting. They detect the high-velocity requests originating from a unified IP block,
+categorize the traffic as a “botnet,” and issue IP-level bans or endless CAPTCHA challenges,
+severing the data supply.
+Marabunta bypasses these defenses natively. It utilizes the Swarm to execute Planetary Asymmetric
+Data Acquisition.
+B.1 The Ephemeral Edge Advantage
+The fundamental architecture of Marabunta is a 100-million node peer-to-peer mesh. Crucially, the
+vast majority of these nodes (the “Ephemeral” cohort) do not reside in recognizable datacenters.
+They are consumer laptops, IoT devices, and smartphones operating on residential IP addresses
+(e.g., Comcast, Vodafone, China Telecom) across 190 countries.
+This topology is indistinguishable from organic, human web traffic.
+
+THE MARABUNTA BIBLE
+
+74
+
+When an Administrator submits an MCL (Marabunta Command Language) payload requesting a
+massive data extraction operation, the Gateway Assimilator shreds the target URLs into millions of
+micro-tasks.
+
+The Implementation: src/swarm/detection/webserver.rs
+
+The Edge nodes execute the HTTP requests directly from their local network interfaces. Because
+the requests originate from residential ISP IP addresses, they mathematically bypass datacenter IP
+blocklists.
+//
+
+Execution
+
+occurs
+
+locally
+
+on
+
+the
+
+Edge
+
+Node
+
+via
+
+the
+
+WebServerDetector
+
+use
+
+std::collections::HashMap; use async_trait::async_trait;
+pub struct WebServerDetector { pub host: String, pub port: u16, }
+impl WebServerDetector { /// Executes a distributed web request from a residential edge node. pub
+async fn execute_extraction(&self, url: &str) -> Result<Vec, &’static str> { let response =
+crate::swarm::detection::http_get_raw(&self.host, self.port).await .map_err(|_| “Target unreachable
+from local residential node”)?;
+
+// The target domain serves the data, unaware that the
+
+residential // request is part of a coordinated, global swarm. Ok(response) } }
+The Ethics of Extration: Consent and Autonomous Throttling
+Routing heavy, asymmetric data extraction payloads through the residential IP addresses of
+unwitting consumers (the “Ephemeral” nodes) introduces severe legal and ethical liabilities. If a
+target domain detects the scraping pattern and blacklists the IP address, a consumer in Praia Grande
+or Mumbai could find their home internet banned from accessing standard web services.
+
+Marabunta prevents this through Autonomous Legal Throttling ( src/swarm/detection/
+
+webserver.rs ).
+
+THE MARABUNTA BIBLE
+
+75
+
+

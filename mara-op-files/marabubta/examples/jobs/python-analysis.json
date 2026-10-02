@@ -1,0 +1,68 @@
+{
+  "name": "statistical-analysis",
+  "description": "Python-based statistical analysis job demonstrating data science workloads",
+  "priority": "normal",
+  "tasks": [
+    {
+      "id": "generate-data",
+      "name": "Generate Sample Data",
+      "payload": {
+        "type": "python",
+        "script": "import random; import json; random.seed(42); data = [random.gauss(100, 15) for _ in range(10000)]; json.dump(data, open('/tmp/sample_data.json', 'w')); print(f'Generated {len(data)} samples')",
+        "args": []
+      },
+      "depends_on": []
+    },
+    {
+      "id": "descriptive-stats",
+      "name": "Calculate Descriptive Statistics",
+      "payload": {
+        "type": "python",
+        "script": "import json; import statistics; data = json.load(open('/tmp/sample_data.json')); stats = {'mean': statistics.mean(data), 'median': statistics.median(data), 'stdev': statistics.stdev(data), 'variance': statistics.variance(data), 'min': min(data), 'max': max(data), 'n': len(data)}; json.dump(stats, open('/tmp/descriptive_stats.json', 'w')); print(stats)",
+        "args": []
+      },
+      "depends_on": ["generate-data"]
+    },
+    {
+      "id": "percentiles",
+      "name": "Calculate Percentiles",
+      "payload": {
+        "type": "python",
+        "script": "import json; import statistics; data = json.load(open('/tmp/sample_data.json')); data_sorted = sorted(data); n = len(data); percentiles = {f'p{p}': data_sorted[int(n * p / 100)] for p in [10, 25, 50, 75, 90, 95, 99]}; json.dump(percentiles, open('/tmp/percentiles.json', 'w')); print(percentiles)",
+        "args": []
+      },
+      "depends_on": ["generate-data"]
+    },
+    {
+      "id": "histogram",
+      "name": "Generate Histogram Data",
+      "payload": {
+        "type": "python",
+        "script": "import json; data = json.load(open('/tmp/sample_data.json')); min_val, max_val = min(data), max(data); num_bins = 20; bin_width = (max_val - min_val) / num_bins; histogram = [0] * num_bins; [histogram.__setitem__(min(int((x - min_val) / bin_width), num_bins - 1), histogram[min(int((x - min_val) / bin_width), num_bins - 1)] + 1) for x in data]; bins = [{'start': min_val + i * bin_width, 'end': min_val + (i + 1) * bin_width, 'count': histogram[i]} for i in range(num_bins)]; json.dump(bins, open('/tmp/histogram.json', 'w')); print(f'Histogram with {num_bins} bins created')",
+        "args": []
+      },
+      "depends_on": ["generate-data"]
+    },
+    {
+      "id": "final-report",
+      "name": "Generate Final Report",
+      "payload": {
+        "type": "python",
+        "script": "import json; stats = json.load(open('/tmp/descriptive_stats.json')); percentiles = json.load(open('/tmp/percentiles.json')); histogram = json.load(open('/tmp/histogram.json')); report = {'descriptive_statistics': stats, 'percentiles': percentiles, 'histogram_bins': len(histogram), 'analysis_complete': True}; json.dump(report, open('/tmp/final_report.json', 'w'), indent=2); print(json.dumps(report, indent=2))",
+        "args": []
+      },
+      "depends_on": ["descriptive-stats", "percentiles", "histogram"]
+    }
+  ],
+  "constraints": {
+    "memory_min": 268435456
+  },
+  "preferences": {
+    "memory_prefer": 536870912,
+    "preferred_runtimes": ["python3", "python"]
+  },
+  "placement": {
+    "strategy": "balanced"
+  },
+  "timeout_secs": 300
+}

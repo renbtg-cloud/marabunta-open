@@ -1,0 +1,58 @@
+[Unit]
+Description=Marabunta Compute Coordinator
+Documentation=https://docs.marabunta-compute.io
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=marabunta
+Group=marabunta
+
+# Main executable
+ExecStart=/usr/local/bin/marabunta-coordinator --config /etc/marabunta/coordinator.toml
+
+# Environment
+Environment=RUST_LOG=info
+EnvironmentFile=-/etc/marabunta/coordinator.env
+
+# Working directory
+WorkingDirectory=/var/lib/marabunta
+
+# Restart behavior
+Restart=on-failure
+RestartSec=5s
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+MemoryDenyWriteExecute=yes
+LockPersonality=yes
+
+# Allow network access
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+# Read-write paths
+ReadWritePaths=/var/lib/marabunta /var/log/marabunta
+
+# File descriptor limits
+LimitNOFILE=65536
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=marabunta-coordinator
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,56 @@
+[Unit]
+Description=Marabunta Compute Worker
+Documentation=https://docs.marabunta-compute.io
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=marabunta
+Group=marabunta
+
+# Main executable
+ExecStart=/usr/local/bin/marabunta-worker --config /etc/marabunta/worker.toml
+
+# Environment
+Environment=RUST_LOG=info
+EnvironmentFile=-/etc/marabunta/worker.env
+
+# Working directory
+WorkingDirectory=/var/lib/marabunta
+
+# Restart behavior
+Restart=on-failure
+RestartSec=10s
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+# Security hardening (less restrictive for task execution)
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictRealtime=yes
+
+# Allow network access
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+# Read-write paths
+ReadWritePaths=/var/lib/marabunta /var/log/marabunta /tmp
+
+# Resource limits
+LimitNOFILE=65536
+# Uncomment to limit CPU and memory
+# CPUQuota=200%
+# MemoryMax=4G
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=marabunta-worker
+
+[Install]
+WantedBy=multi-user.target

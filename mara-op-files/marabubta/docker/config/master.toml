@@ -1,0 +1,59 @@
+# Marabunta - Licensed under the MIT License.
+# Marabunta Compute Master Configuration
+# This file configures the master node for task scheduling
+
+[server]
+# Address to bind the HTTP server
+bind = "0.0.0.0:9000"
+
+# Maximum number of concurrent connections
+max_connections = 10000
+
+# Request timeout
+request_timeout = "60s"
+
+[coordinator]
+# Coordinator URL for registration
+url = "http://coordinator:8080"
+
+# Registration retry interval
+retry_interval = "5s"
+
+# Maximum retries before failing
+max_retries = 10
+
+[scheduler]
+# Scheduling algorithm: fifo, priority, fair_share
+algorithm = "priority"
+
+# Task queue size limit
+queue_size = 100000
+
+# Maximum concurrent tasks per worker
+max_tasks_per_worker = 10
+
+# Task timeout (0 = no timeout)
+task_timeout = "1h"
+
+# Enable preemption for high-priority tasks
+preemption_enabled = true
+
+[storage]
+# Data directory for persistent state
+data_dir = "/var/lib/marabunta"
+
+# Results retention period
+results_retention = "7d"
+
+[logging]
+level = "info"
+format = "json"
+file = "/var/log/marabunta/master.log"
+
+[metrics]
+enabled = true
+endpoint = "/metrics"
+
+[security]
+tls_enabled = false
+auth_enabled = false

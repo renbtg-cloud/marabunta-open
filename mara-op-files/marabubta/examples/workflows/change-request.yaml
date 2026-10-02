@@ -1,0 +1,408 @@
+# Marabunta - Licensed under the MIT License.
+# examples/workflows/change-request.yaml
+# IT Change Request / Governance Workflow
+# Replaces: SAP Solution Manager ChARM ($100K-$500K/year),
+#           ServiceNow Change Management (~$100/user/month)
+# License: Apache 2.0
+
+name: change-request
+version: "1.0.0"
+description: >
+  ITIL-aligned change management with risk-based routing.
+  Low risk: peer review (2 engineers). Medium/High/Critical:
+  CAB review (3 members). Supports rollback from implementation.
+
+# -- Context Schema ------------------------------------------
+context:
+  title:
+    type: string
+    required: true
+    description: "Short title for the change request"
+  description:
+    type: string
+    required: true
+    description: "Detailed description of the proposed change"
+  risk_level:
+    type: string
+    required: true
+    enum: ["low", "medium", "high", "critical"]
+    description: "Assessed risk level"
+  affected_systems:
+    type: array
+    required: true
+    description: "List of system identifiers affected by this change"
+  requester_id:
+    type: string
+    required: true
+    description: "User ID of the change requester"
+  implementer_id:
+    type: string
+    required: true
+    description: "User ID of the assigned implementer"
+  rollback_plan:
+    type: string
+    required: true
+    description: "Documented rollback procedure"
+  peer_approvals:
+    type: array
+    default: []
+    description: "Collected peer review approvals"
+  cab_approvals:
+    type: array
+    default: []
+    description: "Collected CAB member approvals"
+  scheduled_window:
+    type: string
+    default: ""
+    description: "Scheduled maintenance window (ISO 8601 interval)"
+  implementation_notes:
+    type: string
+    default: ""
+    description: "Notes recorded during implementation"
+  verification_result:
+    type: string
+    default: ""
+    description: "Result of post-implementation verification"
+  cancellation_reason:
+    type: string
+    default: ""
+    description: "Reason for cancellation if applicable"
+  rollback_reason:
+    type: string
+    default: ""
+    description: "Reason for rollback if applicable"
+
+# -- Roles ---------------------------------------------------
+roles:
+  - name: requester
+    description: "Person requesting the change"
+  - name: implementer
+    description: "Engineer assigned to implement the change"
+  - name: peer
+    description: "Peer engineer for low-risk review"
+  - name: cab_member
+    description: "Change Advisory Board member"
+
+# -- States --------------------------------------------------
+states:
+  - name: draft
+    type: initial
+    description: "Change request is being drafted"
+
+  - name: risk_assessment
+    type: active
+    description: "Risk has been assessed, routing to appropriate review"
+    on_enter:
+      - action: audit_log
+        params:
+          message: "Risk assessed as {{ context.risk_level }} for: {{ context.title }}"
+          criticality: NORMAL
+      - action: notify_group
+        params:
+          role: "cab_member"
+          template: "change_submitted"
+          when: "{{ context.risk_level != 'low' }}"
+
+  - name: peer_review
+    type: active
+    description: "Low-risk change under peer review (2 approvals needed)"
+    on_enter:
+      - action: set_context
+        params:
+          key: peer_approvals
+          value: []
+      - action: notify_group
+        params:
+          role: "peer"
+          template: "peer_review_requested"
+      - action: audit_log
+        params:
+          message: "Peer review initiated for low-risk change"
+          criticality: NORMAL
+
+  - name: cab_review
+    type: active
+    description: "Medium/High/Critical risk change under CAB review (3 approvals needed)"
+    on_enter:
+      - action: set_context
+        params:
+          key: cab_approvals
+          value: []
+      - action: notify_group
+        params:
+          role: "cab_member"
+          template: "cab_review_requested"
+      - action: audit_log
+        params:
+          message: "CAB review initiated for {{ context.risk_level }}-risk change"
+          criticality: HIGH
+
+  - name: scheduled
+    type: active
+    description: "Change approved and scheduled for implementation"
+    on_enter:
+      - action: notify
+        params:
+          to: "{{ context.implementer_id }}"
+          template: "change_scheduled"
+      - action: audit_log
+        params:
+          message: "Change scheduled: {{ context.scheduled_window }}"
+          criticality: NORMAL
+
+  - name: implementing
+    type: active
+    description: "Change is being actively implemented"
+    on_enter:
+      - action: audit_log
+        params:
+          message: "Implementation started by {{ context.implementer_id }}"
+          criticality: HIGH
+      - action: notify_group
+        params:
+          role: "cab_member"
+          template: "implementation_started"
+
+  - name: verifying
+    type: active
+    description: "Post-implementation verification in progress"
+    on_enter:
+      - action: audit_log
+        params:
+          message: "Verification phase started"
+          criticality: NORMAL
+
+  - name: completed
+    type: terminal
+    description: "Change successfully implemented and verified"
+    on_enter:
+      - action: audit_log
+        params:
+          message: "Change {{ instance.id }} completed successfully"
+          criticality: HIGH
+      - action: notify
+        params:
+          to: "{{ context.requester_id }}"
+          template: "change_completed"
+
+  - name: rolled_back
+    type: terminal
+    description: "Change was rolled back"
+    on_enter:
+      - action: audit_log
+        params:
+          message: "ROLLBACK: {{ context.rollback_reason }}"
+          criticality: CRITICAL
+      - action: notify_group
+        params:
+          role: "cab_member"
+          template: "change_rolled_back"
+
+  - name: cancelled
+    type: terminal
+    description: "Change request was cancelled"
+    on_enter:
+      - action: audit_log
+        params:
+          message: "Change cancelled: {{ context.cancellation_reason }}"
+          criticality: NORMAL
+
+# -- Transitions ---------------------------------------------
+transitions:
+  - name: submit
+    from: draft
+    to: risk_assessment
+    guards:
+      - condition: role_is
+        params:
+          role: requester
+      - condition: expression
+        params:
+          expr: "len(context.affected_systems) > 0"
+          message: "Must specify at least one affected system"
+    actions:
+      - action: audit_log
+        params:
+          message: "Change request submitted: {{ context.title }}"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: route_to_peer_review
+    from: risk_assessment
+    to: peer_review
+    guards:
+      - condition: expression
+        params:
+          expr: "context.risk_level == \"low\""
+    actions:
+      - action: audit_log
+        params:
+          message: "Routed to peer review (low risk)"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: route_to_cab_review
+    from: risk_assessment
+    to: cab_review
+    guards:
+      - condition: expression
+        params:
+          expr: "context.risk_level != \"low\""
+    actions:
+      - action: audit_log
+        params:
+          message: "Routed to CAB review ({{ context.risk_level }} risk)"
+          criticality: HIGH
+    audit:
+      criticality: HIGH
+
+  - name: peer_approve
+    from: peer_review
+    to: scheduled
+    guards:
+      - condition: role_is
+        params:
+          role: peer
+      - condition: requires_approval
+        params:
+          from_role: peer
+          approval_key: peer_approvals
+          required_count: 2
+    actions:
+      - action: audit_log
+        params:
+          message: "Peer review passed (2/2 approvals)"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: cab_approve
+    from: cab_review
+    to: scheduled
+    guards:
+      - condition: role_is
+        params:
+          role: cab_member
+      - condition: requires_approval
+        params:
+          from_role: cab_member
+          approval_key: cab_approvals
+          required_count: 3
+    actions:
+      - action: audit_log
+        params:
+          message: "CAB review passed (3/3 approvals)"
+          criticality: HIGH
+    audit:
+      criticality: HIGH
+
+  - name: begin_implementation
+    from: scheduled
+    to: implementing
+    guards:
+      - condition: role_is
+        params:
+          role: implementer
+      - condition: expression
+        params:
+          expr: "context.scheduled_window != \"\""
+          message: "Maintenance window must be set before implementation"
+    actions:
+      - action: audit_log
+        params:
+          message: "Implementation begun within window: {{ context.scheduled_window }}"
+          criticality: HIGH
+    audit:
+      criticality: HIGH
+
+  - name: begin_verification
+    from: implementing
+    to: verifying
+    guards:
+      - condition: role_is
+        params:
+          role: implementer
+    actions:
+      - action: audit_log
+        params:
+          message: "Implementation complete, entering verification"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL
+
+  - name: complete_change
+    from: verifying
+    to: completed
+    guards:
+      - condition: role_is
+        params:
+          role: implementer
+      - condition: expression
+        params:
+          expr: "context.verification_result == \"pass\""
+          message: "Verification must pass before completion"
+    actions:
+      - action: audit_log
+        params:
+          message: "Verification passed, change completed"
+          criticality: HIGH
+    audit:
+      criticality: HIGH
+
+  - name: rollback
+    from:
+      - implementing
+      - verifying
+    to: rolled_back
+    guards:
+      - condition: any_of
+        params:
+          conditions:
+            - condition: role_is
+              params:
+                role: implementer
+            - condition: role_is
+              params:
+                role: cab_member
+    actions:
+      - action: set_context
+        params:
+          key: rollback_reason
+          value: "{{ params.reason }}"
+      - action: audit_log
+        params:
+          message: "ROLLBACK initiated by {{ actor.id }}: {{ params.reason }}"
+          criticality: CRITICAL
+    audit:
+      criticality: CRITICAL
+
+  - name: cancel
+    from:
+      - draft
+      - risk_assessment
+      - peer_review
+      - cab_review
+    to: cancelled
+    guards:
+      - condition: any_of
+        params:
+          conditions:
+            - condition: role_is
+              params:
+                role: requester
+            - condition: role_is
+              params:
+                role: cab_member
+    actions:
+      - action: set_context
+        params:
+          key: cancellation_reason
+          value: "{{ params.reason }}"
+      - action: audit_log
+        params:
+          message: "Change cancelled by {{ actor.id }}: {{ params.reason }}"
+          criticality: NORMAL
+    audit:
+      criticality: NORMAL

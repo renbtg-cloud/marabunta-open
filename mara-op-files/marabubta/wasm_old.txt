@@ -1,0 +1,47 @@
+        TaskPayload::Wasm { wasm_bytes, input, .. } => {
+            use crate::highestsec::sandbox::{HighestsecSandbox, HighestsecSandboxConfig};
+            let config = HighestsecSandboxConfig {
+                max_memory_pages: 512,
+                max_fuel: chunk.max_fuel,
+                max_execution_ms: 30_000,
+                max_output_bytes: 10 * 1024 * 1024,
+            };
+
+            if let Ok(sandbox) = HighestsecSandbox::new(config) {
+                // Determine memory limit from job requirements (if available)
+                // In this inner function we don't have the full job posting, so we rely on node defaults
+                // or if we passed it down. For now, default to None to use sandbox config.
+                match sandbox.execute(wasm_bytes, input, b"execute", false, None, isomorphic_ring.clone(), None, None) {
+                    Ok(r) => ChunkResult {
+                        success: true,
+                        output: r.output.clone(),
+                        stdout: String::from_utf8_lossy(&r.output).to_string(),
+                        stderr: String::new(),
+                        duration_ms: start.elapsed().as_millis() as u64,
+                        completed_at: chrono::Utc::now(),
+                        
+                        fuel_consumed: r.fuel_consumed,
+                        execution_error: None,
+                        is_e2ee: false, 
+                        blind_execution_proof: None, journal_dump: r.journal_dump,
+                    },
+                    Err(e) => ChunkResult {
+                        success: false,
+                        output: Vec::new(),
+                        stdout: String::new(),
+                        stderr: format!("WASM execution failed: {}", e),
+                        duration_ms: start.elapsed().as_millis() as u64,
+                        completed_at: chrono::Utc::now(),
+                        
+                        fuel_consumed: 0,
+                        execution_error: Some(e.to_string()),
+                        is_e2ee: false, 
+                        blind_execution_proof: None, journal_dump: None,
+                    }
+                }
+            } else {
+                ChunkResult {
+                    success: false,
+                    output: Vec::new(),
+                    stdout: String::new(),
+                    stderr: "Sandbox init failed".to_string(),
